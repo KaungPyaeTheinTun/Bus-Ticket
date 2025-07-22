@@ -11,14 +11,14 @@
         </div>
         <div class="right-panel">
             <h2>Forget Password</h2>
-            <p class="subtitle">Reset using phone number</p>
+            <p class="subtitle">Reset using email</p>
             <form class="forget-password-form" method="POST" action="<?php echo URLROOT; ?>/auth/forgetpassword">
                 <div class="form-group">
-                    <input type="text" id="email" name="email" placeholder="Email">
+                    <input type="text" id="email" name="email" placeholder="Email" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="submit-button">Submit</button></a>
-                    <button type="button" class="cancel-button">Cancel</button></a>
+                    <a href="<?php echo URLROOT; ?>/pages/login"><button type="button" class="cancel-button">Cancel</button></a>
                 </div>
             </form>
         </div>

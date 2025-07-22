@@ -67,7 +67,7 @@ class Mail
 
             //Recipients
             $mail->setFrom('kkpp42877@gmail.com', 'Cash Flow');  
-            $mail->addAddress($recipient_mail,$recipient_name);     // Add a recipient
+            $mail->addAddress($recipient_mail);     // Add a recipient
 
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML

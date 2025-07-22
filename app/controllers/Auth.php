@@ -73,11 +73,11 @@ class Auth extends Controller
                     $userCreated = $this->db->create('users', $user->toArray());
 
                     if ($userCreated) {
-                        $mail = new Mail();
-                        $verify_token = URLROOT . '/auth/verify/' . $token;
-                        $mail->verifyMail($email, $name, $verify_token);
+                        // $mail = new Mail();
+                        // $verify_token = URLROOT . '/auth/verify/' . $token;
+                        // $mail->verifyMail($email, $name, $verify_token);
     
-                        setMessage('success', 'Please check your Mail box !');
+                        // setMessage('success', 'Please check your Mail box !');
                         redirect('pages/login');
                     }
                     redirect('pages/register');
@@ -252,29 +252,37 @@ class Auth extends Controller
                         $_SESSION['session_loginemail'] = $isLogin['email'];
 
                         // Redirect based on role
-                        if ($isLogin) {
-                            switch ($isLogin['role_id']) {
-                                case ROLE_ADMIN:
-                                    redirect('pages/dashboard'); // Admin dashboard
-                                    break;
+                        // if ($isLogin) {
+                        //     switch ($isLogin['role_id']) {
+                        //         case ROLE_ADMIN:
+                        //             redirect('/pages/dashboard'); 
+                        //             break;
 
-                                case ROLE_USER:
-                                    redirect('pages/index'); // User dashboard
-                                    break;
+                        //         case ROLE_USER:
+                        //             redirect('/pages/index');
+                        //             break;
 
-                                default:
-                                    setMessage('error', 'Invalid role!');
-                                    redirect('pages/login');
-                                    break;
-                            }
-                        } else {
+                        //         default:
+                        //             setMessage('error', 'Invalid role!');
+                        //             redirect('/pages/login');
+                        //             break;
+                        //     }
+                        if ($isLogin['role_id'] == ROLE_ADMIN) {
+                            redirect('pages/dashboard');  // admin dashboard
+                        } else if($isLogin['role_id'] == ROLE_USER){
+                            // setMessage('error', 'Login Fail!');
+                            // exit;
+                            redirect('pages/index');  // user dashboard
+                        }
+                        } else { 
+                            // var_dump('fail');exit;
                             setMessage('error', 'Login Fail!');
                             redirect('pages/login');
                         }
                 }
             }
         }
-    }
+    
   
     function logout($id)
     {
@@ -340,7 +348,8 @@ class Auth extends Controller
     public function changepassword(){
         if($_SERVER['REQUEST_METHOD'] == 'POST' ){
            session_start();
-           
+
+        //    $id = $_POST['id'];
            $email = $_SESSION['otp'];
            $password = $_POST['password'];
            $confirmpassword = $_POST['confirm_password'];
