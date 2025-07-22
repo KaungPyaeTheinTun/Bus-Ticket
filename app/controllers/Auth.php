@@ -141,131 +141,141 @@ class Auth extends Controller
 }
 
     public function verify($token)
-    {
-        $user = $this->db->columnFilter('users', 'token', $token);
+        {
+            $user = $this->db->columnFilter('users', 'token', $token);
 
-        if ($user) {
-            $success = $this->db->verifyMail($user[0]['id']);
+            if ($user) {
+                $success = $this->db->verifyMail($user[0]['id']);
 
-            if ($success) {
-                setMessage(
-                    'success',
-                    'Successfully Verified . Please log in !'
-                );
-            } else {
-                setMessage('error', 'Fail to Verify . Please try again!');
-            }
-        } else {
-            setMessage('error', 'Incrorrect Token . Please try again!');
-        }
-
-        redirect('');
-    }
-
-    // public function login()
-    // {
-    //     //  echo "Hello Bo Kaw";
-    //     //  exit;
-    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    //         if (isset($_POST['email']) && isset($_POST['password'])) {
-    //             $email = $_POST['email'];
-    //             $password = base64_encode($_POST['password']);
-
-    //             $isLogin = $this->db->loginCheck($email, $password);
-
-    //             if ($isLogin) {
-    //                 setMessage('id', base64_encode($isLogin['id']));
-    //                 $id = $isLogin['id'];
-    //                 $setLogin = $this->db->setLogin($id);
-    //                 redirect('pages/dashboard');
-    //             } else {
-    //                 setMessage('error', 'Login Fail!');
-    //                 redirect('pages/login');
-    //             }
-
-    //             // $isEmailExist = $this->db->columnFilter('users', 'email', $email);
-    //             // print_r($isEmailExist);
-    //             // exit;
-    //             // $isPasswordExist = $this->db->columnFilter('users', 'password', $password);
-
-    //             // if ($isEmailExist && $isPasswordExist) {
-    //             //     echo "Login success";
-    //             // } else {
-    //             //     echo "login fail";
-    //             // }
-    //             // print_r($email);
-    //             // print_r($password);
-    //         }
-    //     }
-    // }
-    // public function login()
-    // {
-    //     // echo"I'm here";
-    //     // exit;
-    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    //         if (isset($_POST['email']) && isset($_POST['password'])) {
-    //             $email = $_POST['email'];
-    //             $password = base64_encode($_POST['password']);
-    //             // var_dump($email,$password);
-    //             // exit;
-    //             $isLogin = $this->db->loginCheck($email, $password);
-    //             if ($isLogin) {
-    //                 // optional: mark user as logged in DB
-    //                  $this->db->setLogin($isLogin['id']);
-    //                 session_start();
-    //                 $_SESSION['session_loginuserid'] = $isLogin['id'];
-
-    //                 // redirect by role
-    //                 if ($isLogin['role_id'] == 1) {
-    //                     redirect('pages/dashboard');  // admin dashboard
-    //                 } else if($isLogin['role_id'] == 2){
-    //                     // setMessage('error', 'Login Fail!');
-    //                     // exit;
-    //                     redirect('pages/index');  // user dashboard
-    //                 }
-    //             } else {
-    //                 // echo"here";
-    //                 // exit;
-    //                 setMessage('error', 'Login Fail!');
-    //                 redirect('pages/login');
-    //             }
-    //         }
-    //     }
-    // }
-public function login()
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (isset($_POST['email']) && isset($_POST['password'])) {
-            $email = $_POST['email'];
-            $password = base64_encode($_POST['password']);
-
-            $isLogin = $this->db->loginCheck($email, $password);
-            if ($isLogin) {
-                // Mark user as logged in
-                $this->db->setLogin($isLogin['id']);
-
-                session_start();
-                $_SESSION['session_loginuserid'] = $isLogin['id'];
-
-                // Redirect based on role
-                if ($isLogin['role_id'] == ROLE_ADMIN) {
-                    redirect('pages/dashboard'); // Admin dashboard
-                } elseif ($isLogin['role_id'] == ROLE_USER) {
-                    redirect('pages/index'); // User dashboard
+                if ($success) {
+                    setMessage(
+                        'success',
+                        'Successfully Verified . Please log in !'
+                    );
                 } else {
-                    // Unknown role — fallback
-                    setMessage('error', 'Invalid role!');
-                    redirect('pages/login');
+                    setMessage('error', 'Fail to Verify . Please try again!');
                 }
             } else {
-                setMessage('error', 'Login Fail!');
-                redirect('pages/login');
+                setMessage('error', 'Incrorrect Token . Please try again!');
+            }
+
+            redirect('');
+        }
+
+        // public function login()
+        // {
+        //     //  echo "Hello Bo Kaw";
+        //     //  exit;
+        //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        //         if (isset($_POST['email']) && isset($_POST['password'])) {
+        //             $email = $_POST['email'];
+        //             $password = base64_encode($_POST['password']);
+
+        //             $isLogin = $this->db->loginCheck($email, $password);
+
+        //             if ($isLogin) {
+        //                 setMessage('id', base64_encode($isLogin['id']));
+        //                 $id = $isLogin['id'];
+        //                 $setLogin = $this->db->setLogin($id);
+        //                 redirect('pages/dashboard');
+        //             } else {
+        //                 setMessage('error', 'Login Fail!');
+        //                 redirect('pages/login');
+        //             }
+
+        //             // $isEmailExist = $this->db->columnFilter('users', 'email', $email);
+        //             // print_r($isEmailExist);
+        //             // exit;
+        //             // $isPasswordExist = $this->db->columnFilter('users', 'password', $password);
+
+        //             // if ($isEmailExist && $isPasswordExist) {
+        //             //     echo "Login success";
+        //             // } else {
+        //             //     echo "login fail";
+        //             // }
+        //             // print_r($email);
+        //             // print_r($password);
+        //         }
+        //     }
+        // }
+        // public function login()
+        // {
+        //     // echo"I'm here";
+        //     // exit;
+        //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        //         if (isset($_POST['email']) && isset($_POST['password'])) {
+        //             $email = $_POST['email'];
+        //             $password = base64_encode($_POST['password']);
+        //             // var_dump($email,$password);
+        //             // exit;
+        //             $isLogin = $this->db->loginCheck($email, $password);
+        //             if ($isLogin) {
+        //                 // optional: mark user as logged in DB
+        //                  $this->db->setLogin($isLogin['id']);
+        //                 session_start();
+        //                 $_SESSION['session_loginuserid'] = $isLogin['id'];
+
+        //                 // redirect by role
+        //                 if ($isLogin['role_id'] == 1) {
+        //                     redirect('pages/dashboard');  // admin dashboard
+        //                 } else if($isLogin['role_id'] == 2){
+        //                     // setMessage('error', 'Login Fail!');
+        //                     // exit;
+        //                     redirect('pages/index');  // user dashboard
+        //                 }
+        //             } else {
+        //                 // echo"here";
+        //                 // exit;
+        //                 setMessage('error', 'Login Fail!');
+        //                 redirect('pages/login');
+        //             }
+        //         }
+        //     }
+        // }
+        public function login()
+        {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                if (isset($_POST['email']) && isset($_POST['password'])) {
+                    $email = $_POST['email'];
+                    $password = base64_encode($_POST['password']);
+
+                    $isLogin = $this->db->loginCheck($email, $password);
+                    // var_dump($isLogin);
+                    // exit;
+                    if ($isLogin) {
+                        // Mark user as logged in
+                        $this->db->setLogin($isLogin['id']);
+                        // $this->db->setLogin($isLogin['email']);
+
+                        session_start();
+                        $_SESSION['session_loginuserid'] = $isLogin['id'];
+                        $_SESSION['session_loginemail'] = $isLogin['email'];
+
+                        // Redirect based on role
+                        if ($isLogin) {
+                            switch ($isLogin['role_id']) {
+                                case ROLE_ADMIN:
+                                    redirect('pages/dashboard'); // Admin dashboard
+                                    break;
+
+                                case ROLE_USER:
+                                    redirect('pages/index'); // User dashboard
+                                    break;
+
+                                default:
+                                    setMessage('error', 'Invalid role!');
+                                    redirect('pages/login');
+                                    break;
+                            }
+                        } else {
+                            setMessage('error', 'Login Fail!');
+                            redirect('pages/login');
+                        }
+                }
             }
         }
     }
-}
-
-    
+  
     function logout($id)
     {
         // session_start();

@@ -1,6 +1,5 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 
-<?php session_start(); ?>
 <style>
     .error-message {
         color: red;

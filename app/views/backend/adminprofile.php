@@ -263,37 +263,32 @@
                 </div>
 
                 <div class="admin-table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <!-- <th style="text-align: center;">Change Password</th> -->
-                                <th style="text-align: center;">Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($data['user'] as $user): ?>
-                                <tr>
-                                    <td><?php echo $user['name']; ?></td>
-                                    <td><?php echo $user['phone']; ?></td>
-                                    <td><?php echo $user['email']; ?></td>
-                                    
-                                    <!-- <td style="text-align: center;">
-                                        <a href="#" class="change-password-btn"><i class="fas fa-key action-icon"></i></a>
-                                    </td> -->
-                                    <td style="text-align: center;">
-                                        <a href="<?php echo URLROOT; ?>/user/delete/<?php echo base64_encode($user['id']); ?>" 
-                                            class="delete-admin-btn" >
-                                            <i class="fas fa-trash-alt action-icon delete-icon"></i>
-                                        </a>
-                                    </td>
-                                </tr>                                
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th style="text-align: center;">Delete</th>
+                </tr>
+            </thead>
+            <tbody class="scrollable-tbody">
+                <?php foreach ($data['user'] as $user): ?>
+                    <tr>
+                        <td><?php echo $user['name']; ?></td>
+                        <td><?php echo $user['phone']; ?></td>
+                        <td><?php echo $user['email']; ?></td>
+                        <td style="text-align: center;">
+                            <a href="<?php echo URLROOT; ?>/user/delete/<?php echo base64_encode($user['id']); ?>" 
+                                class="delete-admin-btn" >
+                                <i class="fas fa-trash-alt action-icon delete-icon"></i>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
             </section>
         </main>
     </div>
