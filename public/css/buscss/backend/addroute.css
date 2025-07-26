@@ -133,110 +133,234 @@ body {
     display: inline-block;
 }
 
+.user-profile .admin-dropdown {
+    background-color: #f0f0f0;
+    color: var(--text-color-dark);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
 
+.user-profile .admin-dropdown i {
+    margin-left: 8px;
+}
 
-/* Add Admin Card Styles */
-.add-admin-card {
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--card-bg);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    right: 0;
+    top: 100%; /* Position below the button */
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: var(--text-color-dark);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    border-radius: 5px;
+}
+
+.dropdown-content a i {
+    margin-right: 10px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.user-profile:hover .dropdown-content {
+    display: block;
+}
+/* section */
+
+.add-routes-card {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     padding: 25px;
-    max-width: 500px; /* Limit width of the form card */
+    max-width: 500px; /* Limit width for desktop for better readability */
     margin: 0 auto; /* Center the card */
 }
 
 .card-header {
-    display: flex;
-    align-items: center;
-    color: #0d47a1;
     font-size: 1.2em;
     font-weight: bold;
+    color: #333;
     border-bottom: 1px solid #eee;
     padding-bottom: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
-.add-admin-icon {
-    margin-right: 10px;
-    font-size: 1.5em;
-}
-
-.form-subtitle {
-    font-size: 1.2em;
-    color: #444;
-    margin-bottom: 20px;
+.route-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between form groups */
 }
 
 .form-group {
-    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
-    display: block;
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    font-size: 0.95em;
 }
 
-.input-field {
-    width: calc(100% - 20px); /* Adjust for padding */
-    padding: 10px;
+.text-input {
+    width: 100%;
+    padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1em;
-    box-sizing: border-box; /* Include padding in width */
+    box-sizing: border-box; /* Include padding in element's total width and height */
 }
 
-/* Password field specific styling */
-.password-field-container {
+.text-input::placeholder {
+    color: #bbb;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #0d47a1;
+    box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2);
+}
+
+/* Specific styling for route inputs */
+.route-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.route-inputs .text-input {
+    flex-grow: 1; /* Allow inputs to take equal space */
+}
+
+.route-separator {
+    color: #777;
+    font-size: 1.2em;
+}
+
+/* Input with icon for date/time */
+/* .input-with-icon {
     position: relative;
-    width: 100%;
-}
+    display: flex;
+    align-items: center;
+} */
 
-.password-input {
-    padding-right: 40px; /* Make space for the icon */
-}
+/* .input-with-icon .text-input {
+    padding-right: 40px; }
 
-.password-toggle-icon {
+.input-icon {
     position: absolute;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
+    right: 15px;
     color: #999;
-    user-select: none;
+} */
+
+.estimate-text {
+    font-size: 0.8em;
+    color: #777;
+    margin-left: 10px;
+    flex-shrink: 0; /* Prevent text from shrinking */
 }
 
-.add-btn {
-    background-color: #28a745; /* Green */
+/* Amount input with currency */
+.amount-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.amount-input {
+    flex-grow: 1;
+}
+
+.amount-currency {
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap; /* Prevent "MMK" from wrapping */
+}
+
+/* File Upload Styles */
+.file-upload-group label {
+    display: block; /* Ensure label is on its own line */
+    margin-bottom: 8px;
+}
+
+.file-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-file-upload {
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+}
+
+input[type="file"] {
+    display: none; /* Hide default file input */
+}
+
+.file-name {
+    color: #666;
+    font-size: 0.9em;
+}
+
+
+/* Buttons and Links */
+.confirm-button {
+    background-color: #0d47a1; /* Dark blue */
     color: white;
     padding: 12px 25px;
     border: none;
+    width: 450px;
     border-radius: 5px;
-    font-size: 1em;
+    font-size: 1.05em;
     cursor: pointer;
-    width: 100%; /* Full width button */
-    margin-top: 20px;
     transition: background-color 0.2s ease;
+    align-self: flex-start; /* Align button to the left */
+    margin-top: 10px; /* Space above button */
 }
 
-.add-btn:hover {
-    background-color: #218838;
-}
-
-.back-link-container {
-    text-align: center;
-    margin-top: 25px;
-    margin-right: 330px;
+.confirm-button:hover {
+    background-color: #0a3d8b;
 }
 
 .back-link {
     color: #0d47a1; /* Dark blue */
     font-size: 0.95em;
-    font-weight: bold;
     display: inline-flex;
     align-items: center;
     transition: text-decoration 0.2s ease;
+    margin-top: 10px; /* Space below button */
+    text-decoration: none;
 }
 
 .back-link i {
@@ -245,8 +369,11 @@ body {
 }
 
 .back-link:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
+
+
+/* End section */
 
 
 @media (max-width: 480px) {

@@ -32,9 +32,11 @@
                             <button type="button" class="plus-btn"><i class="fas fa-plus-circle"></i></button>
                         </div>
                     </div>
-                    <button type="button" class="search-button" id="searchRoutesButton">
-                        <i class="fas fa-search"></i>Search Now
-                    </button>
+                    <a href="<?php echo URLROOT; ?>/home/trip">
+                        <button type="button" class="search-button" id="searchRoutesButton">
+                            <i class="fas fa-search"></i>Search Now
+                        </button>
+                    </a>
                 </form> 
             </div>           
         </section>
@@ -237,4 +239,4 @@
                 window.location.href = 'trip.html';
             });
         });
-    </script>
+</script>

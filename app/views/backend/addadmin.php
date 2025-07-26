@@ -51,9 +51,9 @@
                     <div class="form-group">
                         <div class="password-field-container">
                             <input type="password" required id="password" name="password" class="input-field password-input" placeholder="Enter Password">
-                        </div><br>
-                        <input type="checkbox" onclick="myFunction()"> Show Password
-                    </div>                 
+                        </div>
+                    </div> 
+                    <input type="checkbox" onclick="myFunction()"> Show Password                
                     <button type="submit" class="add-btn">Add</button>
                 </form>
 
