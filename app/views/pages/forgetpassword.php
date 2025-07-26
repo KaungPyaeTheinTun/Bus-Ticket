@@ -1,4 +1,5 @@
 <?php require_once APPROOT . '/views/inc/header.php'; ?>
+<?php session_start(); ?>
 
     <div class="forget-password-container">
         <div class="left-panel">
@@ -10,10 +11,17 @@
              </div>
         </div>
         <div class="right-panel">
+            <?php require_once APPROOT . '/views/components/auth_message.php';?>
             <h2>Forget Password</h2>
             <p class="subtitle">Reset using email</p>
             <form class="forget-password-form" method="POST" action="<?php echo URLROOT; ?>/auth/forgetpassword">
-                <div class="form-group">
+            <p class="text-danger ml-4">
+						<?php
+							if(isset($data['email-err']))
+							echo $data['email-err'];
+						?>
+			</p>    
+            <div class="form-group">
                     <input type="text" id="email" name="email" placeholder="Email" required>
                 </div>
                 <div class="form-actions">

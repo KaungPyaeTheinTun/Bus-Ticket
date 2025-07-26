@@ -24,11 +24,6 @@ class Pages extends Controller
         $this->view('pages/register');
     }
 
-    public function record()
-    {
-        $this->view('pages/record');
-    }
-
     public function forgetpassword()
     {
         $this->view('pages/forgetpassword');

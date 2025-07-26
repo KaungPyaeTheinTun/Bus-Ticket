@@ -26,7 +26,7 @@ class Auth extends Controller
         }
     }
 
-       public function register()
+    public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = $_POST['email'];
@@ -77,7 +77,7 @@ class Auth extends Controller
                         // $verify_token = URLROOT . '/auth/verify/' . $token;
                         // $mail->verifyMail($email, $name, $verify_token);
     
-                        // setMessage('success', 'Please check your Mail box !');
+                        setMessage('success', '✅ Successfully registered.');
                         redirect('pages/login');
                     }
                     redirect('pages/register');
@@ -87,58 +87,60 @@ class Auth extends Controller
     }
     //admin register function
    public function adminRegister()
-{
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $email = $_POST['email'];
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = $_POST['email'];
 
-        // Check if user exists
-        $isUserExist = $this->db->columnFilter('users', 'email', $email);
+            // Check if user exists
+            $isUserExist = $this->db->columnFilter('users', 'email', $email);
 
-        if ($isUserExist) {
-            setMessage('error', 'This email is already registered!');
-            redirect('user/addadmin');
-        } else {
-            // Validate entries
-            $validation = new UserValidator($_POST);
-            $data = $validation->validateForm();
-
-            if (count($data) > 0) {
-                $this->view('backend/addadmin', $data);
-            } else {
-                $name = $_POST['name'];
-                $phone = $_POST['phone'];
-                $password = $_POST['password'];
-
-                $profile_image = 'default_profile.jpg';
-                $token = bin2hex(random_bytes(50));
-                $password = base64_encode($password); // should use password_hash ideally
-
-                $user = new UserModel();
-                $user->setName($name);
-                $user->setEmail($email);
-                $user->setPhone($phone);
-                $user->setPassword($password);
-                $user->setToken($token);
-                $user->setProfileImage($profile_image);
-                $user->setIsLogin(0);
-                $user->setIsActive(0);
-                $user->setIsConfirmed(0);
-                $user->setDate(time());
-                $user->setRoleId(1);
-
-                $userCreated = $this->db->create('users', $user->toArray());
-
-                if ($userCreated) {
-                    redirect('user/profile');
-                }
+            if ($isUserExist) {
+                setMessage('error', 'This email is already registered!');
                 redirect('user/addadmin');
+            } else {
+                // Validate entries
+                $validation = new UserValidator($_POST);
+                $data = $validation->validateForm();
+
+                if (count($data) > 0) {
+                    $this->view('backend/addadmin', $data);
+                } else {
+                    $name = $_POST['name'];
+                    $phone = $_POST['phone'];
+                    $password = $_POST['password'];
+
+                    $profile_image = 'default_profile.jpg';
+                    $token = bin2hex(random_bytes(50));
+                    $password = base64_encode($password); // should use password_hash ideally
+
+                    $user = new UserModel();
+                    $user->setName($name);
+                    $user->setEmail($email);
+                    $user->setPhone($phone);
+                    $user->setPassword($password);
+                    $user->setToken($token);
+                    $user->setProfileImage($profile_image);
+                    $user->setIsLogin(0);
+                    $user->setIsActive(0);
+                    $user->setIsConfirmed(0);
+                    $user->setDate(time());
+                    $user->setRoleId(1);
+
+                    $userCreated = $this->db->create('users', $user->toArray());
+
+                    if ($userCreated) {
+                        session_start();
+                        $_SESSION['success'] = "✅ Admin registered successfully.";
+                        redirect('user/profile');
+                    }
+                    redirect('user/addadmin');
+                }
             }
+        } else {
+            // if request is not POST, just show the addadmin form
+            $this->view('user/addadmin');
         }
-    } else {
-        // if request is not POST, just show the addadmin form
-        $this->view('user/addadmin');
     }
-}
 
     public function verify($token)
         {
@@ -276,7 +278,7 @@ class Auth extends Controller
                         }
                         } else { 
                             // var_dump('fail');exit;
-                            setMessage('error', 'Login Fail!');
+                            setMessage('error', 'Fail to login !');
                             redirect('pages/login');
                         }
                 }
@@ -295,37 +297,74 @@ class Auth extends Controller
     }
 
 
-    public function forgetpassword(){
-        if($_SERVER['REQUEST_METHOD'] == 'POST' ){
+    // public function forgetpassword(){
+    //     if($_SERVER['REQUEST_METHOD'] == 'POST' ){
+    //         $email = $_POST['email'];
+
+    //         $checkmail = $this->db->columnFilter('users','email',$email);
+
+    //         if($checkmail){
+    //            $otp = str_pad(rand(0,999999),6,'0',STR_PAD_LEFT);
+    //            $expiry =date('Y-m-d H:i:s', strtotime('+5 minutes')); 
+               
+    //            $iscreate = $this->db->updateotp($otp,$expiry,$email);
+    //         //    var_dump($iscreate);
+    //         //    die();
+    //            if($iscreate){
+    //             $new = new Mail();
+    //             $user = $new->sendOTP($email,$otp);
+    //             session_start();
+    //                  $_SESSION['post_mail'] =$email;
+    //                 redirect('pages/otp');
+    //            }else{
+    //             setMessage('error','Error');
+    //             redirect('pages/forgetpassword');
+    //            }
+
+    //         }else{
+    //             setMessage('error','Mail is not have !');
+    //             redirect('pages/forgetpassword');
+    //         }
+
+    //     }
+    // }
+    public function forgetpassword() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = $_POST['email'];
 
-            $checkmail = $this->db->columnFilter('users','email',$email);
+            $checkmail = $this->db->columnFilter('users', 'email', $email);
 
-            if($checkmail){
-               $otp = str_pad(rand(0,999999),6,'0',STR_PAD_LEFT);
-               $expiry =date('Y-m-d H:i:s', strtotime('+5 minutes')); 
-               
-               $iscreate = $this->db->updateotp($otp,$expiry,$email);
-            //    var_dump($iscreate);
-            //    die();
-               if($iscreate){
-                $new = new Mail();
-                $user = $new->sendOTP($email,$otp);
-                session_start();
-                     $_SESSION['post_mail'] =$email;
+            if ($checkmail) {
+                $userId = $checkmail['id'];
+
+                $otp = str_pad(rand(0,999999), 6, '0', STR_PAD_LEFT);
+                $expiry = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+
+                $iscreate = $this->db->update('users', $userId, [
+                    'otp' => $otp,
+                    'otp_expiry' => $expiry
+                ]);
+
+                if ($iscreate) {
+                    $new = new Mail();
+                    $new->sendOTP($email, $otp);
+
+                    session_start();
+                    $_SESSION['post_mail'] = $email;
+
                     redirect('pages/otp');
-               }else{
-                setMessage('error','Error');
-                redirect('pages/forgetpassword');
-               }
-
-            }else{
-                setMessage('error','Mail is not have');
+                } else {
+                    setMessage('error', 'Error');
+                    redirect('pages/forgetpassword');
+                }
+            } else {
+                setMessage('error', 'Email not found!');
                 redirect('pages/forgetpassword');
             }
-
         }
     }
+
 
     public function otp(){
         if($_SERVER['REQUEST_METHOD'] == 'POST' ){
@@ -345,77 +384,180 @@ class Auth extends Controller
         }
     }
 
-    public function changepassword(){
-        if($_SERVER['REQUEST_METHOD'] == 'POST' ){
-           session_start();
+    // public function changepassword(){
+    //     if($_SERVER['REQUEST_METHOD'] == 'POST' ){
+    //        session_start();
 
-        //    $id = $_POST['id'];
-           $email = $_SESSION['otp'];
-           $password = $_POST['password'];
-           $confirmpassword = $_POST['confirm_password'];
-           if($password !== $confirmpassword){
-            // echo "Password does not match";
-            // die();
-            setMessage('error','⚠️ Password does not match !');
-            redirect('pages/changepassword');
-           }else{
-                $uppercase    = preg_match('@[A-Z]@', $password);
-                $lowercase    = preg_match('@[a-z]@', $password);
-                $number       = preg_match('@[0-9]@', $password);
-                $specialChars = preg_match('@[^\w]@', $password);
-                if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
-                    setMessage('error','⚠️ Password does not meet the required format!');
-                    redirect('pages/changepassword');
-                }
-                $password = base64_encode($password);
-                $ischange = $this->db->changepassword($email,$password);
-                if($ischange){
-                    redirect('pages/login');
-                }else{
-                    setMessage('error','Error');
-                    redirect('pages/changepassword');
-                }
-           }
+    //     //    $id = $_POST['id'];
+    //        $email = $_SESSION['otp'];
+    //        $password = $_POST['password'];
+    //        $confirmpassword = $_POST['confirm_password'];
+    //        if($password !== $confirmpassword){
+    //         // echo "Password does not match";
+    //         // die();
+    //         setMessage('error','⚠️ Password does not match !');
+    //         redirect('pages/changepassword');
+    //        }else{
+    //             $uppercase    = preg_match('@[A-Z]@', $password);
+    //             $lowercase    = preg_match('@[a-z]@', $password);
+    //             $number       = preg_match('@[0-9]@', $password);
+    //             $specialChars = preg_match('@[^\w]@', $password);
+    //             if(!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+    //                 setMessage('error','⚠️ Password does not meet the required format!');
+    //                 redirect('pages/changepassword');
+    //             }
+    //             $password = base64_encode($password);
+    //             $ischange = $this->db->changepassword($email,$password);
+    //             if($ischange){
+    //                 setMessage('success','Password Changed successfully.');
+    //                 redirect('pages/login');
+    //             }else{
+    //                 setMessage('error','Error');
+    //                 redirect('pages/changepassword');
+    //             }
+    //        }
+    //     }
+    // }
+    public function changepassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            session_start();
+
+            $email = $_SESSION['otp'] ?? null;
+            $password = $_POST['password'] ?? '';
+            $confirmpassword = $_POST['confirm_password'] ?? '';
+
+            if (!$email) {
+                setMessage('error', '⚠️ Session expired. Please try again.');
+                redirect('pages/changepassword');
+            }
+
+            if ($password !== $confirmpassword) {
+                setMessage('error', '⚠️ Passwords do not match!');
+                redirect('pages/changepassword');
+                return;
+            }
+
+            $uppercase    = preg_match('@[A-Z]@', $password);
+            $lowercase    = preg_match('@[a-z]@', $password);
+            $number       = preg_match('@[0-9]@', $password);
+            $specialChars = preg_match('@[^\w]@', $password);
+
+            if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+                setMessage('error', "⚠️ Password doesn't meet the required format!");
+                redirect('pages/changepassword');
+                return;
+            }
+
+            $password = base64_encode($password);
+            // Find user by email
+            $user = $this->db->getByEmail('users', $email);
+            if (!$user) {
+                setMessage('error', '⚠️ User not found.');
+                redirect('pages/changepassword');
+            }
+
+            $isChanged = $this->db->update('users', $user['id'], ['password' => $password]);
+
+            if ($isChanged) {
+                setMessage('success', '✅ Password changed successfully.');
+                redirect('pages/login');
+            } else {
+                setMessage('error', '⚠️ Failed to update password.');
+                redirect('pages/changepassword');
+            }
         }
     }
 
+    // public function changepasswordadmin()
+    // {
+    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    //         session_start();
+    //         $adminId = $_SESSION['session_loginuserid'] ?? null;
+    //         // var_dump($adminId);exit;
+    //         if (!$adminId) {
+    //             setMessage('error', 'User not logged in.');
+    //             redirect('/user/profile');
+    //         }
+
+    //         $password = $_POST['password'];
+    //         $confirmPassword = $_POST['confirm-password'];
+
+    //         if (empty($password) || empty($confirmPassword)) {
+    //             setMessage('error', 'All fields are required.');
+    //             redirect('/user/profile');
+    //         }
+
+    //         if ($password !== $confirmPassword) {
+    //             setMessage('error', '⚠️ Passwords do not match.');
+    //             redirect('/user/profile');
+    //         }
+    //         else{
+    //             $password = base64_encode($password);
+    //             if ($this->db->changepasswordadmin($adminId, $password)) {
+    //                 setMessage('success', 'Password changed successfully.');
+    //             } else {
+    //                 setMessage('error', 'Failed to change password.');
+    //             }
+    //         redirect('/user/profile');
+    //         }
+    //     } 
+    //         else 
+    //         {
+    //             redirect('/user/profile');
+    //         }
+    // }
+
     public function changepasswordadmin()
-        {
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_start();
+
             $adminId = $_SESSION['session_loginuserid'] ?? null;
-            // var_dump($adminId);exit;
+
             if (!$adminId) {
-                setMessage('error', 'User not logged in.');
+                setMessage('error', '⚠️ User not logged in.');
                 redirect('/user/profile');
             }
 
-            $password = $_POST['password'];
-            $confirmPassword = $_POST['confirm-password'];
+            $password = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm-password'] ?? '';
 
             if (empty($password) || empty($confirmPassword)) {
-                setMessage('error', 'All fields are required.');
+                setMessage('error', '⚠️ All fields are required.');
                 redirect('/user/profile');
             }
 
             if ($password !== $confirmPassword) {
                 setMessage('error', '⚠️ Passwords do not match.');
                 redirect('/user/profile');
+                return;
             }
-            else{
-                $password = base64_encode($password);
-                if ($this->db->changepasswordadmin($adminId, $password)) {
-                    setMessage('success', 'Password changed successfully.');
-                } else {
-                    setMessage('error', 'Failed to change password.');
-                }
-            redirect('/user/profile');
-            }
-        } 
-            else 
-            {
-                redirect('/user/profile');
-            }
-        }
 
+            $uppercase    = preg_match('@[A-Z]@', $password);
+            $lowercase    = preg_match('@[a-z]@', $password);
+            $number       = preg_match('@[0-9]@', $password);
+            $specialChars = preg_match('@[^\w]@', $password);
+
+            if (!$uppercase || !$lowercase || !$number || !$specialChars || strlen($password) < 8) {
+                setMessage('error', "⚠️ Password doesn't meet the required format!");
+                redirect('/user/profile');
+                return;
+            }
+
+            $password = base64_encode($password);
+
+            $isChanged = $this->db->update('users', $adminId, ['password' => $password]);
+
+            if ($isChanged) {
+                setMessage('success', '✅ Password changed successfully.');
+            } else {
+                setMessage('error', '⚠️ Failed to change password.');
+            }
+
+            redirect('/user/profile');
+        } else {
+            redirect('/user/profile');
+        }
+    }
 }

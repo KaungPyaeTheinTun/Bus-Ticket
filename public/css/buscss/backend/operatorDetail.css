@@ -133,107 +133,136 @@ body {
     display: inline-block;
 }
 
+.user-profile .admin-dropdown {
+    background-color: #f0f0f0;
+    color: var(--text-color-dark);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
 
+.user-profile .admin-dropdown i {
+    margin-left: 8px;
+}
 
-/* Add Admin Card Styles */
-.add-admin-card {
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--card-bg);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    right: 0;
+    top: 100%; /* Position below the button */
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: var(--text-color-dark);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    border-radius: 5px;
+}
+
+.dropdown-content a i {
+    margin-right: 10px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.user-profile:hover .dropdown-content {
+    display: block;
+}
+/* section */
+.main-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr; /* Bus info takes 1 part, seats take 1.5 parts */
+    gap: 25px;
+}
+
+/* Card Styles */
+.bus-info-card, .seat-layout-card {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     padding: 25px;
-    max-width: 500px; /* Limit width of the form card */
-    margin: 0 auto; /* Center the card */
 }
 
 .card-header {
-    display: flex;
-    align-items: center;
-    color: #0d47a1;
     font-size: 1.2em;
     font-weight: bold;
+    color: #333;
     border-bottom: 1px solid #eee;
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
 
-.add-admin-icon {
-    margin-right: 10px;
-    font-size: 1.5em;
+/* Bus Information Card Specifics */
+ .bus-info-card .info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr; /* Label column and value column */
+    gap: 10px 15px; /* Row gap and column gap */
+    margin-bottom: 25px;
 }
 
-.form-subtitle {
-    font-size: 1.2em;
-    color: #444;
-    margin-bottom: 20px;
+.bus-info-card .info-item {
+    display: contents; /* Makes children participate in grid layout */
 }
 
-.form-group {
-    margin-bottom: 15px;
+.bus-info-card .info-item .label {
+    font-weight: bold;
+    color: #555;
+    text-align: left;
 }
 
-.form-group label {
-    display: block;
+.bus-info-card .info-item .value {
+    color: #333;
+}
+
+.amount-seats {
+    font-weight: normal;
     font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
+    color: #777;
 }
 
-.input-field {
-    width: calc(100% - 20px); /* Adjust for padding */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1em;
-    box-sizing: border-box; /* Include padding in width */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-/* Password field specific styling */
-.password-field-container {
-    position: relative;
-    width: 100%;
-}
-
-.password-input {
-    padding-right: 40px; /* Make space for the icon */
-}
-
-.password-toggle-icon {
-    position: absolute;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #999;
-    user-select: none;
-}
-
-.add-btn {
-    background-color: #28a745; /* Green */
+.update-button {
+    background-color: #0d47a1; /* Dark blue */
     color: white;
-    padding: 12px 25px;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     font-size: 1em;
     cursor: pointer;
-    width: 100%; /* Full width button */
-    margin-top: 20px;
     transition: background-color 0.2s ease;
 }
 
-.add-btn:hover {
-    background-color: #218838;
-}
-
-.back-link-container {
-    text-align: center;
-    margin-top: 25px;
-    margin-right: 330px;
+.update-button:hover {
+    background-color: #0a3d8b;
 }
 
 .back-link {
     color: #0d47a1; /* Dark blue */
     font-size: 0.95em;
-    font-weight: bold;
+    /* font-weight: bold; */
     display: inline-flex;
     align-items: center;
     transition: text-decoration 0.2s ease;
@@ -243,10 +272,134 @@ body {
     margin-right: 8px;
     font-size: 1em;
 }
-
-.back-link:hover {
-    text-decoration: underline;
+a{
+    text-decoration: none;
 }
+.back-link:hover {
+    text-decoration: none;
+}
+
+/* Seat Layout Card Specifics */
+.seat-layout-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.seat-layout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px; /* Space between tabs and button */
+}
+
+.tabs-container {
+    display: flex;
+    gap: 5px;
+    background-color: #eee;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.tab {
+    background-color: transparent;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #555;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tab:hover {
+    background-color: #ddd;
+}
+
+.tab.active {
+    background-color: #0d47a1; /* Dark blue for active tab */
+    color: white;
+}
+
+.reset-seats-button {
+    background-color: #28a745; /* Green */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.reset-seats-button:hover {
+    background-color: #218838;
+}
+
+.seat-grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for seats */
+    gap: 15px;
+    padding: 10px;
+    background-color: #f8f8f8; /* Light background for seat area */
+    border-radius: 8px;
+    flex-grow: 1; /* Allow it to take available space */
+}
+
+.driver-box {
+    grid-column: span 4; /* Spans all 4 columns */
+    width: 19%;
+    height: 60px; 
+    background-color: #ccc;
+    color: #555;
+    text-align: center;
+    padding: 17px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 10px; /* Space below driver box */
+}
+
+.seat-box {
+    width: 90px; /* Fixed width for seats */
+    height: 60px; /* Fixed height for seats */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ddd; /* Default available seat color (lighter grey) */
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Seat States */
+.seat-box.sold {
+    background-color: #8a8585; /* Lighter grey for sold seats */
+    color: #ffffff;
+    /* cursor: not-allowed; */
+    border-color: #ccc;
+}
+
+.seat-box.available {
+    background-color: #d8e6f1; /* A light blue for available */
+    color: #333;
+    cursor: pointer;
+}
+
+.seat-box.available:hover:not(.selected) {
+    background-color: #c0daed; /* Lighter blue on hover */
+}
+
+.seat-box.selected {
+    background-color: #28a745; /* Green for selected seats */
+    color: white;
+    border-color: #218838;
+}
+/* End section */
 
 
 @media (max-width: 480px) {

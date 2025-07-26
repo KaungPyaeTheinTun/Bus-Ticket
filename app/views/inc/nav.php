@@ -10,6 +10,10 @@
 
     <link rel="stylesheet" href="<?php echo URLROOT ;  ?>/public/css/buscss/home/style.css"> <!-- Ensure this path is correct -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/home/trip.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <style>
          /* Styles for the Modal (Popup Box) */
@@ -91,7 +95,7 @@
                 <ul>
                     <li><a href="<?php echo URLROOT; ?>/pages/index/#">Home</a></li>
                     <li><a href="<?php echo URLROOT; ?>/pages/index/#operator">Bus Operator</a></li>
-                    <li><a href="<?php echo URLROOT; ?>/pages/record">Record</a></li>
+                    <li><a href="<?php echo URLROOT; ?>/home/record">Record</a></li>
                     <!-- <li><a href="<?php echo URLROOT; ?>/pages/login">Login</a></li> -->
                     <?php session_start(); ?>
                     <?php if (isset($_SESSION['session_loginuserid'])): ?>

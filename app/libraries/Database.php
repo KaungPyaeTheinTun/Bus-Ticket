@@ -31,40 +31,67 @@ class Database
         }
     }
 
+    // public function create($table, $data)
+    // {
+    //     try {
+    //         $column = array_keys($data);
+    //         $columnSql = implode(', ', $column);
+    //         $bindingSql = ':' . implode(',:', $column);
+    //         // echo $bindingSql;
+    //         $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
+    //         // echo $sql;
+    //         $stm = $this->pdo->prepare($sql);
+    //         foreach ($data as $key => $value) {
+    //             $stm->bindValue(':' . $key, $value);
+    //         }
+    //         // print_r($stm);
+    //         $status = $stm->execute();
+    //         // echo $status;
+    //         return ($status) ? $this->pdo->lastInsertId() : false;
+    //     } catch (PDOException $e) {
+    //         echo $e;
+    //     }
+    // }
     public function create($table, $data)
-    {
-        try {
-            $column = array_keys($data);
-            $columnSql = implode(', ', $column);
-            $bindingSql = ':' . implode(',:', $column);
-            // echo $bindingSql;
-            $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
-            // echo $sql;
-            $stm = $this->pdo->prepare($sql);
-            foreach ($data as $key => $value) {
-                $stm->bindValue(':' . $key, $value);
-            }
-            // print_r($stm);
-            $status = $stm->execute();
-            // echo $status;
-            return ($status) ? $this->pdo->lastInsertId() : false;
-        } catch (PDOException $e) {
-            echo $e;
-        }
-    }
-    public function verifyMail($userId)
 {
     try {
-        $sql = "UPDATE users SET is_confirmed = 1, token = NULL WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
-        return $stmt->execute();
+        $columns = array_keys($data);
+        // Wrap each column name with backticks to escape reserved words
+        $escapedColumns = array_map(function($col) {
+            return "`$col`";
+        }, $columns);
+
+        $columnSql = implode(', ', $escapedColumns);
+        $bindingSql = ':' . implode(',:', $columns);
+
+        $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
+        $stm = $this->pdo->prepare($sql);
+
+        foreach ($data as $key => $value) {
+            $stm->bindValue(':' . $key, $value);
+        }
+
+        $status = $stm->execute();
+        return ($status) ? $this->pdo->lastInsertId() : false;
     } catch (PDOException $e) {
-        // Log or handle the error
-        error_log("verifyMail error: " . $e->getMessage());
-        return false;
+        echo $e;
     }
 }
+
+    
+    public function verifyMail($userId)
+    {
+        try {
+            $sql = "UPDATE users SET is_confirmed = 1, token = NULL WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            // Log or handle the error
+            error_log("verifyMail error: " . $e->getMessage());
+            return false;
+        }
+    }
 
     // public function create($table, $data)
     // {
@@ -96,8 +123,40 @@ class Database
     // }
 
     // Update Query
+    // public function update($table, $id, $data)
+    // {   
+    //     // First, we don't want id from category table
+    //     if (isset($data['id'])) {
+    //         unset($data['id']);
+    //     }
+
+    //     try {
+    //         $columns = array_keys($data);
+    //         function map ($item) {
+    //             return $item . '=:' . $item;
+    //         }
+    //         $columns = array_map('map', $columns);
+    //         $bindingSql = implode(',', $columns);
+    //         // echo $bindingSql;
+    //         // exit;
+    //         $sql = 'UPDATE ' .  $table . ' SET ' . $bindingSql . ' WHERE `id` =:id';
+    //         $stm = $this->pdo->prepare($sql);
+
+    //         // Now, we assign id to bind
+    //         $data['id'] = $id;
+
+    //         foreach ($data as $key => $value) {
+    //             $stm->bindValue(':' . $key, $value);
+    //         }
+    //         $status = $stm->execute();
+    //         // print_r($status);
+    //         return $status;
+    //     } catch (PDOException $e) {
+    //         echo $e;
+    //     }
+    // }
     public function update($table, $id, $data)
-    {   
+    {
         // First, we don't want id from category table
         if (isset($data['id'])) {
             unset($data['id']);
@@ -105,14 +164,16 @@ class Database
 
         try {
             $columns = array_keys($data);
-            function map ($item) {
-                return $item . '=:' . $item;
+
+            // wrap column names in backticks to avoid SQL keywords issues
+            function map($item) {
+                return '`' . $item . '`=:' . $item;
             }
             $columns = array_map('map', $columns);
             $bindingSql = implode(',', $columns);
-            // echo $bindingSql;
-            // exit;
-            $sql = 'UPDATE ' .  $table . ' SET ' . $bindingSql . ' WHERE `id` =:id';
+
+            $sql = 'UPDATE `' .  $table . '` SET ' . $bindingSql . ' WHERE `id` =:id';
+
             $stm = $this->pdo->prepare($sql);
 
             // Now, we assign id to bind
@@ -121,9 +182,7 @@ class Database
             foreach ($data as $key => $value) {
                 $stm->bindValue(':' . $key, $value);
             }
-            $status = $stm->execute();
-            // print_r($status);
-            return $status;
+            return $stm->execute();
         } catch (PDOException $e) {
             echo $e;
         }
@@ -136,15 +195,6 @@ class Database
         $stm->bindValue(':id', $id);
         $success = $stm->execute();
         return ($success);
-    }
-
-    public function updateotp($otp,$expiry,$email){
-        $sql = $sql = "UPDATE users SET otp = :otp, otp_expiry = :expiry WHERE email = :email";;
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':otp',$otp);
-        $stmt->bindValue(':expiry',$expiry);
-        $stmt->bindValue(':email' , $email);
-        return $stmt->execute();
     }
 
     public function columnFilter($table, $column, $value)
@@ -170,20 +220,13 @@ class Database
         return ($success) ? $row : [];
     }
 
-    public function changepassword($email,$password){
-        $sql = $sql = "UPDATE users SET password = :password  WHERE email = :email";;
+    public function getByEmail($table, $email)
+    {
+        $sql = "SELECT * FROM {$table} WHERE email = :email LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':password',$password);
-        $stmt->bindValue(':email' , $email);
-        return $stmt->execute();
-    }
-
-    public function changepasswordadmin($id, $password){
-        $sql = "UPDATE users SET password = :password WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':password', $password);
-        $stmt->bindValue(':id', $id);
-        return $stmt->execute();
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function otpcheck($email,$otp)

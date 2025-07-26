@@ -22,7 +22,25 @@
     <link rel="stylesheet" href="<?php echo URLROOT;?>/public/css/buscss/backend/customerlist.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/operator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/addoperator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/operatorDetail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/editoperator.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/route.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/addroute.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
         <aside class="sidebar fixed-sidebar"> <div class="logo">
@@ -42,14 +60,14 @@
                             <span>Customers</span>
                         </a>
                     </li>
-                    <li class="<?php echo (strpos($currentUrl, '/user/operator') !== false) ? 'active' : ''; ?>">
-                        <a href="">
-                            <i class="fa-solid fa-book"></i>
+                    <li class="<?php echo (strpos($currentUrl, '/operator') !== false || strpos($currentUrl, '/operator/detail') !== false || strpos($currentUrl, '/operator/edit') !== false)? 'active' : ''; ?>">
+                        <a href="<?php echo URLROOT; ?>/operator">
+                            <i class="fas fa-bus"></i>
                             <span>Operators</span>
                         </a>
                     </li>
-                    <li class="<?php echo (strpos($currentUrl, '/user/route') !== false) ? 'active' : ''; ?>">
-                        <a href="">
+                    <li class="<?php echo (strpos($currentUrl, '/route') !== false) ? 'active' : ''; ?>">
+                        <a href="<?php echo URLROOT; ?>/route">
                             <i class="fas fa-route"></i>
                             <span>Routes</span>
                         </a>

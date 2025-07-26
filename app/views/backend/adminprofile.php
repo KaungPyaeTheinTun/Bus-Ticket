@@ -392,6 +392,6 @@
         setTimeout(() => {
             flashMessage.style.animation = "fadeOut 0.5s forwards";
             setTimeout(() => flashMessage.remove(), 500); // Remove after fadeOut completes
-        }, 2000); // Show for 2 seconds
+        },1500); // Show for 2 seconds
     }
 </script>
