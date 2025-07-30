@@ -1,47 +1,5 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
-<?php
-$seats = [
-    'day' => [
-        1 => 'sold', 2 => 'available', 3 => 'sold', 4 => 'available', 5 => 'available', 6 => 'available',
-        7 => 'sold', 8 => 'available', 9 => 'available', 10 => 'sold', 11 => 'available', 12 => 'available',
-        13 => 'available', 14 => 'available', 15 => 'sold', 16 => 'available', 17 => 'available', 18 => 'available',
-        19 => 'available', 20 => 'available', 21 => 'sold', 22 => 'available', 23 => 'available', 24 => 'available',
-        25 => 'available', 26 => 'available', 27 => 'available', 28 => 'available', 29 => 'available', 30 => 'available',
-        31 => 'sold', 32 => 'available',
-    ],
-    'afternoon' => [
-        1 => 'available', 2 => 'sold', 3 => 'available', 4 => 'available', 5 => 'sold', 6 => 'available',
-        7 => 'available', 8 => 'available', 9 => 'sold', 10 => 'available', 11 => 'sold', 12 => 'available',
-        13 => 'available', 14 => 'available', 15 => 'available', 16 => 'sold', 17 => 'available', 18 => 'available',
-        19 => 'available', 20 => 'sold', 21 => 'available', 22 => 'available', 23 => 'sold', 24 => 'available',
-        25 => 'available', 26 => 'available', 27 => 'available', 28 => 'sold', 29 => 'available', 30 => 'available',
-        31 => 'sold', 32 => 'sold',
-    ],
-    'night' => [
-        1 => 'sold', 2 => 'sold', 3 => 'available', 4 => 'available', 5 => 'available', 6 => 'available',
-        7 => 'available', 8 => 'sold', 9 => 'available', 10 => 'available', 11 => 'sold', 12 => 'available',
-        13 => 'available', 14 => 'available', 15 => 'available', 16 => 'available', 17 => 'available', 18 => 'sold',
-        19 => 'available', 20 => 'available', 21 => 'available', 22 => 'sold', 23 => 'available', 24 => 'available',
-        25 => 'available', 26 => 'available', 27 => 'available', 28 => 'sold', 29 => 'available', 30 => 'available',
-        31 => 'available', 32 => 'sold',
-    ],
-];
 
-// Detect activeTab based on departure_time
-$departure_time = $data['route']['departure_time'] ?? null;
-$activeTab = 'day'; // default
-if ($departure_time) {
-    $time_parts = explode(':', $departure_time);
-    $hour = (int)$time_parts[0];
-    if ($hour >= 5 && $hour < 12) {
-        $activeTab = 'day';
-    } elseif ($hour >= 12 && $hour < 17) {
-        $activeTab = 'afternoon';
-    } else {
-        $activeTab = 'night';
-    }
-}
-?>
 <style>
    
     .time-filter-dropdown {
@@ -143,81 +101,67 @@ if ($departure_time) {
     <div class="seat-layout-header">
         <button class="tab sold-tab" style="background-color:#8a8585; color:white;">Sold</button>
         <button class="tab available-tab" style="background-color:#d8e6f1; color:#333;">Available</button>
-        <div class="tabs-container">
-            <select id="timeFilterSelect" class="time-filter-dropdown">
-                <option value="day">Day (5 AM - 11:59 AM)</option>
-                <option value="afternoon">Afternoon (12 PM - 4:59 PM)</option>
-                <option value="night">Night (5 PM - 4:59 AM)</option>
-            </select>
-        </div>
         <button class="reset-seats-button" id="resetSeatsButton">Reset seats</button>
     </div>
 
-    <div class="seat-grid-container" id="seatGrid">
-        <?php
-        $activeTab = 'day'; // default
-        foreach ($seats[$activeTab] as $num => $status) {
-            $class = ($status === 'sold') ? 'seat-box sold' : 'seat-box available';
-            echo "<div class=\"$class\">$num</div>";
-        }
-        ?>
-    </div>
-</section>
-</div>
-</main>
+                <div class="seat-grid-container">
+                        <div class="driver-box">Driver</div>
+                        <div class="seat-box available">1</div>
+                        <div class="seat-box available">2</div> 
+                        <div class="seat-box available">3</div>
+                        <div class="seat-box available">4</div>
+                        <div class="seat-box available">5</div>
+                        <div class="seat-box available">6</div>
+                        <div class="seat-box available">7</div>
+                        <div class="seat-box available">8</div>
+                        <div class="seat-box available">9</div>
+                        <div class="seat-box available">10</div>
+                        <div class="seat-box available">11</div>
+                        <div class="seat-box available">12</div>
+                        <div class="seat-box available">13</div>
+                        <div class="seat-box available">14</div>
+                        <div class="seat-box available">15</div>
+                        <div class="seat-box available">16</div>
+                        <div class="seat-box available">17</div>
+                        <div class="seat-box available">18</div>
+                        <div class="seat-box available">19</div>
+                        <div class="seat-box available">20</div>
+                        <div class="seat-box available">21</div>
+                        <div class="seat-box available">22</div>
+                        <div class="seat-box available">23</div>
+                        <div class="seat-box available">24</div>
+                        <div class="seat-box available">25</div>
+                        <div class="seat-box available">26</div>
+                        <div class="seat-box available">27</div>
+                        <div class="seat-box available">28</div>
+                        <div class="seat-box available">29</div>
+                        <div class="seat-box available">30</div>
+                        <div class="seat-box available">31</div>
+                        <div class="seat-box available">32</div>
+                    </div>
+        </section>
+        </div>
+        </main>
 
-<div id="confirmModal" class="modal-overlay">
-  <div class="modal-content">
-    <p>Are you sure you want to reset all seats?</p>
-    <div class="modal-buttons">
-      <button id="confirmYes" class="btn-yes">Yes, Reset</button>
-      <button id="confirmNo" class="btn-no">No, Cancel</button>
-    </div>
-  </div>
-</div>
+        <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <p>Are you sure you want to reset all seats?</p>
+            <div class="modal-buttons">
+            <button id="confirmYes" class="btn-yes">Yes, Reset</button>
+            <button id="confirmNo" class="btn-no">No, Cancel</button>
+            </div>
+        </div>
+        </div>
 
 <script>
-    const seatsData = <?php echo json_encode($seats); ?>;
-    let activeTab = 'day';
-    const seatGrid = document.getElementById('seatGrid');
-    const timeFilter = document.getElementById('timeFilterSelect');
-
-    // Render seats
-    function renderSeats(tab) {
-        seatGrid.innerHTML = '';
-        for(let i=1; i<=32; i++) {
-            const status = seatsData[tab][i] ?? 'available';
-            const div = document.createElement('div');
-            div.className = 'seat-box ' + (status==='sold' ? 'sold' : 'available');
-            div.textContent = i;
-            seatGrid.appendChild(div);
-        }
-    }
-
-    // Init render
-    renderSeats(activeTab);
-
-    // Change time filter
-    timeFilter.addEventListener('change', () => {
-        activeTab = timeFilter.value;
-        renderSeats(activeTab);
-    });
-
     // Reset seats modal logic
-    const resetBtn = document.getElementById('resetSeatsButton');
-    const confirmModal = document.getElementById('confirmModal');
-    const confirmYes = document.getElementById('confirmYes');
-    const confirmNo = document.getElementById('confirmNo');
-
-    resetBtn.addEventListener('click', ()=> confirmModal.style.display='flex');
-    confirmYes.addEventListener('click', ()=>{
-        for(let i=1;i<=32;i++) seatsData[activeTab][i]='available';
-        renderSeats(activeTab);
-        showFlashMessage(`All seats for ${activeTab} have been reset to available!`);
-        confirmModal.style.display='none';
-    });
-    confirmNo.addEventListener('click', ()=> confirmModal.style.display='none');
-
+   document.getElementById('resetSeatsButton').addEventListener('click', function() {
+            const selectedSeats = document.querySelectorAll('.seat-box.sold');
+            selectedSeats.forEach(seat => {
+                seat.classList.remove('sold');
+            });
+            alert('All selected seats have been reset!'); // Optional: provide user feedback
+        });
     // Flash message
     function showFlashMessage(message){
         let flash = document.getElementById('flashMessage');
