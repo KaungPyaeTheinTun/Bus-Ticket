@@ -12,13 +12,13 @@
     --shadow-medium: 0 4px 15px rgba(0, 0, 0, 0.1);
     --green-btn: #28a745;
     --green-btn-hover: #218838;
+    --red-cta: #dc3545; /* Added a red variable for the NRC message */
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    
 }
 
 body {
@@ -34,7 +34,7 @@ body {
     color: var(--white);
     padding: 15px 0;
     box-shadow: var(--shadow-light);
-     position: fixed;
+    position: fixed;
     z-index: 100;
     width: 100%;
 }
@@ -95,8 +95,9 @@ body {
     margin-bottom: 30px;
     top:65px;
     position: fixed;
+    z-index: 1;
+    max-width:100% ;
     width: 100%;
-    z-index: 10;
 }
 
 .search-bar-top .search-inputs {
@@ -156,7 +157,6 @@ body {
     -moz-appearance: textfield; /* Firefox */
 }
 
-
 .search-bar-top .search-now-btn {
     background-color: var(--green-btn);
     color: var(--white);
@@ -193,7 +193,7 @@ body {
     box-shadow: var(--shadow-light);
     padding: 25px;
     position: sticky; /* Keep sidebar visible on scroll */
-    top: 20px; /* Distance from top when sticky */
+    top: 20px; /* Distance from top when sticky (adjust if your header is taller) */
 }
 
 .filter-sidebar h3 {
@@ -230,7 +230,7 @@ body {
     color: var(--text-color-medium);
 }
 
-.trip-listings {
+.results-container { /* Renamed from .trip-listings to match HTML */
     flex-grow: 1; /* Take remaining space */
     display: flex;
     flex-direction: column;
@@ -243,118 +243,131 @@ body {
     box-shadow: var(--shadow-light);
     padding: 20px;
     display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap; /* Allow content inside card to wrap */
-    margin-bottom: 20px; 
+    align-items: flex-start; /* Align items to the top within the card */
+    gap: 40px; /* Adjusted gap for better spacing */
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    margin-bottom: 20px;
 }
 
+/* ------------------------------------- */
+/* Specific Trip Card Info Styling - Matching Image */
+/* ------------------------------------- */
+
 .trip-time-info {
-    flex: 2; /* Takes more space for time and route info */
-    min-width: 200px;
+    flex: 2; /* Takes more space, allows content to push right */
+    min-width: 250px;
+    text-align: left;
 }
 
 .trip-time-info .time {
-    font-size: 24px;
+    font-size: 32px; /* Large time font */
     font-weight: 700;
-    color: var(--primary-blue);
-    margin-bottom: 5px;
+    color: var(--primary-blue); /* Dark blue for emphasis */
+    margin-bottom: -5px; /* Pull date closer */
 }
 
-.trip-time-info .day {
-    font-size: 14px;
+.trip-time-info .date {
+    font-size: 15px;
     color: var(--text-color-medium);
-    margin-bottom: 10px;
+    margin-bottom: 8px; /* Space after date */
 }
 
 .trip-time-info .route {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-color-dark);
     margin-bottom: 5px;
 }
 
-.trip-time-info .details {
-    font-size: 14px;
+.trip-time-info .arrival-details { /* New class for arrival info */
+    font-size: 15px;
     color: var(--text-color-medium);
     margin-bottom: 3px;
 }
 
-.trip-time-info .estimate {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 10px;
+.trip-time-info .duration { /* New class for duration */
+    font-size: 15px;
+    color: var(--text-color-medium);
+    margin-bottom: 10px;
+}
+
+.trip-time-info .nrc-note { /* New class for NRC message */
+    font-size: 14px;
+    color: var(--red-cta);
     font-weight: 500;
 }
 
-.trip-time-info .nrc-message {
-    font-size: 13px;
-    color: var(--red-cta); /* Assuming a red color for warning/note */
-    margin-top: 10px;
-}
-
 .trip-operator-info {
-    flex: 1; /* Takes less space for operator info */
-    min-width: 150px;
+    flex: 1; /* Allows it to grow/shrink based on content */
+    min-width: 180px; /* Minimum width for this section */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
     text-align: center;
 }
 
 .trip-operator-info .operator-logo {
-    height: 50px;
+    height: 70px; /* Adjust size as needed for your images */
+    width: auto;
     margin-bottom: 10px;
-    filter: grayscale(10%); /* Slight grayscale */
+    object-fit: contain; /* Ensures image fits without distortion */
 }
 
 .trip-operator-info .operator-name {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: var(--text-color-dark);
+    margin-bottom: 5px;
 }
 
-.trip-operator-info .bus-type,
-.trip-operator-info .departure-point {
-    font-size: 13px;
+.trip-operator-info .bus-spec,
+.trip-operator-info .depart-point { /* Combined styles for sub-details */
+    font-size: 14px;
     color: var(--text-color-medium);
-    margin-top: 5px;
+    margin-top: 3px;
 }
+
 
 .trip-price-actions {
     flex: 0 0 auto; /* Don't grow, take content width */
+    min-width: 150px; /* Minimum width for this section */
     text-align: right;
-    min-width: 120px; /* Minimum width for price and button */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align price and button to the right */
 }
 
 .trip-price-actions .price {
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--primary-blue);
     margin-bottom: 5px;
 }
 
-.trip-price-actions .seats-left {
-    font-size: 13px;
+.trip-price-actions .available-seats { /* New class for available seats */
+    font-size: 14px;
     color: var(--text-color-medium);
     margin-bottom: 15px;
 }
-.no-routes-found{
-    color: red;
-}
+
 .select-trip-btn {
     background-color: var(--primary-blue);
     color: var(--white);
     border: none;
     border-radius: 5px;
-    padding: 8px 15px;
-    font-size: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%; /* Make button take full width within its container */
+    max-width: 160px; /* Max width to resemble image */
 }
 
 .select-trip-btn:hover {
     background-color: #30419a;
 }
+
 
 /* Footer (reused from dashboard) */
 .main-footer {
@@ -452,7 +465,7 @@ body {
 }
 
 
-/* Responsive Design */
+/* Responsive Design - Your existing media queries */
 @media (max-width: 992px) {
     .search-bar-top .search-inputs {
         justify-content: center;
@@ -481,7 +494,7 @@ body {
         position: static; /* Remove sticky on mobile */
     }
 
-    .trip-listings {
+    .results-container { /* Adjusted name */
         width: 100%;
     }
 
@@ -489,21 +502,26 @@ body {
         flex-direction: column; /* Stack info vertically within trip card */
         align-items: flex-start;
         text-align: left;
-        gap: 15px;
+        gap: 15px; /* Reduced gap when stacked */
         padding: 15px;
     }
 
-    .trip-operator-info {
-        text-align: left; /* Align operator info left */
-    }
-
+    .trip-time-info,
+    .trip-operator-info,
     .trip-price-actions {
-        width: 100%;
-        text-align: left; /* Align price and button left */
+        width: 100%; /* Take full width when stacked */
+        min-width: unset; /* Remove min-width constraints */
+        text-align: left; /* Align all text left */
+        align-items: flex-start; /* Align flex items to start */
+    }
+    
+    .trip-operator-info .operator-logo {
+        margin-left: 0; /* Align logo left when stacked */
     }
 
     .select-trip-btn {
         width: 100%; /* Full width select button */
+        max-width: none; /* Remove max-width constraint */
     }
 }
 
@@ -573,13 +591,25 @@ body {
         padding: 15px;
     }
 
+    /* Font size adjustments for smaller screens */
     .trip-time-info .time {
-        font-size: 20px;
+        font-size: 28px; /* Slightly smaller time */
+    }
+    .trip-time-info .date,
+    .trip-time-info .route,
+    .trip-time-info .arrival-details,
+    .trip-time-info .duration,
+    .trip-time-info .nrc-note,
+    .trip-operator-info .operator-name,
+    .trip-operator-info .bus-spec,
+    .trip-operator-info .depart-point,
+    .trip-price-actions .available-seats {
+        font-size: 13px; /* Smaller text for better fit */
+    }
+    .trip-price-actions .price {
+        font-size: 22px; /* Smaller price */
     }
 
-    .trip-price-actions .price {
-        font-size: 18px;
-    }
 
     .footer-content {
         flex-direction: column;
@@ -611,12 +641,22 @@ body {
         font-size: 20px;
     }
 
-    .trip-time-info .details,
-    .trip-time-info .estimate,
-    .trip-time-info .nrc-message,
-    .trip-operator-info .bus-type,
-    .trip-operator-info .departure-point,
-    .trip-price-actions .seats-left {
+    /* Further font size reductions for very small screens */
+    .trip-time-info .time {
+        font-size: 24px;
+    }
+    .trip-time-info .date,
+    .trip-time-info .route,
+    .trip-time-info .arrival-details,
+    .trip-time-info .duration,
+    .trip-time-info .nrc-note,
+    .trip-operator-info .operator-name,
+    .trip-operator-info .bus-spec,
+    .trip-operator-info .depart-point,
+    .trip-price-actions .available-seats {
         font-size: 12px;
+    }
+    .trip-price-actions .price {
+        font-size: 20px;
     }
 }

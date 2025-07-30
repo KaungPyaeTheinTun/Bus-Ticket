@@ -1,4 +1,49 @@
 <?php require_once APPROOT . '/views/inc/nav.php' ?>
+<?php 
+   $today = date('Y-m-d'); 
+?>
+<style>
+       .flash-message {
+            position: fixed;
+            top: 28px;
+            left: 40%;
+            /* transform: translateX(0); */
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            animation: fadeInScale 0.3s ease;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            /* border-left: 5px solid #28a745; */
+        }
+
+        .error-message {
+            background-color:rgb(239, 154, 161);
+            color: #721c24;
+            /* border-left: 5px solid #dc3545; */
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform:  scale(0.9);
+            }
+        }
+</style>
+<?php if (!empty($_SESSION['error'])): ?>
+            <div id="flashMessage" class="flash-message error-message">
+                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
     <main>
         <section class="hero-section">
             <div class="hero-content">
@@ -15,15 +60,15 @@
                 </div>
             </div>
             <div class="booking-form-container">
-                <form class="booking-form" id="searchForm">
+                <form class="booking-form" id="searchForm" method="get" action="<?php echo URLROOT; ?>/route/searchAndRedirect">
                     <div class="form-group">
-                        <input type="text" placeholder="From" id="from-location" name="from-location">
+                        <input type="text" placeholder="From" id="from-location" name="from" required>
                     </div>
                     <div class="form-group">
-                        <input type="text" placeholder="To" id="to-location" name="to-location">
+                        <input type="text" placeholder="To" id="to-location" name="to" required>
                     </div>
                     <div class="form-group">
-                        <input type="date" id="departure-date" name="departure-date">
+                        <input type="date" id="departure-date" name="date" required min="<?php echo $today; ?>">
                     </div>
                     <div class="form-group passenger-group">
                         <div class="passenger-control">
@@ -32,12 +77,11 @@
                             <button type="button" class="plus-btn"><i class="fas fa-plus-circle"></i></button>
                         </div>
                     </div>
-                    <a href="<?php echo URLROOT; ?>/home/trip">
-                        <button type="button" class="search-button" id="searchRoutesButton">
+                        <button type="submit" class="search-button" id="searchRoutesButton">
                             <i class="fas fa-search"></i>Search Now
                         </button>
-                    </a>
                 </form> 
+
             </div>           
         </section>
 <br><br><br>    
@@ -66,10 +110,10 @@
         <section id="payment" class="payment-section">
             <h2>We Accept</h2>
             <div class="payment-logos">
-                <img src="payment/kpay.png" alt="Kpay"> 
-                <img src="payment/wave.png" alt="Wave Money">
-                <img src="payment/a+.png" alt="A+ Pay">
-                <img src="payment/mab.png" alt="MAB Pay">
+                <img src="<?php echo URLROOT; ?>/images/kpay.png" alt="Kpay"> 
+                <img src="<?php echo URLROOT; ?>/images/wave.png" alt="Wave Money">
+                <img src="<?php echo URLROOT; ?>/images/a+.png" alt="A+ Pay">
+                <img src="<?php echo URLROOT; ?>/images/mab.png" alt="MAB Pay">
             </div>
         </section>
 
@@ -77,14 +121,14 @@
             <h2>Popular Routes</h2>
             <div class="route-cards">
                 <div class="route-card">
-                    <img src="route/bagan.jpg" alt="Yangon - Bagan"> <p>Yangon - Bagan</p>
+                    <img src="<?php echo URLROOT; ?>/images/bagan.jpg" alt="Yangon - Bagan"> <p>Yangon - Bagan</p>
                 </div>
                 <div class="route-card">
-                    <img src="route/mdy.jpg" alt="Yangon - Mandalay">
+                    <img src="<?php echo URLROOT; ?>/images/mdy.jpg" alt="Yangon - Mandalay">
                     <p>Yangon - Mandalay</p>
                 </div>
                 <div class="route-card">
-                    <img src="route/ygn.jpg" alt="Mandalay - Bagan">
+                    <img src="<?php echo URLROOT; ?>/images/ygn.jpg" alt="Mandalay - Bagan">
                     <p>Mandalay - Yangon</p>
                 </div>
             </div>
@@ -93,28 +137,18 @@
         <section id="operator" class="operators-section">
             <h2>Over 10+ Bus Operators</h2>
             <div class="operator-logos">
-                <img src="operator/jj.png" alt="JJ Express">
-                <img src="operator/s.png" alt="S Bus">
-                <img src="operator/shwemandalar.png" alt="Shwe Mandalar">
-                <img src="operator/lunimi.png" alt="Lumbini">
-                <img src="operator/myat.png" alt="Myat Express">
-                <img src="operator/k.png" alt="K Express">
+                <img src="<?php echo URLROOT; ?>/images/jj.png" alt="JJ Express">
+                <img src="<?php echo URLROOT; ?>/images/s.png" alt="S Bus">
+                <img src="<?php echo URLROOT; ?>/images/shwemandalar.png" alt="Shwe Mandalar">
+                <img src="<?php echo URLROOT; ?>/images/lunimi.png" alt="Lumbini">
+                <img src="<?php echo URLROOT; ?>/images/myat.png" alt="Myat Express">
+                <img src="<?php echo URLROOT; ?>/images/k.png" alt="K Express">
             </div>
         </section>
     </main>
 <?php require_once APPROOT . '/views/inc/footer.php' ?>
  
  <script>
-        // Mock Route Data - IMPORTANT: Ensure image paths are correct relative to CSS folder
-        const allRoutesData = [
-            { from: 'Yangon', to: 'Mandalay', date: '2025-06-15', operator: 'ShweMandalar', price: '46,000 MMK', time: '7:30 AM', image: 'operator/shwemandalar.png', arrival: '4:00 PM' },
-            { from: 'Yangon', to: 'Mandalay', date: '2025-06-16', operator: 'EliteExpress', price: '50,000 MMK', time: '8:00 AM', image: 'operator/s.png', arrival: '5:00 PM' },
-            { from: 'Mandalay', to: 'Yangon', date: '2025-06-15', operator: 'Lumbini', price: '45,000 MMK', time: '9:00 PM', image: 'operator/lunimi.png', arrival: '6:00 AM' },
-            { from: 'Yangon', to: 'Bagan', date: '2025-06-20', operator: 'JJ Express', price: '30,000 MMK', time: '6:00 AM', image: 'operator/jj.png', arrival: '1:00 PM' },
-            { from: 'Bagan', to: 'Yangon', date: '2025-06-20', operator: 'Myat Express', price: '32,000 MMK', time: '7:00 PM', image: 'operator/myat.png', arrival: '2:00 AM' },
-            { from: 'Yangon', to: 'Nay Pyi Taw', date: '2025-06-17', operator: 'K Express', price: '25,000 MMK', time: '10:00 PM', image: 'operator/k.png', arrival: '5:00 AM' },
-            { from: 'Yangon', to: 'Mandalay', date: '2025-06-15', operator: 'S Bus', price: '48,000 MMK', time: '1:00 PM', image: 'operator/s.png', arrival: '8:00 PM' }
-        ];
 
         // Custom message box function (replaces alert for better UX)
         function showMessageBox(message) {
@@ -143,27 +177,6 @@
                 document.body.removeChild(messageBox);
             });
         }
-
-        // Function to get today's date in YYYY-MM-DD format
-        function getTodayDate() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // Set the minimum date for the departure date input
-        document.addEventListener('DOMContentLoaded', function() {
-            const departureDateInput = document.getElementById('departure-date');
-            if (departureDateInput) {
-                departureDateInput.min = getTodayDate();
-                // Optionally set default value to today for convenience if not already set
-                if (!departureDateInput.value) {
-                    departureDateInput.value = getTodayDate();
-                }
-            }
-
             // Toggle mobile navigation
             document.getElementById('mobile-menu').addEventListener('click', function() {
                 document.getElementById('main-nav').classList.toggle('active');
@@ -186,57 +199,14 @@
                     passengerInput.value = currentPassengers - 1;
                 } 
             });
-
-            // Search functionality
-            document.getElementById('searchRoutesButton').addEventListener('click', function() {
-                const fromLocation = document.getElementById('from-location').value.trim();
-                const toLocation = document.getElementById('to-location').value.trim();
-                const departureDate = document.getElementById('departure-date').value; 
-                const passengers = document.getElementById('passengers').value;
-
-                // Basic validation for empty fields
-                if (!fromLocation || !toLocation || !departureDate) {
-                    showMessageBox('Please fill in all search fields (From, To, Date).');
-                    return;
-                }
-
-                // Date validation: Cannot search past days
-                const todayDate = getTodayDate();
-                if (departureDate < todayDate) {
-                    showMessageBox('You cannot search for routes on a past date. Please choose today or a future date.');
-                    // Clear filtered results and set searchPerformed to true so trip.html shows 'no routes available'
-                    localStorage.setItem('initialFilteredBusRoutes', JSON.stringify([])); 
-                    localStorage.setItem('searchPerformed', 'true');
-                    localStorage.setItem('searchParams', JSON.stringify({
-                        from: fromLocation,
-                        to: toLocation,
-                        date: departureDate, // Still send the chosen (past) date for display
-                        passengers: passengers
-                    }));
-                    window.location.href = 'trip.html'; // Redirect to trip.html to show "no routes"
-                    return; // Stop further execution
-                }
-
-                const filteredRoutes = allRoutesData.filter(route => {
-                    const routeDate = route.date;
-                    return route.from.toLowerCase() === fromLocation.toLowerCase() &&
-                           route.to.toLowerCase() === toLocation.toLowerCase() &&
-                           routeDate === departureDate;
-                });
-
-                // Store *all* routes for filtering on trip.html, and the initial filtered results
-                localStorage.setItem('allBusRoutesData', JSON.stringify(allRoutesData)); // Store full data
-                localStorage.setItem('initialFilteredBusRoutes', JSON.stringify(filteredRoutes)); // Store initial search result
-                localStorage.setItem('searchPerformed', 'true');
-                localStorage.setItem('searchParams', JSON.stringify({
-                    from: fromLocation,
-                    to: toLocation,
-                    date: departureDate,
-                    passengers: passengers
-                }));
-
-                // Redirect to trip.html
-                window.location.href = 'trip.html';
-            });
-        });
+</script>
+<script>
+    // Auto-hide flash message after 2 seconds
+    const flashMessage = document.getElementById('flashMessage');
+    if (flashMessage) {
+        setTimeout(() => {
+            flashMessage.style.animation = "fadeOut 0.5s forwards";
+            setTimeout(() => flashMessage.remove(), 500); // Remove after fadeOut completes
+        },1500); // Show for 2 seconds
+    }
 </script>

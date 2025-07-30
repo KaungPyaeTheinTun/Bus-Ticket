@@ -4,8 +4,32 @@
                 <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
+<?php 
+   $today = date('Y-m-d'); 
+?>
+<style>
+        .all-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color:#28a745; 
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 0.9em;
+        margin-left: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
 
- <style>
+    .all-button i {
+        margin-right: 5px;
+    }
+
+    .all-button:hover {
+        background-color: #5a6268;
+    }
         .detail-button {
             background-color:green; 
             color: white;
@@ -173,7 +197,7 @@
                 <div class="routes-header-controls">
                     <h2 class="section-title">All Routes</h2>
                     <div class="search-and-add">
-                        <div class="search-bar">
+                        <!-- <div class="search-bar">
                             <input type="text" placeholder="From" class="search-input">
                             <span class="ex-icon"><i class="fas fa-arrow-right"></i></span>
                             <input type="text" placeholder="To" class="search-input">
@@ -182,7 +206,22 @@
                             
                            <button class="search-button"><i class="fas fa-search"></i></button>
                            
-                        </div>
+                        </div> -->
+                        <a href="<?php echo URLROOT; ?>/route/index" class="all-button" title="Show all routes">
+                                <i class="fas fa-sync-alt"></i> All
+                        </a>
+                        <form method="get" action="<?php echo URLROOT; ?>/route/index" class="search-bar">
+                            <input type="text" name="from" placeholder="From" class="search-input" 
+                                value="<?php echo isset($_GET['from']) ? htmlspecialchars($_GET['from']) : ''; ?>">
+                            <span class="ex-icon"><i class="fas fa-arrow-right"></i></span>
+                            <input type="text" name="to" placeholder="To" class="search-input"
+                                value="<?php echo isset($_GET['to']) ? htmlspecialchars($_GET['to']) : ''; ?>">
+                            &nbsp;&nbsp;&nbsp;
+                            <input type="date" name="date" style="height: 30px;"
+                             min="<?php echo $today; ?>"
+                                value="<?php echo isset($_GET['date']) ? htmlspecialchars($_GET['date']) : ''; ?>">
+                            <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+                        </form>
                         <a href="<?php echo URLROOT; ?>/route/create"><button class="add-routes-button"><i class="fas fa-plus"></i> Add Routes</button></a>
                     </div>
                 </div>
@@ -234,7 +273,7 @@
                                 <div class="trip-operator-info">
                                     <img src="<?php echo URLROOT; ?>/public/uploads/routes_images/<?php echo htmlspecialchars($route['image']); ?>" class="operator-logo">
                                     <p class="operator-name"><?php echo htmlspecialchars($route['operator_name']); ?></p>
-                                    <p class="departure-point">Yangon, Aung Mingalar (Departs Gate)</p>
+                                    <!-- <p class="departure-point">Yangon, Aung Mingalar (Departs Gate)</p> -->
                                 </div>
                                 <div class="route-actions">
                                     <div class="price-info">

@@ -279,7 +279,16 @@ class Database
         $row = $stm->fetchAll(PDO::FETCH_ASSOC);
         return ($success) ? $row : [];
     }
-
+    
+    public function runQuery($sql, $params = [])
+    {
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     // public function categoryView()
     // {
     //     $sql = 'SELECT * FROM vw_categories_type';
