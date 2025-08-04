@@ -1,16 +1,68 @@
-<?php require_once APPROOT . '/views/inc/sidebar.php' ?>
+<?php require_once APPROOT . '/views/inc/sidebar.php'; ?>
+
+<?php
+    $routeId = $data['route']['id'] ?? 0;
+    $db = new Database();
+    $allSeats = $db->readAll('seats');
+    $bookedSeatNumbers = [];
+    foreach ($allSeats as $seat) {
+        if (((int)$seat['is_booked'] === 1 || (int)$seat['is_booked'] === 2) && (int)$seat['route_id'] === (int)$routeId) {
+            $seatNumbersArray = json_decode($seat['seat_number'], true);
+            if (is_array($seatNumbersArray)) {
+                foreach ($seatNumbersArray as $number) {
+                    $bookedSeatNumbers[] = (int)$number;
+                }
+            }
+        }
+    }
+?>
+
+<?php if (!empty($_SESSION['error'])): ?>
+    <div id="flashMessage" class="flash-message error-message">
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['success'])): ?>
+    <div id="flashMessage" class="flash-message success-message">
+        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+    </div>
+<?php endif; ?>
 
 <style>
-   
-    .time-filter-dropdown {
-        padding: 8px 12px;
-        font-size: 14px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        background: #fff;
-        cursor: pointer;
-        max-width: 192px;
+    /* Layout header: side by side */
+    .seat-layout-header {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 15px;
     }
+
+    /* Common button styles */
+    .seat-layout-header .tab,
+    .reset-seats-button {
+        padding: 10px 16px;
+        font-size: 1em;
+        border: none;
+        border-radius: 4px;
+        cursor: default; /* disable hover cursor on Sold/Available */
+    }
+
+    /* Sold & Available fixed styles, no hover */
+    .sold-tab { background: #8a8585; color: white; cursor: default }
+    .available-tab { background: #d8e6f1; color: #333;cursor: default }
+
+    /* Reset button with hover */
+    .reset-seats-button {
+        cursor: pointer;
+        background: #e74c3c;
+        color: #fff;
+        transition: background 0.2s;
+    }
+    .reset-seats-button:hover { background: #c0392b; }
+
+    /* Flash messages */
     .flash-message {
         position: fixed;
         top: 28px;
@@ -21,160 +73,186 @@
         font-weight: 500;
         z-index: 9999;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        animation: fadeInScale 0.3s ease;
     }
-    .success-message {
-        background-color: #d4edda;
-        color: #155724;
-    }
+    .success-message { background-color: #d4edda; color: #155724; }
+    .error-message { background-color: rgb(239, 154, 161); color: #721c24; }
+
     @keyframes fadeOut {
         0% { opacity: 1; transform: scale(1); }
         100% { opacity: 0; transform: scale(0.9); }
     }
+
+    /* Seat grid */
+    .seat-grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 15px 0;
+        padding: 10px;
+        background: #f4f4f4;
+        border-radius: 8px;
+    }
+    .seat-box {
+        padding: 12px 0;
+        background: #ddd;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    .driver-box {
+        grid-column: span 4;
+        background-color: #ddd;          /* same as seat-box */
+        text-align: center;
+        font-weight: bold;
+        padding: 12px 0;                 /* same padding as seat-box */
+        border-radius: 5px;              /* same rounded corners */
+        border: 1px solid #bbb;          /* same border */
+        margin-bottom: 8px;
+        font-size: 1.1em;               /* same font size */
+        width:115px;
+        height:50px;
+    }
+  
+    /* Modal */
     .modal-overlay {
         display: none;
-        position: fixed; top: 0; left: 0;
+        position: fixed;
+        top: 0; left: 0;
         width: 100%; height: 100%;
         background: rgba(0,0,0,0.6);
-        justify-content: center; align-items: center;
+        justify-content: center;
+        align-items: center;
         z-index: 1000;
     }
     .modal-content {
-        background: #fff; padding: 30px; border-radius: 8px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        text-align: center; max-width: 400px; width: 90%;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        animation: fadeInScale 0.3s ease-out;
     }
-    .modal-buttons { margin-top: 25px; display: flex; justify-content: center; gap: 15px; }
+    .modal-buttons {
+        margin-top: 25px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
     .modal-buttons button {
-        padding: 12px 25px; border: none; border-radius: 5px;
-        cursor: pointer; font-size: 1em; transition: background-color 0.2s ease;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.2s ease;
     }
-    .btn-yes { background-color: #e74c3c; color: white; }
+    .btn-yes {
+        background-color: #e74c3c;
+        color: white;
+    }
     .btn-yes:hover { background-color: #c0392b; }
-    .btn-no { background-color: #bdc3c7; color: #333; }
+    .btn-no {
+        background-color: #bdc3c7;
+        color: #333;
+    }
     .btn-no:hover { background-color: #95a5a6; }
+    .seat-box.sold {
+        background-color: #8a8585;
+        color: white;
+        cursor: not-allowed;
+    }
+
+    .seat-box.available {
+        background-color: #d8e6f1;
+        color: #333;
+        cursor: default;
+    }
 </style>
 
 <main class="main-content">
-<?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
+<?php require_once APPROOT . '/views/inc/profileHeader.php'; ?>
 
 <div class="main-content-grid">
 <section class="bus-info-card">
     <div class="card-header">Bus Information</div>
     <div class="info-grid">
-        <div class="info-item"><span class="label">Operator :</span><span class="value"><?php echo htmlspecialchars($data['operator']['name']); ?></span></div>
-        <div class="info-item"><span class="label">Phone :</span><span class="value"><?php echo htmlspecialchars($data['operator']['phone']); ?></span></div>
-        <div class="info-item"><span class="label">From :</span><span class="value"><?php echo htmlspecialchars($data['route']['from']); ?></span></div>
-        <div class="info-item"><span class="label">To :</span><span class="value"><?php echo htmlspecialchars($data['route']['to']); ?></span></div>
-        <div class="info-item"><span class="label">Price :</span><span class="value">MMK <?php echo htmlspecialchars($data['route']['price']); ?></span></div>
-        <div class="info-item">
-            <span class="label">Departure :</span>
-            <span class="value">
-                <?php
-                $depRaw = $data['route']['departure_time'] ?? null;
-                if ($depRaw) {
-                    $depDt = new DateTime($depRaw);
-                    echo htmlspecialchars($depDt->format('F j') . ' at ' . $depDt->format('g:i A'));
-                }
-                ?>
-            </span>
-        </div>
-        <div class="info-item">
-            <span class="label">Arrival :</span>
-            <span class="value">
-                <?php
-                $arrRaw = $data['route']['arrival_time'] ?? null;
-                if ($arrRaw) {
-                    $arrDt = new DateTime($arrRaw);
-                    echo htmlspecialchars($arrDt->format('F j') . ' at ' . $arrDt->format('g:i A'));
-                }
-                ?>
-            </span>
-        </div>
+        <div class="info-item"><span class="label">Operator :</span><span class="value"><?= htmlspecialchars($data['operator']['name']) ?></span></div>
+        <div class="info-item"><span class="label">Phone :</span><span class="value"><?= htmlspecialchars($data['operator']['phone']) ?></span></div>
+        <div class="info-item"><span class="label">From :</span><span class="value"><?= htmlspecialchars($data['route']['from']) ?></span></div>
+        <div class="info-item"><span class="label">To :</span><span class="value"><?= htmlspecialchars($data['route']['to']) ?></span></div>
+        <div class="info-item"><span class="label">Price :</span><span class="value" style="color:green;">MMK <?= htmlspecialchars($data['route']['price']) ?></span></div>
+        <div class="info-item"><span class="label">Departure :</span><span class="value">
+            <?php
+            $depRaw = $data['route']['departure_time'] ?? null;
+            if($depRaw){
+                $depDt = new DateTime($depRaw);
+                echo htmlspecialchars($depDt->format('F j') . ' at ' . $depDt->format('g:i A'));
+            }
+            ?>
+        </span></div>
+        <div class="info-item"><span class="label">Arrival :</span><span class="value">
+            <?php
+            $arrRaw = $data['route']['arrival_time'] ?? null;
+            if($arrRaw){
+                $arrDt = new DateTime($arrRaw);
+                echo htmlspecialchars($arrDt->format('F j') . ' at ' . $arrDt->format('g:i A'));
+            }
+            ?>
+        </span></div>
     </div>
     <div class="card-actions">
-        <a href="<?php echo URLROOT; ?>/route"><i class="fas fa-arrow-left"></i> Back</a>
-        <!-- <a href="<?php echo URLROOT; ?>/route/edit/<?php echo base64_encode($data['route']['id']); ?>" class="update-button">Update Info</a> -->
+        <a href="<?= URLROOT; ?>/route"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
 </section>
 
 <section class="seat-layout-card">
     <div class="seat-layout-header">
-        <button class="tab sold-tab" style="background-color:#8a8585; color:white;">Sold</button>
-        <button class="tab available-tab" style="background-color:#d8e6f1; color:#333;">Available</button>
-        <button class="reset-seats-button" id="resetSeatsButton">Reset seats</button>
+        <button class="tab sold-tab">Sold</button>
+        <button class="tab available-tab">Available</button>
+        <button type="button" class="reset-seats-button" id="openModalBtn">Reset seats</button>
     </div>
 
-                <div class="seat-grid-container">
-                        <div class="driver-box">Driver</div>
-                        <div class="seat-box available">1</div>
-                        <div class="seat-box available">2</div> 
-                        <div class="seat-box available">3</div>
-                        <div class="seat-box available">4</div>
-                        <div class="seat-box available">5</div>
-                        <div class="seat-box available">6</div>
-                        <div class="seat-box available">7</div>
-                        <div class="seat-box available">8</div>
-                        <div class="seat-box available">9</div>
-                        <div class="seat-box available">10</div>
-                        <div class="seat-box available">11</div>
-                        <div class="seat-box available">12</div>
-                        <div class="seat-box available">13</div>
-                        <div class="seat-box available">14</div>
-                        <div class="seat-box available">15</div>
-                        <div class="seat-box available">16</div>
-                        <div class="seat-box available">17</div>
-                        <div class="seat-box available">18</div>
-                        <div class="seat-box available">19</div>
-                        <div class="seat-box available">20</div>
-                        <div class="seat-box available">21</div>
-                        <div class="seat-box available">22</div>
-                        <div class="seat-box available">23</div>
-                        <div class="seat-box available">24</div>
-                        <div class="seat-box available">25</div>
-                        <div class="seat-box available">26</div>
-                        <div class="seat-box available">27</div>
-                        <div class="seat-box available">28</div>
-                        <div class="seat-box available">29</div>
-                        <div class="seat-box available">30</div>
-                        <div class="seat-box available">31</div>
-                        <div class="seat-box available">32</div>
-                    </div>
-        </section>
-        </div>
-        </main>
+    <div class="seat-grid-container">
+        <div class="driver-box">Driver</div>
+        <?php for ($i=1; $i<=32; $i++): ?>
+            <?php $seatClass = in_array($i, $bookedSeatNumbers) ? 'seat-box sold' : 'seat-box available'; ?>
+            <div class="<?= $seatClass ?>"><?= $i ?></div>
+        <?php endfor; ?>
+    </div>
+</section>
+</div>
+</main>
 
-        <div id="confirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <p>Are you sure you want to reset all seats?</p>
+<!-- Modal -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal-content">
+        <p>Are you sure you want to reset all seats?</p>
+        <form method="post" action="<?= URLROOT ?>/route/resetSeats">
+            <input type="hidden" name="route_id" value="<?= (int)$routeId ?>">
             <div class="modal-buttons">
-            <button id="confirmYes" class="btn-yes">Yes, Reset</button>
-            <button id="confirmNo" class="btn-no">No, Cancel</button>
+                <button type="submit" class="btn-yes">Yes, Reset</button>
+                <button type="button" class="btn-no" id="closeModalBtn">No, Cancel</button>
             </div>
-        </div>
-        </div>
+        </form>
+    </div>
+</div>
 
 <script>
-    // Reset seats modal logic
-   document.getElementById('resetSeatsButton').addEventListener('click', function() {
-            const selectedSeats = document.querySelectorAll('.seat-box.sold');
-            selectedSeats.forEach(seat => {
-                seat.classList.remove('sold');
-            });
-            alert('All selected seats have been reset!'); // Optional: provide user feedback
-        });
-    // Flash message
-    function showFlashMessage(message){
-        let flash = document.getElementById('flashMessage');
-        if(!flash){
-            flash = document.createElement('div');
-            flash.id='flashMessage'; flash.className='flash-message success-message';
-            document.body.appendChild(flash);
-        }
-        flash.textContent=message; flash.style.display='block';
-        if(flash.fadeTimeout) clearTimeout(flash.fadeTimeout);
-        flash.fadeTimeout = setTimeout(()=>{
-            flash.style.animation='fadeOut 0.5s forwards';
-            flash.addEventListener('animationend', ()=>{flash.style.display='none'; flash.style.animation='';}, {once:true});
-        },2000);
+    const flashMessage = document.getElementById('flashMessage');
+    if (flashMessage) {
+        setTimeout(() => {
+            flashMessage.style.animation = "fadeOut 0.5s forwards";
+            setTimeout(() => flashMessage.remove(), 500);
+        }, 1500);
     }
+
+    document.getElementById('openModalBtn').addEventListener('click', () => {
+        document.getElementById('confirmModal').style.display='flex';
+    });
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+        document.getElementById('confirmModal').style.display='none';
+    });
 </script>

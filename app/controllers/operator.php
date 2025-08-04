@@ -28,6 +28,30 @@ class Operator extends Controller
     }
 
     // Store new operator
+    // public function store()
+    // {
+    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    //         $name = $_POST['name'] ?? '';
+    //         $phone = $_POST['phone'] ?? '';
+    //         $seat_capacity = $_POST['seat_capacity'] ?? '';
+
+    //         // Optional: Validate fields here
+
+    //         $operator = new OperatorModel();
+    //         $operator->setName($name);
+    //         $operator->setPhone($phone);
+    //         $operator->setSeatCapacity($seat_capacity);
+
+    //         $isCreated = $this->db->create('operator', $operator->toArray());
+
+    //         if ($isCreated) {
+    //             setMessage('success', '✅ Successfully added new operator.');
+    //         } else {
+    //             setMessage('error', '⚠️ Failed to add operator.');
+    //         }
+    //         redirect('/operator');
+    //     }
+    // }
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -38,9 +62,9 @@ class Operator extends Controller
             // Optional: Validate fields here
 
             $operator = new OperatorModel();
-            $operator->setName($name);
-            $operator->setPhone($phone);
-            $operator->setSeatCapacity($seat_capacity);
+            $operator->name = $name;
+            $operator->phone = $phone;
+            $operator->seat_capacity = $seat_capacity;
 
             $isCreated = $this->db->create('operator', $operator->toArray());
 
@@ -52,6 +76,7 @@ class Operator extends Controller
             redirect('/operator');
         }
     }
+
 
     // Show edit form
     public function edit($encodedId = null)
@@ -75,6 +100,30 @@ class Operator extends Controller
     }
 
     // Update operator
+    // public function update()
+    // {
+    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    //         $id = $_POST['id'] ?? '';
+    //         $name = $_POST['name'] ?? '';
+    //         $phone = $_POST['phone'] ?? '';
+    //         $seat_capacity = $_POST['seat_capacity'] ?? '';
+
+    //         $operator = new OperatorModel();
+    //         $operator->setId($id);
+    //         $operator->setName($name);
+    //         $operator->setPhone($phone);
+    //         $operator->setSeatCapacity($seat_capacity);
+
+    //         $isUpdated = $this->db->update('operator', $operator->getId(), $operator->toArray());
+
+    //         if ($isUpdated) {
+    //             setMessage('success', '✅ Operator updated successfully!');
+    //         } else {
+    //             setMessage('error', '⚠️ Failed to update operator!');
+    //         }
+    //         redirect('/operator');
+    //     }
+    // }
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -84,12 +133,12 @@ class Operator extends Controller
             $seat_capacity = $_POST['seat_capacity'] ?? '';
 
             $operator = new OperatorModel();
-            $operator->setId($id);
-            $operator->setName($name);
-            $operator->setPhone($phone);
-            $operator->setSeatCapacity($seat_capacity);
+            $operator->id = $id;
+            $operator->name = $name;
+            $operator->phone = $phone;
+            $operator->seat_capacity = $seat_capacity;
 
-            $isUpdated = $this->db->update('operator', $operator->getId(), $operator->toArray());
+            $isUpdated = $this->db->update('operator', $operator->id, $operator->toArray());
 
             if ($isUpdated) {
                 setMessage('success', '✅ Operator updated successfully!');
@@ -99,13 +148,31 @@ class Operator extends Controller
             redirect('/operator');
         }
     }
-
     // Delete operator
-    public function delete($id)
+    // public function delete($id)
+    // {
+    //     $id = base64_decode($id);
+
+    //     $deleted = $this->db->delete('operator', $id);
+    //     if ($deleted) {
+    //         setMessage('success', '✅ Operator deleted successfully.');
+    //     } else {
+    //         setMessage('error', '⚠️ Failed to delete operator.');
+    //     }
+    //     redirect('/operator');
+    // }
+    public function delete($encodedId)
     {
-        $id = base64_decode($id);
+        $id = base64_decode($encodedId);
+
+        if (!$id) {
+            setMessage('error', '⚠️ Invalid operator ID.');
+            redirect('/operator');
+            return;
+        }
 
         $deleted = $this->db->delete('operator', $id);
+
         if ($deleted) {
             setMessage('success', '✅ Operator deleted successfully.');
         } else {
@@ -114,4 +181,5 @@ class Operator extends Controller
         redirect('/operator');
     }
 }
+
 ?>

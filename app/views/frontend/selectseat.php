@@ -1,52 +1,89 @@
 <?php require_once APPROOT . '/views/inc/nav.php'; ?>
 <?php
     $trip = $data['trip'] ?? [];
-    $route_id = $trip['route_id'] ?? '';
-    $from = $trip['from'] ?? '';
-    $to = $trip['to'] ?? '';
-    $departure_time = $trip['departure_time'] ?? '';
-    $arrival_time = $trip['arrival_time'] ?? '';
-    $operator_name = $trip['operator_name'] ?? '';
-    $price = $trip['price'] ?? 0;
-    $passengers = $trip['passengers'] ?? 1;
+    $bookedSeatNumbers = $data['bookedSeatNumbers'];
+    $departureFormatted = $trip['departure_time'] ? date('F j g:i A', strtotime($trip['departure_time'])) : '';
+    $arrivalFormatted = $trip['arrival_time'] ? date('F j g:i A', strtotime($trip['arrival_time'])) : '';
 ?>
-
-<?php
-    $departureFormatted = $departure_time ? date('F j g:i A', strtotime($departure_time)) : '';
-    $arrivalFormatted = $arrival_time ? date('F j g:i A', strtotime($arrival_time)) : '';
-?>
-
+<?php if (!empty($_SESSION['error'])): ?>
+            <div id="flashMessage" class="flash-message error-message">
+                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
 <style>
+    .flash-message {
+            position: fixed;
+            top: 28px;
+            left: 40%;
+            /* transform: translateX(0); */
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            animation: fadeInScale 0.3s ease;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            /* border-left: 5px solid #28a745; */
+        }
+
+        .error-message {
+            background-color:rgb(239, 154, 161);
+            color: #721c24;
+            /* border-left: 5px solid #dc3545; */
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform:  scale(0.9);
+            }
+        }
     .seat-box.selected {
-    background-color: #4caf50 !important; /* Green when selected */
-    color: white;
-    border-color: #388e3c;
+        background-color: #4caf50 !important; /* Green when selected */
+        color: white;
+        border-color: #388e3c;
+    }
+
+    .seat-box.booked {
+        background-color: #e0e0e0;
+        color: #999;
+        cursor: not-allowed;
+        border-color: #ccc;
+        pointer-events: none; /* <--- add this */
     }
 
     .select-seat-main {
-    max-width: 1000px;
-    margin: 10px auto 60px;
-    margin-top:-50px;
-    padding: 0 20px;
+        max-width: 1000px;
+        margin: 10px auto 60px;
+        margin-top: -50px;
+        padding: 0 20px;
     }
-    .seat-grid-container 
-    {
+
+    .seat-grid-container {
         display: grid;
-        grid-template-columns: repeat(4, 1fr); /* 4 columns for seats */
+        grid-template-columns: repeat(4, 1fr);
         gap: 15px;
         padding: 10px;
-        background-color: #f8f8f8; /* Light background for seat area */
+        background-color: #f8f8f8;
         border-radius: 8px;
-        flex-grow: 1; /* Allow it to take available space */
+        flex-grow: 1;
     }
 
     .seat-box {
-        width: 75px; /* Fixed width for seats */
-        height: 50px; /* Fixed height for seats */
+        width: 75px;
+        height: 50px;
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #ddd; /* Default available seat color (lighter grey) */
+        background-color: #ddd;
         border: 1px solid #bbb;
         border-radius: 5px;
         font-weight: bold;
@@ -56,110 +93,91 @@
     }
 </style>
 
-    <main class="select-seat-main">
-        <section class="seat-selection-section">
-            <div class="selection-card">
-                <h2>Seat Selection</h2>
-                <div class="card-content">
-                    <div class="seat-map-container">
-                        <h3 id="seatSelectionMessage">Please select <span id="requiredSeatsCount"><?= htmlspecialchars($passengers) ?></span> seat</h3>
-                        <div class="seat-map" id="seatMap">
-                            <!-- Driver seat is static in HTML -->
-                            <div class="seat-row driver-row">
-                                <div class="seat driver-seat">Driver</div>
-                            </div>
-                            <div class="seat-grid-container">
-                                <div class="seat-box available">1</div>
-                                <div class="seat-box available">2</div> 
-                                <div class="seat-box available">3</div>
-                                <div class="seat-box available">4</div>
-                                <div class="seat-box available">5</div>
-                                <div class="seat-box available">6</div>
-                                <div class="seat-box available">7</div>
-                                <div class="seat-box available">8</div>
-                                <div class="seat-box available">9</div>
-                                <div class="seat-box available">10</div>
-                                <div class="seat-box available">11</div>
-                                <div class="seat-box available">12</div>
-                                <div class="seat-box available">13</div>
-                                <div class="seat-box available">14</div>
-                                <div class="seat-box available">15</div>
-                                <div class="seat-box available">16</div>
-                                <div class="seat-box available">17</div>
-                                <div class="seat-box available">18</div>
-                                <div class="seat-box available">19</div>
-                                <div class="seat-box available">20</div>
-                                <div class="seat-box available">21</div>
-                                <div class="seat-box available">22</div>
-                                <div class="seat-box available">23</div>
-                                <div class="seat-box available">24</div>
-                                <div class="seat-box available">25</div>
-                                <div class="seat-box available">26</div>
-                                <div class="seat-box available">27</div>
-                                <div class="seat-box available">28</div>
-                                <div class="seat-box available">29</div>
-                                <div class="seat-box available">30</div>
-                                <div class="seat-box available">31</div>
-                                <div class="seat-box available">32</div>
-                            </div>
+<main class="select-seat-main">
+    <section class="seat-selection-section">
+        <div class="selection-card">
+            <h2>Seat Selection</h2>
+            <div class="card-content">
+                <div class="seat-map-container">
+                    <h3 id="seatSelectionMessage">
+                        Please select <span id="requiredSeatsCount"><?= htmlspecialchars($trip['passengers']) ?></span> seat
+                    </h3>
+                    <div class="seat-map" id="seatMap">
+                        <div class="seat-row driver-row">
+                            <div class="seat driver-seat">Driver</div>
+                        </div>
+                        <div class="seat-grid-container">
+                            <?php for ($i = 1; $i <= 32; $i++): ?>
+                                <?php
+                                    $isBooked = in_array($i, $bookedSeatNumbers);
+                                    $seatClass = $isBooked ? 'booked' : 'available';
+                                    $isDisabled = $isBooked ? 'disabled' : '';
+                                ?>
+                                <div class="seat-box <?= $seatClass ?>" data-seat-number="<?= $i ?>">
+                                    <?= htmlspecialchars($i) ?>
+                                </div>
+
+                            <?php endfor; ?>
                         </div>
                     </div>
+                </div>
 
-                    <div class="trip-summary-container">
-                        <h3>Trip Summary</h3>
-                        <div class="summary-details">
+                <div class="trip-summary-container">
+                    <h3>Trip Summary</h3>
+                    <div class="summary-details">
                         <p>
-                            <span id="summaryFromLocation"><?= htmlspecialchars($from) ?></span>
+                            <span id="summaryFromLocation"><?= htmlspecialchars($trip['from']) ?></span>
                             <span class="date" id="summaryDepartureDateTime"><?= htmlspecialchars($departureFormatted) ?></span>
                         </p>
                         <p>
-                            <span id="summaryToLocation"><?= htmlspecialchars($to) ?></span>
+                            <span id="summaryToLocation"><?= htmlspecialchars($trip['to']) ?></span>
                             <span class="date" id="summaryArrivalDateTime"><?= htmlspecialchars($arrivalFormatted) ?></span>
-                        </p>                            
+                        </p>
                         <p class="small-text">*Arrival times are estimates and may be subject to change.</p>
                         <hr>
-                        <p>Bus Operator <span id="summaryBusOperator"><?= htmlspecialchars($operator_name) ?></span></p>
-                        <p>Ticket Price <span id="summaryTicketPrice"><?= htmlspecialchars($price) ?> MMK</span></p>
+                        <p>Bus Operator <span id="summaryBusOperator"><?= htmlspecialchars($trip['operator_name']) ?></span></p>
+                        <p>Ticket Price <span id="summaryTicketPrice"><?= htmlspecialchars($trip['price']) ?> MMK</span></p>
                         <p>Seat Number <span id="summaryNumberOfSeats">0</span></p>
                         <p class="total-price">Total Ticket Price <span style="color:green" id="summaryTotalPrice">MMK 0</span></p>
-                        <div class="notice-box">
-                            Notices - Please bring your NRC
-                        </div>
+                        <div class="notice-box">Notices - Please bring your NRC</div>
                         <form action="<?= URLROOT ?>/seat/store" method="post" id="seatForm">
-                            <input type="hidden" name="route_id" value="<?= $route_id ?>">
+                            <input type="hidden" name="route_id" value="<?= $trip['route_id'] ?>">
+                            <!-- <input type="hidden" name="user_id" value="$_SESSION['session_loginuserid']"> -->
+                            <input type="hidden" name="passengers" value="<?= htmlspecialchars($trip['passengers'] ?? 1) ?>">
                             <input type="hidden" name="selected_seats" id="selectedSeatsInput" value="">
-                            <button type="submit" class="continue-payment-btn" id="continuePaymentBtn" disabled>Continue to payment</button>
+                            <button type="submit" class="continue-payment-btn" id="continuePaymentBtn" >
+                                Continue to payment
+                            </button>
                         </form>
-                        </div>
-
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+</main>
 
 <?php require_once APPROOT . '/views/inc/footer.php'; ?>
 
 <script>
-    
-document.addEventListener('DOMContentLoaded', function() {
-    const maxSelectableSeats = <?= (int)$passengers ?>;
-    const seatBoxes = document.querySelectorAll('.seat-box.available');
-    const summaryNumberOfSeats = document.getElementById('summaryNumberOfSeats');
-    const summaryTotalPrice = document.getElementById('summaryTotalPrice');
-    const continueBtn = document.getElementById('continuePaymentBtn');
-    const pricePerSeat = <?= (int)$price ?>;
-    const seatForm = document.getElementById('seatForm');
-    const selectedSeatsInput = document.getElementById('selectedSeatsInput');
+    document.addEventListener('DOMContentLoaded', function() {
+        const maxSelectableSeats = <?= (int)$trip['passengers'] ?? 1 ?>;
+        const seatBoxes = document.querySelectorAll('.seat-box');
+        const summaryNumberOfSeats = document.getElementById('summaryNumberOfSeats');
+        const summaryTotalPrice = document.getElementById('summaryTotalPrice');
+        const pricePerSeat = <?= (int)$trip['price'] ?>;
+        const selectedSeatsInput = document.getElementById('selectedSeatsInput');
 
-    let selectedSeats = [];
+        let selectedSeats = [];
 
-    seatBoxes.forEach(box => {
+        seatBoxes.forEach(box => {
         box.addEventListener('click', () => {
+            if (box.classList.contains('booked')) {
+                return;
+            }
+
             const seatNumber = box.textContent.trim();
 
             if (box.classList.contains('selected')) {
-                // Deselect
                 box.classList.remove('selected');
                 selectedSeats = selectedSeats.filter(num => num !== seatNumber);
             } else {
@@ -169,22 +187,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Update summary
             summaryNumberOfSeats.textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : '0';
             summaryTotalPrice.textContent = `MMK ${selectedSeats.length * pricePerSeat}`;
 
-            // Enable or disable continue button
-            continueBtn.disabled = (selectedSeats.length !== maxSelectableSeats);
+            // **UPDATE the hidden input value here:**
+            selectedSeatsInput.value = selectedSeats.join(',');
         });
     });
 
-    // Submit form when continue is clicked
-    continueBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    if (selectedSeats.length === maxSelectableSeats) {
-        selectedSeatsInput.value = selectedSeats.join(',');
-        seatForm.submit();
-    }
-});
-});
+
+    });
+        // Auto-hide flash message after 2 seconds
+        const flashMessage = document.getElementById('flashMessage');
+        if (flashMessage) {
+            setTimeout(() => {
+                flashMessage.style.animation = "fadeOut 0.5s forwards";
+                setTimeout(() => flashMessage.remove(), 500); // Remove after fadeOut completes
+            },1500); // Show for 2 seconds
+        }
 </script>

@@ -1,0 +1,322 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #3f51b5; /* A shade of blue, like in the image */
+    --secondary-color: #e0f2f7; /* Light blue for active sidebar */
+    --text-color-dark: #333;
+    --text-color-light: #fff;
+    --card-bg: #fff;
+    --border-color: #ddd;
+    --sidebar-width: 250px;
+    --header-height: 70px;
+    --blue-icon-bg: #bbdefb;
+    --green-icon-bg: #c8e6c9;
+    --yellow-icon-bg: #ffe082;
+    --orange-icon-bg: #ffccbc;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6; /* Light gray background */
+    color: var(--text-color-dark);
+}
+
+.container {
+    display: flex;
+    /* min-height: 100vh; */ /* Removed as content might exceed viewport with fixed sidebar */
+}
+
+/* Fixed Sidebar Styling */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    /* Fixed positioning properties */
+    position: fixed; /* Makes the sidebar fixed */
+    top: 0;
+    left: 0;
+    height: 100vh; /* Make it span full viewport height */
+    z-index: 100; /* Ensure it stays on top of other content */
+}
+
+.sidebar .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+.sidebar .logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.sidebar .logo h1 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.sidebar .navigation ul {
+    list-style: none;
+}
+
+.sidebar .navigation ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar .navigation ul li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 10px;
+    color: var(--text-color-light);
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .navigation ul li a i {
+    font-size: 20px;
+    margin-right: 15px;
+    width: 25px; /* Fixed width for icon alignment */
+    text-align: center;
+}
+
+.sidebar .navigation ul li.active a,
+.sidebar .navigation ul li a:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1;
+    padding: 20px 30px;
+    background-color: #f4f7f6;
+    /* Margin to make space for the fixed sidebar */
+    margin-left: var(--sidebar-width);
+    /* Adjust for padding from body (if body had it) or for specific content flow */
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: var(--card-bg);
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    height: var(--header-height);
+}
+
+.navbar h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.user-profile {
+    position: relative;
+    display: inline-block;
+}
+
+.user-profile .admin-dropdown {
+    background-color: #f0f0f0;
+    color: var(--text-color-dark);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.user-profile .admin-dropdown i {
+    margin-left: 8px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--card-bg);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    right: 0;
+    top: 100%; /* Position below the button */
+    margin-top: 5px;
+}
+
+.dropdown-content a {
+    color: var(--text-color-dark);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    border-radius: 5px;
+}
+
+.dropdown-content a i {
+    margin-right: 10px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.user-profile:hover .dropdown-content {
+    display: block;
+}
+
+
+/*..................... section .....................................*/
+
+.booking-list-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 25px;
+}
+
+.card-header {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.booking-table-container {
+    overflow-x: auto; /* Enable horizontal scrolling for table on small screens */
+}
+
+.booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 550px; /* Ensure table doesn't get too narrow */
+}
+
+.booking-table th, .booking-table td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: left;
+    white-space: nowrap; /* Prevent content wrapping in table cells */
+}
+
+.booking-table th {
+    background-color: #3f51b5;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.booking-table td {
+    background-color: #fff;
+    font-size: 0.95em;
+    color: #333;
+}
+
+.booking-table tr:nth-child(even) td {
+    background-color: #fafafa;
+}
+
+.booking-table tr:hover td {
+    background-color: #f5f5f5;
+}
+
+.booking-table td.amount {
+    color: #28a745; /* Green for amount text */
+    font-weight: bold;
+}
+
+.action-icon {
+    font-size: 1.1em;
+    cursor: pointer;
+    color: #0d47a1; /* Blue for view icon */
+    transition: color 0.2s ease;
+}
+
+.action-icon:hover {
+    color: #0a3d8b;
+}
+
+
+
+/* .....................end section .................................*/
+
+
+@media (max-width: 480px) {
+    .dashboard-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card.revenue {
+        grid-column: 1 / -1;
+    }
+
+    /* For very small screens, make table stackable using data-labels */
+    .ongoing-bus table {
+        display: block;
+        overflow-x: auto; /* Enables horizontal scroll if content overflows */
+        white-space: nowrap; /* Prevents cell content from wrapping */
+    }
+    /*
+    .ongoing-bus table thead,
+    .ongoing-bus table tbody,
+    .ongoing-bus table th,
+    .ongoing-bus table td,
+    .ongoing-bus table tr {
+        display: block;
+    }
+
+    .ongoing-bus table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .ongoing-bus table tr {
+        border: 1px solid var(--border-color);
+        margin-bottom: 10px;
+    }
+
+    .ongoing-bus table td {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    .ongoing-bus table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+    */
+    /* Note: For table stacking, add data-label="Column Name" to each <td> in HTML */
+    /* Example: <td data-label="Bus Name">Shwe Mandalar</td> */
+}

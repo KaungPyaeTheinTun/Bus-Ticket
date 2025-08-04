@@ -58,17 +58,29 @@ class Auth extends Controller
                     $password = base64_encode($password); // (❗You should use password_hash instead for real apps)
     
                     $user = new UserModel();
-                    $user->setName($name);
-                    $user->setEmail($email);
-                    $user->setPhone($phone);
-                    $user->setPassword($password);
-                    $user->setToken($token);
-                    $user->setProfileImage($profile_image);
-                    $user->setIsLogin(0);
-                    $user->setIsActive(0);
-                    $user->setIsConfirmed(0);
-                    $user->setDate(time());
-                    $user->setRoleId(2);
+                    // $user->setName($name);
+                    // $user->setEmail($email);
+                    // $user->setPhone($phone);
+                    // $user->setPassword($password);
+                    // $user->setToken($token);
+                    // $user->setProfileImage($profile_image);
+                    // $user->setIsLogin(0);
+                    // $user->setIsActive(0);
+                    // $user->setIsConfirmed(0);
+                    // $user->setDate(time());
+                    // $user->setRoleId(2);
+
+                    $user->name = $name;
+                    $user->phone = $phone;
+                    $user->email = $email;
+                    $user->password = $password;
+                    $user->profile_image = $profile_image;
+                    $user->token = $token;
+                    $user->is_confirmed = 0;
+                    $user->is_login = 0;
+                    $user->is_active = 0;
+                    $user->date = time();
+                    $user->role_id = 2;
 
                     $userCreated = $this->db->create('users', $user->toArray());
 
@@ -114,17 +126,17 @@ class Auth extends Controller
                     $password = base64_encode($password); // should use password_hash ideally
 
                     $user = new UserModel();
-                    $user->setName($name);
-                    $user->setEmail($email);
-                    $user->setPhone($phone);
-                    $user->setPassword($password);
-                    $user->setToken($token);
-                    $user->setProfileImage($profile_image);
-                    $user->setIsLogin(0);
-                    $user->setIsActive(0);
-                    $user->setIsConfirmed(0);
-                    $user->setDate(time());
-                    $user->setRoleId(1);
+                    $user->name = $name;
+                    $user->phone = $phone;
+                    $user->email = $email;
+                    $user->password = $password;
+                    $user->profile_image = $profile_image;
+                    $user->token = $token;
+                    $user->is_confirmed = 0;
+                    $user->is_login = 0;
+                    $user->is_active = 0;
+                    $user->date = time();
+                    $user->role_id = 1;
 
                     $userCreated = $this->db->create('users', $user->toArray());
 

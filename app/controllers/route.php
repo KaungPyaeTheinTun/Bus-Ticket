@@ -79,7 +79,7 @@ class Route extends Controller
 
             $this->view('route/detail', $data);
         } else {
-            setMessage('error', '⚠️ Invalid ID.');
+            // setMessage('error', '⚠️ Invalid ID.');
             redirect('/route');
         }
     }
@@ -95,22 +95,20 @@ class Route extends Controller
         $this->view('route/create', $data);
     }
 
-    public function store() {
+    public function store() 
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-            // Get data
             $operator_id     = $_POST['operator_id'];
             $price           = $_POST['price'];
             $from           = $_POST['from'];
             $to           = $_POST['to'];
             $departure_time  = $_POST['departure_time'];
             $arrival_time    = $_POST['arrival_time'];
-            // Handle file upload
             $imageName = null;
             if (isset($_FILES['image']) && isset($_FILES['image']['tmp_name']) && isset($_FILES['image']['name'])) {
                 $targetDir = dirname(APPROOT) . '/public/uploads/routes_images/';
                 
-                // Create directory if not exists
                 if (!file_exists($targetDir)) {
                     mkdir($targetDir, 0777, true);
                 }
@@ -118,7 +116,6 @@ class Route extends Controller
                 $originalName = basename($_FILES['image']['name']);
                 $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
                 
-                // Generate unique file name
                 $uniqueName = uniqid('route_', true) . '.' . $ext;
                 $targetFile = $targetDir . $uniqueName;
 
@@ -127,7 +124,6 @@ class Route extends Controller
                 }
             }
 
-            // Create model
             $route = new RouteModel();
             $route->setOperatorId($operator_id);
             $route->setPrice($price);
@@ -137,13 +133,13 @@ class Route extends Controller
             $route->setArrivalTime($arrival_time);
             $route->setImage($imageName);
 
-            // Save to DB
             $isCreated = $this->db->create('route', $route->toArray());
 
             $_SESSION['success'] = "✅ Route created successfully.";
             redirect('/route');
         }
     }
+
 
     public function delete($id)
     {
@@ -173,33 +169,72 @@ class Route extends Controller
             redirect('/pages/index');
             return;
         }
+
+        // Validate passengers
         if ($passengers < 1 || $passengers > 2) {
-            setMessage('error', 'Passenger number must be 1 or 2.');
+            $_SESSION['error'] = 'Passenger number must be 1 or 2.';
             redirect('/pages/index');
             return;
         }
-     
+
+        // Read all routes from view
         $allRoutes = $this->db->readAll('view_route_operator');
 
+        // Filter routes based on search criteria
         $filteredRoutes = array_filter($allRoutes, function($route) use ($from, $to, $date) {
             return (stripos($route['from'], $from) !== false) &&
                 (stripos($route['to'], $to) !== false) &&
                 (date('Y-m-d', strtotime($route['departure_time'])) == $date);
         });
 
-        if (!empty($filteredRoutes)) {
-            $_SESSION['search_result'] = array_values($filteredRoutes);
-            $_SESSION['search_params'] = [
-                'from' => $from,
-                'to' => $to,
-                'date' => $date,
-                'passengers' => $passengers
-            ];
-            redirect('/home/trip'); 
-        } else {
-            $_SESSION['error'] = "No routes found matching your search !";
-            redirect('/pages/index');
+        // Always set search result (empty or not) so view can handle it
+        $_SESSION['search_result'] = array_values($filteredRoutes);
+        $_SESSION['search_params'] = [
+            'from' => $from,
+            'to' => $to,
+            'date' => $date,
+            'passengers' => $passengers
+        ];
+
+        redirect('/home/trip');
+    }
+
+
+    public function resetSeats() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $route_id = $_POST['route_id'] ?? null;
+
+            if ($route_id) {
+                $allSeats = $this->db->readAll('seats');
+
+                $seatsToDelete = [];
+                foreach ($allSeats as $seat) {
+                    if ((int)$seat['route_id'] === (int)$route_id) {
+                        $seatsToDelete[] = $seat['id'];
+                    }
+                }
+
+                $encodedId = base64_encode($route_id);
+
+                if (empty($seatsToDelete)) {
+                    $_SESSION['error'] = "❌ No booked seats to reset!";
+                    redirect('route/detail?id=' . $encodedId);
+                    return;
+                }
+
+                foreach ($seatsToDelete as $seatId) {
+                    $this->db->delete('seats', $seatId);
+                }
+
+                $_SESSION['success'] = "✅ Seats have been reset successfully.";
+                redirect('route/detail?id=' . $encodedId);
+                return;
+            }
         }
+
+        $_SESSION['error'] = "❌ Invalid request!";
+        redirect('/route');
     }
 
 

@@ -41,6 +41,12 @@
     <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/addroute.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/booking.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/backend/payment.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
         <aside class="sidebar fixed-sidebar"> <div class="logo">
@@ -72,20 +78,20 @@
                             <span>Routes</span>
                         </a>
                     </li>
-                    <li class="<?php echo (strpos($currentUrl, '/user/ticket') !== false) ? 'active' : ''; ?>">
+                    <!-- <li class="<?php echo (strpos($currentUrl, '/user/ticket') !== false) ? 'active' : ''; ?>">
                         <a href="">
                             <i class="fas fa-ticket-alt"></i>
                             <span>Tickets</span>
                         </a>
-                    </li>
-                      <li class="<?php echo (strpos($currentUrl, '/user/booking') !== false) ? 'active' : ''; ?>">
-                        <a href="">
+                    </li> -->
+                      <li class="<?php echo (strpos($currentUrl, '/booking') !== false) ? 'active' : ''; ?>">
+                        <a href="<?php echo URLROOT; ?>/booking">
                             <i class="fa-solid fa-book"></i>
                             <span>Bookings</span>
                         </a>
                     </li>
-                    <li class="<?php echo (strpos($currentUrl, '/user/payment') !== false) ? 'active' : ''; ?>">
-                        <a href="">
+                    <li class="<?php echo (strpos($currentUrl, '/payment') !== false) ? 'active' : ''; ?>">
+                        <a href="<?php echo URLROOT; ?>/payment">
                             <i class="fas fa-dollar-sign"></i>
                             <span>Payment</span>
                         </a>
