@@ -208,7 +208,7 @@ body {
 }
 
 /* Bus Information Card Specifics */
- .bus-info-card .info-grid {
+.bus-info-card .info-grid {
     display: grid;
     grid-template-columns: auto 1fr; /* Label column and value column */
     gap: 10px 15px; /* Row gap and column gap */

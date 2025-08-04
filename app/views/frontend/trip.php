@@ -4,6 +4,8 @@
 // Read from PHP session
 $searchResults = $_SESSION['search_result'] ?? [];
 $searchParams = $_SESSION['search_params'] ?? null;
+//var_dump($_SESSION['session_loginuserid']);exit;
+
 ?>
 <style>
     /* Your existing CSS for .trip-card and .search-bar-top */
@@ -231,13 +233,15 @@ $searchParams = $_SESSION['search_params'] ?? null;
         </div>
 
         <div id="resultsContainer" class="results-container">
+            <p id="noRouteMsg" style="color:red; display:none;">No routes found for selected time.</p>
             <?php if (!empty($searchResults)): ?>
                 <?php foreach ($searchResults as $route): ?>
                     <?php
                         // Assuming route['departure_time'] and route['arrival_time'] are valid date/time strings
                         $departureTimeFormatted = $route['departure_time'] ? date('h:i A', strtotime($route['departure_time'])) : '';
-                        $departureDateFormatted = $route['departure_time'] ? date('Y-m-d', strtotime($route['departure_time'])) : '';
+                        $departureDateFormatted = $route['departure_time'] ? date('F j', strtotime($route['departure_time'])) : '';
                         $arrivalTimeFormatted = $route['arrival_time'] ? date('h:i A', strtotime($route['arrival_time'])) : '';
+                        $arrivalDateFormatted = $route['arrival_time'] ? date('F j', strtotime($route['arrival_time'])) : '';
                         $depHour = $route['departure_time'] ? date('G', strtotime($route['departure_time'])) : null;
                     ?>
                     <input type="hidden" name="route_id" value="<?= htmlspecialchars($route['id'] ?? '') ?>">
@@ -245,10 +249,9 @@ $searchParams = $_SESSION['search_params'] ?? null;
                     <div class="trip-card" data-departure-hour="<?php echo htmlspecialchars($depHour); ?>">
                         <div class="trip-time-info">
                             <p class="time"><?php echo $departureTimeFormatted; ?></p>
-                            <p class="date"><?php echo $departureDateFormatted; ?></p>
                             <p class="route"><?php echo htmlspecialchars($route['from'] . ' - ' . $route['to']); ?></p>
-                            <p class="arrival-details"><?php echo htmlspecialchars($route['from'] . ', ' . $departureTimeFormatted); ?> (Depart At)</p>
-                            <p class="arrival-details"><?php echo htmlspecialchars($route['to'] . ', ' . $arrivalTimeFormatted); ?> (Arrives At)</p>
+                            <p class="arrival-details"><?php echo htmlspecialchars($route['from'] . ', ' .$departureDateFormatted .' '. $departureTimeFormatted); ?> (Depart At)</p>
+                            <p class="arrival-details"><?php echo htmlspecialchars($route['to'] . ', '.$arrivalDateFormatted .' ' . $arrivalTimeFormatted); ?> (Arrives At)</p>
                             <p class="nrc-note">Please bring your NRC</p>
                         </div>
                         <div class="trip-operator-info">
@@ -270,7 +273,6 @@ $searchParams = $_SESSION['search_params'] ?? null;
                 <p style="color:red;">No routes found for your search.</p>
             <?php endif; ?>
         </div>
-        <p id="noRouteMsg" style="color:red; display:none;">No routes found for selected time.</p>
     </section>
 </main>
 

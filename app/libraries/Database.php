@@ -197,6 +197,14 @@ class Database
         return ($success);
     }
 
+    public function deleteByColumn($table, $column, $value)
+    {
+        $sql = "DELETE FROM {$table} WHERE {$column} = :value";
+        $stm = $this->pdo->prepare($sql);
+        $stm->bindValue(':value', $value);
+        return $stm->execute();
+    }
+    
     public function columnFilter($table, $column, $value)
     {
         // $sql = 'SELECT * FROM ' . $table . ' WHERE `' . $column . '` = :value';

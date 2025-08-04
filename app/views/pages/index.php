@@ -1,6 +1,7 @@
 <?php require_once APPROOT . '/views/inc/nav.php' ?>
 <?php 
    $today = date('Y-m-d'); 
+//    var_dump($_SESSION['session_loginuserid']);exit;
 ?>
 <style>
        .flash-message {

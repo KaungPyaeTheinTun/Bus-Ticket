@@ -6,6 +6,9 @@ class SeatModel
     private $route_id;
     private $seat_number;
     private $is_booked;
+    private $user_id;
+    private $payment_id;
+    private $payment_slip;
 
     public function setId($id)
     {
@@ -47,12 +50,45 @@ class SeatModel
         return $this->is_booked;
     }
 
+    public function setUser_id($user_id)
+    {
+        $this->user_id = $user_id;
+    }
+
+    public function getUser_id()
+    {
+        return $this->user_id;
+    }
+
+    public function setPaymentId($payment_id)
+    {
+        $this->payment_id = $payment_id;
+    }
+
+    public function getPaymentId()
+    {
+        return $this->payment_id;
+    }
+
+    public function setPaymentSilp($payment_silp)
+    {
+        $this->payment_silp = $payment_silp;
+    }
+
+    public function getPaymentSilp()
+    {
+        return $this->payment_silp;
+    }
+
     public function toArray()
     {
         return [
             'route_id'     => $this->getRoute_id(),
             'seat_number'  => $this->getSeat_number(),
             'is_booked'    => $this->getIs_booked(),
+            'user_id'    => $this->getUser_id(),
+            'payment_id'  => $this->getPaymentId(),
+            'payment_slip' => $this->getPaymentSilp(),
         ];
     }
 }

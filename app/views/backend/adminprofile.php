@@ -308,23 +308,23 @@
     </div>
 
     <div id="changePasswordModal" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Change Password</h3>
-        <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
-        <form id="changePasswordForm" method="POST" action="<?php echo URLROOT; ?>/auth/changepasswordadmin">
-            <input type="password" id="newPassword" name="password" placeholder="New Password" required autocomplete="new-password">
-            <input type="password" id="confirmNewPassword" name="confirm-password" placeholder="Confirm New Password" required autocomplete="new-password">
-            <div class="show-password-container">
-                <input type="checkbox" id="showPassword">
-                <label for="showPassword">Show Password</label>
-            </div>
-            <div class="modal-buttons">
-                <button type="submit" class="btn-yes">Change Password</button>
-                <button type="button" class="btn-no" id="cancelPasswordChange">Cancel</button>
-            </div>
-        </form>
+        <div class="modal-content">
+            <h3>Change Password</h3>
+            <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
+            <form id="changePasswordForm" method="POST" action="<?php echo URLROOT; ?>/auth/changepasswordadmin">
+                <input type="password" id="newPassword" name="password" placeholder="New Password" required autocomplete="new-password">
+                <input type="password" id="confirmNewPassword" name="confirm-password" placeholder="Confirm New Password" required autocomplete="new-password">
+                <div class="show-password-container">
+                    <input type="checkbox" id="showPassword">
+                    <label for="showPassword">Show Password</label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-yes">Change Password</button>
+                    <button type="button" class="btn-no" id="cancelPasswordChange">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
 </main>
 </div>

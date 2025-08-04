@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +16,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/home/selectseat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="<?php echo URLROOT; ?>/public/css/buscss/home/payment.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 </head>
@@ -98,14 +102,9 @@
                 <ul>
                     <li><a href="<?php echo URLROOT; ?>/pages/index/#">Home</a></li>
                     <li><a href="<?php echo URLROOT; ?>/pages/index/#operator">Bus Operator</a></li>
-                    <li><a href="<?php echo URLROOT; ?>/home/record">Record</a></li>
-                    <!-- <li><a href="<?php echo URLROOT; ?>/pages/login">Login</a></li> -->
-                    <?php session_start(); ?>
                     <?php if (isset($_SESSION['session_loginuserid'])): ?>
-                        <li>
-                            <a href="#" id="profileIconToggle"> <img src="<?php echo URLROOT; ?>/public/images/pf.png" style="width:20px; vertical-align:middle;" alt="Profile">
-                            </a>
-                        </li>
+                        <li><a href="<?php echo URLROOT; ?>/home/record">Record</a></li>
+                        <li><a href="<?php echo URLROOT; ?>/user/logout">Logout</a></li>
                     <?php else: ?>
                         <li><a href="<?php echo URLROOT; ?>/pages/login">Login</a></li>
                     <?php endif; ?>
@@ -116,53 +115,5 @@
             </div>
         </div>
 
-        <div id="profileModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button">&times;</span>
-                <h2>User Information</h2>
-                <p><strong>Username:</strong> <?php echo $_SESSION['session_username'] ?? 'N/A'; ?></p>
-                <p><strong>Email:</strong> <?php echo $_SESSION['session_useremail'] ?? 'N/A'; ?></p>
-                <a href="<?php echo URLROOT; ?>/user/logout"><button id="logoutButton">Logout</button></a>
-            </div>
-        </div>
-
     </header>
 <br><br><br>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const profileIcon = document.getElementById('profileIconToggle');
-    const profileModal = document.getElementById('profileModal');
-    const closeButton = document.querySelector('.close-button');
-    const logoutButton = document.getElementById('logoutButton');
-
-    // Function to open the modal
-    if (profileIcon) { // Check if the element exists (user is logged in)
-        profileIcon.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent default link behavior (page jump to #)
-            profileModal.style.display = 'flex'; // Use flex to easily center content
-        });
-    }
-
-    // Function to close the modal when clicking the 'X'
-    if (closeButton) {
-        closeButton.addEventListener('click', function() {
-            profileModal.style.display = 'none';
-        });
-    }
-
-    // Function to close the modal when clicking outside of it
-    window.addEventListener('click', function(event) {
-        if (event.target == profileModal) {
-            profileModal.style.display = 'none';
-        }
-    });
-
-    // Logout functionality
-    if (logoutButton) {
-        logoutButton.addEventListener('click', function() {
-            // Redirect to your logout script
-            window.location.href = '<?php echo URLROOT; ?>/user/logout'; // Assuming a logout route
-        });
-    }
-    });
-</script>

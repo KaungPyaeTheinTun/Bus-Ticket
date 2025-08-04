@@ -6,7 +6,6 @@ class User extends Controller
     public function __construct()
     {
         $this->model('UserModel');
-    
         $this->db = new Database();
     }
 
@@ -18,10 +17,8 @@ class User extends Controller
     public function logout()
     {
         // session_start();
-        session_unset();     // Remove all session variables
-        session_destroy();   // Destroy the session
-
-        // Redirect to home page
+        session_unset();    
+        session_destroy(); 
         redirect('pages/login');
     }
     public function profile()
@@ -72,7 +69,6 @@ class User extends Controller
     public function delete($id)
     {
         // session_start();
-
         $id = base64_decode($id); 
         $loginUserId = $_SESSION['session_loginuserid']; 
         $loginUserEmail = $_SESSION['session_loginemail'];
@@ -93,11 +89,10 @@ class User extends Controller
             }
 
             // Proceed to delete
-            $data = new UserModel();
-            $data->setRoleId($id);
+            // $data = new UserModel();
+            // $data->setRoleId($id);
 
-            $this->db->delete('users', $data->getRoleId());
-
+            $this->db->delete('users', $id);
             $_SESSION['success'] = "✅ Admin deleted successfully.";
             redirect('user/profile');
             }
@@ -107,10 +102,10 @@ class User extends Controller
     {
         $id = base64_decode($id); 
 
-        $data = new UserModel();
-        $data->setRoleId($id);
+        // $data = new UserModel();
+        // $data->setRoleId($id);
 
-        $deletedUser =  $this->db->delete('users', $data->getRoleId());
+        $deletedUser =  $this->db->delete('users', $id);
         if(!$deletedUser){
             redirect('/user/customer');
         }
