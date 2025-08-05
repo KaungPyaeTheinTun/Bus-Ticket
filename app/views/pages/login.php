@@ -1,4 +1,3 @@
-
 <?php require_once APPROOT . '/views/inc/header.php'; ?>
 <?php
     session_start();

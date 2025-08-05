@@ -4,8 +4,10 @@ ini_set('display_errors', 1);
 class Auth extends Controller
 {
     private $db;
+    // private $userModel;
     public function __construct()
     {
+        // $this->model('UserModel');
         $this->model('UserModel');
         $this->db = new Database();
     }
@@ -57,7 +59,7 @@ class Auth extends Controller
     
                     $password = base64_encode($password); // (❗You should use password_hash instead for real apps)
     
-                    $user = new UserModel();
+                    // $user = new UserModel();
                     // $user->setName($name);
                     // $user->setEmail($email);
                     // $user->setPhone($phone);
@@ -69,7 +71,7 @@ class Auth extends Controller
                     // $user->setIsConfirmed(0);
                     // $user->setDate(time());
                     // $user->setRoleId(2);
-
+                    $user = new \App\Models\UserModel();
                     $user->name = $name;
                     $user->phone = $phone;
                     $user->email = $email;
@@ -125,7 +127,8 @@ class Auth extends Controller
                     $token = bin2hex(random_bytes(50));
                     $password = base64_encode($password); // should use password_hash ideally
 
-                    $user = new UserModel();
+                    // $user = new UserModel();
+                    $user = new \App\Models\UserModel();
                     $user->name = $name;
                     $user->phone = $phone;
                     $user->email = $email;
@@ -254,42 +257,20 @@ class Auth extends Controller
                     $password = base64_encode($_POST['password']);
 
                     $isLogin = $this->db->loginCheck($email, $password);
-                    // var_dump($isLogin);
-                    // exit;
+
                     if ($isLogin) {
-                        // Mark user as logged in
                         $this->db->setLogin($isLogin['id']);
-                        // $this->db->setLogin($isLogin['email']);
 
                         session_start();
                         $_SESSION['session_loginuserid'] = $isLogin['id'];
                         $_SESSION['session_loginemail'] = $isLogin['email'];
 
-                        // Redirect based on role
-                        // if ($isLogin) {
-                        //     switch ($isLogin['role_id']) {
-                        //         case ROLE_ADMIN:
-                        //             redirect('/pages/dashboard'); 
-                        //             break;
-
-                        //         case ROLE_USER:
-                        //             redirect('/pages/index');
-                        //             break;
-
-                        //         default:
-                        //             setMessage('error', 'Invalid role!');
-                        //             redirect('/pages/login');
-                        //             break;
-                        //     }
                         if ($isLogin['role_id'] == ROLE_ADMIN) {
-                            redirect('pages/dashboard');  // admin dashboard
+                            redirect('pages/dashboard');  
                         } else if($isLogin['role_id'] == ROLE_USER){
-                            // setMessage('error', 'Login Fail!');
-                            // exit;
-                            redirect('pages/index');  // user dashboard
+                            redirect('pages/index'); 
                         }
                         } else { 
-                            // var_dump('fail');exit;
                             setMessage('error', 'Fail to login !');
                             redirect('pages/login');
                         }

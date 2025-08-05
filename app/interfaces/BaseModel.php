@@ -1,4 +1,6 @@
 <?php
+namespace App\Interfaces;
+
 abstract class BaseModel
 {
     public function __get($property)
@@ -24,4 +26,4 @@ abstract class BaseModel
         return $vars;
     }
 }
-?>
+

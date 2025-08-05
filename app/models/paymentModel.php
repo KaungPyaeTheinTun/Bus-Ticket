@@ -57,6 +57,12 @@
 //     }
 // }
 
+namespace App\Models;
+
+use App\Interfaces\BaseModel; 
+
+require_once APPROOT . '/interfaces/BaseModel.php';
+
 class PaymentModel extends BaseModel
 {
     protected $id;

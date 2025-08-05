@@ -59,9 +59,14 @@ class Operator extends Controller
             $phone = $_POST['phone'] ?? '';
             $seat_capacity = $_POST['seat_capacity'] ?? '';
 
-            // Optional: Validate fields here
+            if (empty($name) || empty($phone) || $seat_capacity < 1 || $seat_capacity > 44) {
+                setMessage('error', '⚠️ Invalid input data.');
+                redirect('/operator/create');
+                return;
+            }
 
-            $operator = new OperatorModel();
+            // $operator = new OperatorModel();
+            $operator = new \App\Models\OperatorModel();
             $operator->name = $name;
             $operator->phone = $phone;
             $operator->seat_capacity = $seat_capacity;
@@ -132,7 +137,14 @@ class Operator extends Controller
             $phone = $_POST['phone'] ?? '';
             $seat_capacity = $_POST['seat_capacity'] ?? '';
 
-            $operator = new OperatorModel();
+            if ($seat_capacity < 1 || $seat_capacity > 44) {
+                // var_dump('error');exit;
+                setMessage('error', '⚠️ Maximun seats is 44 !');
+                redirect('/operator');
+                return;
+            }
+            // $operator = new OperatorModel();
+            $operator = new \App\Models\OperatorModel();
             $operator->id = $id;
             $operator->name = $name;
             $operator->phone = $phone;

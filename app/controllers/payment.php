@@ -37,7 +37,8 @@ class Payment extends Controller
                 }
             }
 
-            $payment = new PaymentModel();
+            // $payment = new PaymentModel();
+            $payment = new \App\Models\PaymentModel();
             $payment->method = $method;
             $payment->phone = $phone;
             $payment->scan_image = $scan_image;
@@ -84,7 +85,8 @@ class Payment extends Controller
                 return;
             }
 
-            $payment = new PaymentModel();
+            // $payment = new PaymentModel();
+            $payment = new \App\Models\PaymentModel();
             $payment->id = $id;
             $payment->method = $method;
             $payment->phone = $phone;
@@ -124,11 +126,11 @@ class Payment extends Controller
                 $payment->scan_image = $oldPayment['scan_image'];
             }
 
-            $isUpdated = $this->db->update('payments', [
+           $isUpdated = $this->db->update('payments', $payment->id, [
                 'method' => $payment->method,
                 'phone' => $payment->phone,
                 'scan_image' => $payment->scan_image
-            ], ['id' => $payment->id]);
+            ]);
 
             if ($isUpdated) {
                 $_SESSION['success'] = "✅ Payment method updated successfully.";
@@ -136,7 +138,7 @@ class Payment extends Controller
                 $_SESSION['error'] = "⚠️ Failed to update payment method!";
             }
 
-            // redirect('/payment');
+            redirect('/payment');
         }
     }
 
