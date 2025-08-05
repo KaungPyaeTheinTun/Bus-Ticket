@@ -56,7 +56,7 @@
                     <div class="form-group">
                         <!-- <label for="seatCapacity">Seat Capacity</label> -->
                         <div class="input-with-icon">
-                            <i class="fas fa-chair icon"></i> <input type="number" id="seatCapacity" name="seat_capacity" class="text-input number-input" placeholder="Enter seat capacity" min="1">
+                            <i class="fas fa-chair icon"></i> <input type="number" id="seatCapacity" name="seat_capacity" class="text-input number-input" placeholder="Enter seat capacity" min="1" max="44" required>
                         </div>
                     </div>
                     <button type="submit" class="confirm-button">Confirm</button>
@@ -117,5 +117,6 @@ function togglePasswordVisibility(id) {
                 // In a real application, you'd load/filter seat data here based on the selected tab (Morning/Evening)
             });
         });
+
     </script>
 </html>

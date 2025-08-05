@@ -58,6 +58,12 @@
 //     }
 // }
 
+namespace App\Models;
+
+use App\Interfaces\BaseModel; 
+
+require_once APPROOT . '/interfaces/BaseModel.php';
+
 class OperatorModel extends BaseModel
 {
     protected $id;
@@ -65,5 +71,5 @@ class OperatorModel extends BaseModel
     protected $phone;
     protected $seat_capacity;
 }
-?>
+
 

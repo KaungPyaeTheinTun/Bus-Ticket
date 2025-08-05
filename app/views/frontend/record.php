@@ -1,48 +1,68 @@
 <?php require_once APPROOT . '/views/inc/nav.php' ?>
 <style>
     .print-btn {
-        margin-top:10px;
-        background-color:#4caf50;
-        color:white;
-        padding:8px 16px;
-        border:none;
-        border-radius:4px;
-        cursor:pointer;
-    }
-    .print-btn:hover {
-        background-color:#45a049;
+        margin-top: 16px;
+        color: black;
+        background-color: silver;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
     }
 
-        .receipt-modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    padding-top: 60px;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5);
+
+    .receipt-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
     }
 
     .receipt-modal-content {
-    background-color: #fff;
-    margin: auto;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 95%;
+        max-width: 500px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        position: relative;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
     }
 
     .close-modal {
-    color: #aaa;
-    float: right;
-    font-size: 24px;
-    cursor: pointer;
+        position: absolute;
+        top: 12px;
+        right: 16px;
+        font-size: 24px;
+        color: #777;
+        cursor: pointer;
+        font-weight: bold;
     }
 
     .close-modal:hover {
-    color: #000;
+        color: #000;
+    }
+
+    .receipt-content p {
+        margin: 10px 0;
+        font-size: 15px;
+        color: #333;
+    }
+
+    .receipt-content span {
+        font-weight: bold;
+        color: #000;
     }
 
     .status-label {
@@ -109,7 +129,7 @@
                             <span class="status-label pending">Pending</span>
                         <?php elseif ($record['is_booked'] == '2'): ?>
                             <span class="status-label approved">Approved</span>
-<button class="status-btn view-receipt-btn">View Receipt</button>                            
+                            <button class="status-btn view-receipt-btn">View Receipt</button>                            
                         <?php elseif ($record['is_booked'] == '0'): ?>
                             <span class="status-label declined">Declined</span>
                         <?php endif; ?>
@@ -118,62 +138,95 @@
             <?php endforeach; ?>
         </section>
     </main>
-    <div id="receiptModal" class="receipt-modal" style="display:none;">
-        <div class="receipt-modal-content">
-            <span class="close-modal">&times;</span>
-            <h3>Receipt / Voucher</h3>
-            <button onclick="printVoucher()" class="print-btn">Print Voucher</button>
-            <div class="receipt-content">
-                <p><strong>Routes:</strong> <span id="modalRoute"></span></p>
-                <p><strong>Departure Date:</strong> <span id="modalDeparture"></span></p>
-                <p><strong>Bus Operator:</strong> <span id="modalOperator"></span></p>
-                <p><strong>Seat Number(s):</strong> <span id="modalSeats"></span></p>
-                <p><strong>Total:</strong> <span id="modalTotal"></span></p>
-            </div>
+<div id="receiptModal" class="receipt-modal">
+    <div class="receipt-modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 style="text-align:center; margin-bottom:20px;">Receipt / Voucher</h2>
+        <div class="receipt-content">
+            <p>Name : <span style="margin-left:80px;"><?php echo htmlspecialchars($data['user']['name']); ?></span></p>
+            <p>Phone : <span style="margin-left:78px;"><?php echo htmlspecialchars($data['user']['phone']); ?></span></p>
+            <p>Routes : <span id="modalRoute"  style="margin-left:74px;"></span></p>
+            <p>Departure Date : <span id="modalDeparture"  style="margin-left:10px;"></span></p>
+            <p>Bus Operator : <span id="modalOperator"  style="margin-left:26px;"></span></p>
+            <p>Seat Number(s) : <span id="modalSeats"  style="margin-left:6px;"></span></p>
+            <p>Total : <span id="modalTotal"  style="margin-left:87px;"></span></p>
         </div>
+        <hr>
+        <h4>Terms & Conditions</h4>
+        <li>All the tickets bought are not refundable and exchangeable.</li>
+        <li>Travellers must reach the bus station 45 minutes before the departure time.</li>
+        <button onclick="printVoucher()" class="print-btn">🖨 Print Voucher</button>
     </div>
+</div>
+
 <br><br><br>
 <?php require_once APPROOT . '/views/inc/footer.php' ?>
 <script>
 function printVoucher() {
-    const modalContent = document.querySelector('.receipt-modal-content').innerHTML;
+    const content = document.querySelector('.receipt-content').innerHTML;
 
-    // Open new window
-    const printWindow = window.open('', '', 'height=600,width=400');
-    printWindow.document.write('<html><head><title>Voucher</title>');
-    printWindow.document.write('<style> body{font-family:Arial; padding:20px;} </style>');
-    printWindow.document.write('</head><body >');
-    printWindow.document.write(modalContent);
-    printWindow.document.write('</body></html>');
-
+    const printWindow = window.open('', '', 'height=700,width=600');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Voucher</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        padding: 40px;
+                        line-height: 1.6;
+                        color: #333;
+                    }
+                    h2 {
+                        text-align: center;
+                        margin-bottom: 30px;
+                    }
+                    p {
+                        margin: 10px 0;
+                        font-size: 16px;
+                    }
+                    span {
+                        font-weight: bold;
+                        color: #000;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>Receipt / Voucher</h2>
+                ${content}
+            </body>
+        </html>
+    `);
     printWindow.document.close();
     printWindow.focus();
     printWindow.print();
     printWindow.close();
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('receiptModal');
     const closeModal = document.querySelector('.close-modal');
 
     document.querySelectorAll('.view-receipt-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-
+        btn.addEventListener('click', () => {
             const card = btn.closest('.ticket-card');
-            // Fetch data from the card
+
             document.getElementById('modalRoute').textContent = card.querySelector('.detail-item:nth-child(1) .value').textContent;
             document.getElementById('modalDeparture').textContent = card.querySelector('.detail-item:nth-child(2) .value').textContent;
             document.getElementById('modalOperator').textContent = card.querySelector('.detail-item:nth-child(3) .value').textContent;
             document.getElementById('modalSeats').textContent = card.querySelector('.detail-item:nth-child(4) .value').textContent;
             document.getElementById('modalTotal').textContent = card.querySelector('.detail-item:nth-child(5) .value').textContent;
 
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
         });
     });
 
-    closeModal.onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; }
+    closeModal.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 });
 </script>
+

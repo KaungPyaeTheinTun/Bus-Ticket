@@ -1,7 +1,6 @@
 <?php require_once APPROOT . '/views/inc/nav.php' ?>
 <?php 
    $today = date('Y-m-d'); 
-//    var_dump($_SESSION['session_loginuserid']);exit;
 ?>
 <style>
        .flash-message {
@@ -41,10 +40,10 @@
         }
 </style>
 <?php if (!empty($_SESSION['error'])): ?>
-            <div id="flashMessage" class="flash-message error-message">
-                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
+    <div id="flashMessage" class="flash-message error-message">
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+     </div>
+<?php endif; ?>
     <main>
         <section class="hero-section">
             <div class="hero-content">

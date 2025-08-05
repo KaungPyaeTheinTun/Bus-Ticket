@@ -124,14 +124,22 @@ class Route extends Controller
                 }
             }
 
-            $route = new RouteModel();
-            $route->setOperatorId($operator_id);
-            $route->setPrice($price);
-            $route->setFrom($from);
-            $route->setTo($to);
-            $route->setDepartureTime($departure_time);
-            $route->setArrivalTime($arrival_time);
-            $route->setImage($imageName);
+            // $route = new RouteModel();
+            // $route->setOperatorId($operator_id);
+            // $route->setPrice($price);
+            // $route->setFrom($from);
+            // $route->setTo($to);
+            // $route->setDepartureTime($departure_time);
+            // $route->setArrivalTime($arrival_time);
+            // $route->setImage($imageName);
+            $route = new \App\Models\RouteModel();
+            $route->operator_id = $operator_id;
+            $route->price = $price;
+            $route->from = $from;
+            $route->to = $to;
+            $route->departure_time = $departure_time;
+            $route->arrival_time = $arrival_time;
+            $route->image = $imageName;
 
             $isCreated = $this->db->create('route', $route->toArray());
 
@@ -145,10 +153,9 @@ class Route extends Controller
     {
         $id = base64_decode($id); 
 
-        $data = new RouteModel();
-        $data->setId($id);
+        $data = new \App\Models\RouteModel();
 
-        $deleteroute =  $this->db->delete('route', $data->getId());
+        $deleteroute =  $this->db->delete('route', $id);
         if(!$deleteroute){
         redirect('/route');
         }

@@ -46,7 +46,7 @@ class Seat extends Controller
         die('Invalid request method');
     }
 
-   public function finalStore() 
+    public function finalStore() 
     {
         if(session_status() == PHP_SESSION_NONE) {
             session_start();
@@ -99,13 +99,20 @@ class Seat extends Controller
             // ✅ Instead of loop: store seat_numbers as JSON
             $seatNumbersJson = json_encode($selected_seats);
 
-            $seat = new SeatModel();
-            $seat->setRoute_id($route_id);
-            $seat->setSeat_number($seatNumbersJson);   // <-- add setSeatNumbers method
-            $seat->setIs_booked(1);
-            $seat->setUser_id($user_id);
-            $seat->setPaymentId($payment_id);
-            $seat->setPaymentSilp($imageName);
+            // $seat = new SeatModel();
+            // $seat->setRoute_id($route_id);
+            // $seat->setSeat_number($seatNumbersJson);  
+            // $seat->setIs_booked(1);
+            // $seat->setUser_id($user_id);
+            // $seat->setPaymentId($payment_id);
+            // $seat->setPaymentSilp($imageName);
+            $seat = new \App\Models\SeatModel();
+            $seat->route_id = $route_id;
+            $seat->seat_number = $seatNumbersJson;
+            $seat->is_booked = 1;
+            $seat->user_id = $user_id;
+            $seat->payment_id = $payment_id;
+            $seat->payment_slip = $imageName;
 
             $seatData = $seat->toArray();
             $this->db->create('seats', $seatData);

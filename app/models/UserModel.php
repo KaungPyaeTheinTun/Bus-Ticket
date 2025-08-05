@@ -126,6 +126,11 @@
 //         ];
 //     }
 // }
+namespace App\Models;
+
+use App\Interfaces\BaseModel; 
+
+require_once APPROOT . '/interfaces/BaseModel.php';
 
 class UserModel extends BaseModel
 {
@@ -145,4 +150,4 @@ class UserModel extends BaseModel
 
 ?>
 
-?>
+

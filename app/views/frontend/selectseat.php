@@ -6,48 +6,42 @@
     $arrivalFormatted = $trip['arrival_time'] ? date('F j g:i A', strtotime($trip['arrival_time'])) : '';
 ?>
 <?php if (!empty($_SESSION['error'])): ?>
-            <div id="flashMessage" class="flash-message error-message">
-                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
+    <div id="flashMessage" class="flash-message error-message">
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+    </div>
+<?php endif; ?>
+
 <style>
     .flash-message {
-            position: fixed;
-            top: 28px;
-            left: 40%;
-            /* transform: translateX(0); */
-            padding: 16px 24px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 500;
-            z-index: 9999;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            animation: fadeInScale 0.3s ease;
-        }
+        position: fixed;
+        top: 28px;
+        left: 40%;
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        z-index: 9999;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        animation: fadeInScale 0.3s ease;
+    }
 
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            /* border-left: 5px solid #28a745; */
-        }
+    .success-message {
+        background-color: #d4edda;
+        color: #155724;
+    }
 
-        .error-message {
-            background-color:rgb(239, 154, 161);
-            color: #721c24;
-            /* border-left: 5px solid #dc3545; */
-        }
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform:  scale(0.9);
-            }
-        }
+    .error-message {
+        background-color: rgb(239, 154, 161);
+        color: #721c24;
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.9); }
+    }
+
     .seat-box.selected {
-        background-color: #4caf50 !important; /* Green when selected */
+        background-color: #4caf50 !important;
         color: white;
         border-color: #388e3c;
     }
@@ -57,29 +51,27 @@
         color: #999;
         cursor: not-allowed;
         border-color: #ccc;
-        pointer-events: none; /* <--- add this */
+        pointer-events: none;
     }
 
     .select-seat-main {
         max-width: 1000px;
         margin: 10px auto 60px;
-        margin-top: -50px;
         padding: 0 20px;
     }
 
     .seat-grid-container {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 15px;
-        padding: 10px;
-        background-color: #f8f8f8;
-        border-radius: 8px;
-        flex-grow: 1;
+        grid-template-columns: repeat(4, 60px);  /* 4 seats per row */
+        gap: 10px 40px; /* spacing between rows and columns */
+        justify-content: center;
+        margin: 20px 0;
     }
 
     .seat-box {
-        width: 75px;
-        height: 50px;
+        /* width: 100%; */
+        max-width: 100%;
+        aspect-ratio: 3 / 2;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -90,6 +82,12 @@
         font-size: 1.1em;
         cursor: pointer;
         transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    @media (max-width: 768px) {
+        .seat-box {
+            font-size: 0.9em;
+        }
     }
 </style>
 
@@ -107,16 +105,14 @@
                             <div class="seat driver-seat">Driver</div>
                         </div>
                         <div class="seat-grid-container">
-                            <?php for ($i = 1; $i <= 32; $i++): ?>
+                            <?php for ($i = 1; $i <= (int)$trip['seat_capacity']; $i++): ?>
                                 <?php
                                     $isBooked = in_array($i, $bookedSeatNumbers);
                                     $seatClass = $isBooked ? 'booked' : 'available';
-                                    $isDisabled = $isBooked ? 'disabled' : '';
                                 ?>
                                 <div class="seat-box <?= $seatClass ?>" data-seat-number="<?= $i ?>">
                                     <?= htmlspecialchars($i) ?>
                                 </div>
-
                             <?php endfor; ?>
                         </div>
                     </div>
@@ -142,10 +138,9 @@
                         <div class="notice-box">Notices - Please bring your NRC</div>
                         <form action="<?= URLROOT ?>/seat/store" method="post" id="seatForm">
                             <input type="hidden" name="route_id" value="<?= $trip['route_id'] ?>">
-                            <!-- <input type="hidden" name="user_id" value="$_SESSION['session_loginuserid']"> -->
                             <input type="hidden" name="passengers" value="<?= htmlspecialchars($trip['passengers'] ?? 1) ?>">
                             <input type="hidden" name="selected_seats" id="selectedSeatsInput" value="">
-                            <button type="submit" class="continue-payment-btn" id="continuePaymentBtn" >
+                            <button type="submit" class="continue-payment-btn" id="continuePaymentBtn">
                                 Continue to payment
                             </button>
                         </form>
@@ -159,8 +154,8 @@
 <?php require_once APPROOT . '/views/inc/footer.php'; ?>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const maxSelectableSeats = <?= (int)$trip['passengers'] ?? 1 ?>;
+    document.addEventListener('DOMContentLoaded', function () {
+        const maxSelectableSeats = <?= (int)($trip['passengers'] ?? 1) ?>;
         const seatBoxes = document.querySelectorAll('.seat-box');
         const summaryNumberOfSeats = document.getElementById('summaryNumberOfSeats');
         const summaryTotalPrice = document.getElementById('summaryTotalPrice');
@@ -170,39 +165,33 @@
         let selectedSeats = [];
 
         seatBoxes.forEach(box => {
-        box.addEventListener('click', () => {
-            if (box.classList.contains('booked')) {
-                return;
-            }
+            box.addEventListener('click', () => {
+                if (box.classList.contains('booked')) return;
 
-            const seatNumber = box.textContent.trim();
+                const seatNumber = box.textContent.trim();
 
-            if (box.classList.contains('selected')) {
-                box.classList.remove('selected');
-                selectedSeats = selectedSeats.filter(num => num !== seatNumber);
-            } else {
-                if (selectedSeats.length < maxSelectableSeats) {
-                    box.classList.add('selected');
-                    selectedSeats.push(seatNumber);
+                if (box.classList.contains('selected')) {
+                    box.classList.remove('selected');
+                    selectedSeats = selectedSeats.filter(num => num !== seatNumber);
+                } else {
+                    if (selectedSeats.length < maxSelectableSeats) {
+                        box.classList.add('selected');
+                        selectedSeats.push(seatNumber);
+                    }
                 }
-            }
 
-            summaryNumberOfSeats.textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : '0';
-            summaryTotalPrice.textContent = `MMK ${selectedSeats.length * pricePerSeat}`;
-
-            // **UPDATE the hidden input value here:**
-            selectedSeatsInput.value = selectedSeats.join(',');
+                summaryNumberOfSeats.textContent = selectedSeats.length > 0 ? selectedSeats.join(', ') : '0';
+                summaryTotalPrice.textContent = `MMK ${selectedSeats.length * pricePerSeat}`;
+                selectedSeatsInput.value = selectedSeats.join(',');
+            });
         });
-    });
 
-
-    });
-        // Auto-hide flash message after 2 seconds
         const flashMessage = document.getElementById('flashMessage');
         if (flashMessage) {
             setTimeout(() => {
                 flashMessage.style.animation = "fadeOut 0.5s forwards";
-                setTimeout(() => flashMessage.remove(), 500); // Remove after fadeOut completes
-            },1500); // Show for 2 seconds
+                setTimeout(() => flashMessage.remove(), 500);
+            }, 1500);
         }
+    });
 </script>
