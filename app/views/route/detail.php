@@ -4,6 +4,9 @@
     $routeId = $data['route']['id'] ?? 0;
     $db = new Database();
     $allSeats = $db->readAll('seats');
+    $operatorId = $data['route']['operator_id'] ?? 0;
+    $operator = $db->getById('operator', $operatorId);
+    $seatCapacity = (int)$operator['seat_capacity'];
     $bookedSeatNumbers = [];
     foreach ($allSeats as $seat) {
         if (((int)$seat['is_booked'] === 1 || (int)$seat['is_booked'] === 2) && (int)$seat['route_id'] === (int)$routeId) {
@@ -217,7 +220,7 @@
 
     <div class="seat-grid-container">
         <div class="driver-box">Driver</div>
-        <?php for ($i=1; $i<=32; $i++): ?>
+        <?php for ($i = 1; $i <= $seatCapacity; $i++): ?>
             <?php $seatClass = in_array($i, $bookedSeatNumbers) ? 'seat-box sold' : 'seat-box available'; ?>
             <div class="<?= $seatClass ?>"><?= $i ?></div>
         <?php endfor; ?>

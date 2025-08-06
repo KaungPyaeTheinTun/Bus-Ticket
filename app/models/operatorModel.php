@@ -70,6 +70,7 @@ class OperatorModel extends BaseModel
     protected $name;
     protected $phone;
     protected $seat_capacity;
+    protected $bus_type_id;
 }
 
 

@@ -1,7 +1,8 @@
 <?php
+require_once APPROOT . '/middleware/AuthMiddleware.php';
+
 class Home extends Controller
 {
-
     private $db;
     public function __construct()
     {
@@ -16,7 +17,10 @@ class Home extends Controller
 
     public function record()
     {   
-        session_start();
+        AuthMiddleware::userOnly();
+        if(session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
         $user_id = $_SESSION['session_loginuserid'] ?? null;
         // var_dump($user_id);exit;
         if (!$user_id) {
@@ -138,6 +142,8 @@ class Home extends Controller
 
    public function payment()
     {
+        AuthMiddleware::userOnly();
+
         $payments = $this->db->readAll('payments');
 
         $selectedId = $_GET['payment_method'] ?? null;

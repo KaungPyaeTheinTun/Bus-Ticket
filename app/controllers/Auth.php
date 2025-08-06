@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
 class Auth extends Controller
 {
     private $db;
@@ -264,6 +265,7 @@ class Auth extends Controller
                         session_start();
                         $_SESSION['session_loginuserid'] = $isLogin['id'];
                         $_SESSION['session_loginemail'] = $isLogin['email'];
+                        $_SESSION['role_id'] = $isLogin['role_id'];
 
                         if ($isLogin['role_id'] == ROLE_ADMIN) {
                             redirect('pages/dashboard');  

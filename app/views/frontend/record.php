@@ -82,6 +82,7 @@
     }
 
 </style>
+<br><br><br>
     <main class="record-main" style="margin-top:-6%;">
         <section class="ticket-card-section">
             <h2 class="section-title">Bought Tickets</h2>

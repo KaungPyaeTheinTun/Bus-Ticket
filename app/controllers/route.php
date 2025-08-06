@@ -1,165 +1,104 @@
 <?php
-session_start();
+// if(session_status() == PHP_SESSION_NONE) {
+//     session_start();
+// }
+require_once APPROOT . '/services/Service_route.php';
+
+require_once APPROOT . '/middleware/authmiddleware.php';
 
 class Route extends Controller
 {
-    private $db;
+    private $routeService;
+
     public function __construct()
     {
-        $this->model('RouteModel');
-        $this->db = new Database();
+        AuthMiddleware::adminOnly();
+        $this->routeService = new RouteService();
     }
 
-    // public function index() {
-    //     $route= $this->db->readAll('view_route_operator');
-    //     // var_dump($route);
-    //     // exit;
-    //     $data = [
-    //         'route' => $route
-    //     ];
-    //     $this->view('route/index', $data);
-    // }
-    public function index() 
+    public function index()
     {
-        $from = isset($_GET['from']) ? trim($_GET['from']) : '';
-        $to = isset($_GET['to']) ? trim($_GET['to']) : '';
-        $date = isset($_GET['date']) ? trim($_GET['date']) : '';
-
-        if ($from || $to || $date) {
-            $sql = "SELECT * FROM view_route_operator WHERE 1=1";
-            $params = [];
-
-            if (!empty($from)) {
-                $sql .= " AND `from` LIKE :from";
-                $params[':from'] = '%' . $from . '%';
-            }
-
-            if (!empty($to)) {
-                $sql .= " AND `to` LIKE :to";
-                $params[':to'] = '%' . $to . '%';
-            }
-
-            if (!empty($date)) {
-                $sql .= " AND DATE(`departure_time`) = :date";
-                $params[':date'] = $date;
-            }
-
-            $route = $this->db->runQuery($sql, $params);
-        } else {
-            $route = $this->db->readAll('view_route_operator');
-        }
-
-        $data = [
-            'route' => $route
+        $filters = [
+            'from' => isset($_GET['from']) ? trim($_GET['from']) : '',
+            'to' => isset($_GET['to']) ? trim($_GET['to']) : '',
+            'date' => isset($_GET['date']) ? trim($_GET['date']) : ''
         ];
 
-        $this->view('route/index', $data);
+        $routes = $this->routeService->getRoutes($filters);
+
+        $this->view('route/index', ['route' => $routes]);
     }
 
     public function detail()
     {
         $id = isset($_GET['id']) ? base64_decode($_GET['id']) : null;
 
-        if ($id) {
-            $route = $this->db->getById('route', $id);
-            if (!$route) {
-                setMessage('error', '⚠️ Route not found.');
-                redirect('/route');
-            }
-
-            $operator = null;
-            if (!empty($route['operator_id'])) {
-                $operator = $this->db->getById('operator', $route['operator_id']);
-            }
-
-            $data = [
-                'route' => $route,
-                'operator' => $operator
-            ];
-
-            $this->view('route/detail', $data);
-        } else {
-            // setMessage('error', '⚠️ Invalid ID.');
+        if (!$id) {
             redirect('/route');
         }
+
+        $route = $this->routeService->getRouteById($id);
+
+        if (!$route) {
+            setMessage('error', '⚠️ Route not found.');
+            redirect('/route');
+        }
+
+        $operator = null;
+        if (!empty($route['operator_id'])) {
+            $operator = (new Database())->getById('operator', $route['operator_id']);
+        }
+
+        $this->view('route/detail', [
+            'route' => $route,
+            'operator' => $operator
+        ]);
     }
 
-    
-    public function create() {
-        // use session to get operator_id
-        $operator = $this->db->readAll('operator');
-        $data = [
-            'operator' => $operator,
-        ];
-        
-        $this->view('route/create', $data);
-    }
-
-    public function store() 
+    public function create()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $db = new Database();
+        $operators = $db->readAll('operator');
+        $busTypes = $db->readAll('bus_type');
 
-            $operator_id     = $_POST['operator_id'];
-            $price           = $_POST['price'];
-            $from           = $_POST['from'];
-            $to           = $_POST['to'];
-            $departure_time  = $_POST['departure_time'];
-            $arrival_time    = $_POST['arrival_time'];
-            $imageName = null;
-            if (isset($_FILES['image']) && isset($_FILES['image']['tmp_name']) && isset($_FILES['image']['name'])) {
-                $targetDir = dirname(APPROOT) . '/public/uploads/routes_images/';
-                
-                if (!file_exists($targetDir)) {
-                    mkdir($targetDir, 0777, true);
-                }
-
-                $originalName = basename($_FILES['image']['name']);
-                $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-                
-                $uniqueName = uniqid('route_', true) . '.' . $ext;
-                $targetFile = $targetDir . $uniqueName;
-
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
-                    $imageName = $uniqueName;
-                }
-            }
-
-            // $route = new RouteModel();
-            // $route->setOperatorId($operator_id);
-            // $route->setPrice($price);
-            // $route->setFrom($from);
-            // $route->setTo($to);
-            // $route->setDepartureTime($departure_time);
-            // $route->setArrivalTime($arrival_time);
-            // $route->setImage($imageName);
-            $route = new \App\Models\RouteModel();
-            $route->operator_id = $operator_id;
-            $route->price = $price;
-            $route->from = $from;
-            $route->to = $to;
-            $route->departure_time = $departure_time;
-            $route->arrival_time = $arrival_time;
-            $route->image = $imageName;
-
-            $isCreated = $this->db->create('route', $route->toArray());
-
-            $_SESSION['success'] = "✅ Route created successfully.";
-            redirect('/route');
+        $typeMap = [];
+        foreach ($busTypes as $type) {
+            $typeMap[$type['id']] = $type['type_name'];
         }
+
+        foreach ($operators as &$op) {
+            $op['type_name'] = $typeMap[$op['bus_type_id']] ?? 'Unknown';
+        }
+
+        $this->view('route/create', ['operator' => $operators]);
     }
 
+    public function store()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/route');
+        }
+
+        try {
+            $this->routeService->createRoute($_POST);
+            $_SESSION['success'] = "✅ Route created successfully.";
+        } catch (Exception $e) {
+            $_SESSION['error'] = "❌ " . $e->getMessage();
+        }
+
+        redirect('/route');
+    }
 
     public function delete($id)
     {
-        $id = base64_decode($id); 
+        $id = base64_decode($id);
 
-        $data = new \App\Models\RouteModel();
-
-        $deleteroute =  $this->db->delete('route', $id);
-        if(!$deleteroute){
-        redirect('/route');
+        if ($this->routeService->deleteRoute($id)) {
+            $_SESSION['success'] = "✅ Route deleted successfully.";
+        } else {
+            $_SESSION['error'] = "❌ Failed to delete route.";
         }
-        $_SESSION['success'] = "✅ Route deleted successfully.";
+
         redirect('/route');
     }
 

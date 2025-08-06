@@ -1,5 +1,6 @@
 <?php
-session_start();
+
+require_once APPROOT . '/middleware/authmiddleware.php';
 
 class Operator extends Controller
 {
@@ -7,17 +8,41 @@ class Operator extends Controller
 
     public function __construct()
     {
+        AuthMiddleware::adminOnly();
         $this->model('OperatorModel');
         $this->db = new Database();
     }
 
     // List all operators
+    // public function index()
+    // {
+    //     $operators = $this->db->readAll('operator');
+    //     $type = $this->db->readAll('bus_type');
+    //     $data = [
+    //         'operator' => $operators,
+    //         'type' => $type,
+    //     ];
+    //     $this->view('operator/index', $data);
+    // }
     public function index()
     {
         $operators = $this->db->readAll('operator');
+        $type = $this->db->readAll('bus_type');
+        // Map types for easier lookup
+        $typeMap = [];
+        foreach ($type as $t) {
+            $typeMap[$t['id']] = $t['type_name'];
+        }
+
+        // Attach type_name to each operator
+        foreach ($operators as &$op) {
+            $op['type_name'] = $typeMap[$op['bus_type_id']] ?? 'Unknown';
+        }
+
         $data = [
             'operator' => $operators
         ];
+
         $this->view('operator/index', $data);
     }
 
@@ -58,6 +83,7 @@ class Operator extends Controller
             $name = $_POST['name'] ?? '';
             $phone = $_POST['phone'] ?? '';
             $seat_capacity = $_POST['seat_capacity'] ?? '';
+            $bus_type_id = $_POST['bus_type_id'] ?? '';
 
             if (empty($name) || empty($phone) || $seat_capacity < 1 || $seat_capacity > 44) {
                 setMessage('error', '⚠️ Invalid input data.');
@@ -70,6 +96,7 @@ class Operator extends Controller
             $operator->name = $name;
             $operator->phone = $phone;
             $operator->seat_capacity = $seat_capacity;
+            $operator->bus_type_id = $bus_type_id;
 
             $isCreated = $this->db->create('operator', $operator->toArray());
 

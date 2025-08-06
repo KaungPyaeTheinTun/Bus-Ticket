@@ -47,7 +47,7 @@
     }
 
     .seat-box.booked {
-        background-color: #e0e0e0;
+        background-color:rgba(80, 79, 79, 0.91);
         color: #999;
         cursor: not-allowed;
         border-color: #ccc;
