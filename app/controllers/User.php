@@ -1,10 +1,14 @@
 <?php
-session_start();
+// session_start();
+
+require_once APPROOT . '/middleware/authmiddleware.php';
+
 class User extends Controller
 {
     private $db;
     public function __construct()
     {
+        AuthMiddleware::adminOnly();
         $this->model('UserModel');
         $this->db = new Database();
     }

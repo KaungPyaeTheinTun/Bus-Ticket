@@ -52,33 +52,46 @@ class Database
     //         echo $e;
     //     }
     // }
-    public function create($table, $data)
-{
-    try {
-        $columns = array_keys($data);
-        // Wrap each column name with backticks to escape reserved words
-        $escapedColumns = array_map(function($col) {
-            return "`$col`";
-        }, $columns);
-
-        $columnSql = implode(', ', $escapedColumns);
-        $bindingSql = ':' . implode(',:', $columns);
-
-        $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
-        $stm = $this->pdo->prepare($sql);
-
-        foreach ($data as $key => $value) {
-            $stm->bindValue(':' . $key, $value);
+    public function routeProcedure($name, $params = [])
+    {
+        try {
+            $placeholders = implode(',', array_fill(0, count($params), '?'));
+            $sql = "CALL $name($placeholders)";
+            $stm = $this->pdo->prepare($sql);
+            $stm->execute(array_values($params));
+            return true;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            return false;
         }
-
-        $status = $stm->execute();
-        return ($status) ? $this->pdo->lastInsertId() : false;
-    } catch (PDOException $e) {
-        echo $e;
     }
-}
 
-    
+    public function create($table, $data)
+    {
+        try {
+            $columns = array_keys($data);
+            // Wrap each column name with backticks to escape reserved words
+            $escapedColumns = array_map(function($col) {
+                return "`$col`";
+            }, $columns);
+
+            $columnSql = implode(', ', $escapedColumns);
+            $bindingSql = ':' . implode(',:', $columns);
+
+            $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
+            $stm = $this->pdo->prepare($sql);
+
+            foreach ($data as $key => $value) {
+                $stm->bindValue(':' . $key, $value);
+            }
+
+            $status = $stm->execute();
+            return ($status) ? $this->pdo->lastInsertId() : false;
+        } catch (PDOException $e) {
+            echo $e;
+        }
+    }
+
     public function verifyMail($userId)
     {
         try {

@@ -206,6 +206,7 @@
                             <th>Name</th>
                             <th>Phone Number</th>
                             <th>Seat</th>
+                            <th>Bus_type</th>
                             <th style="text-align: center;">Edit</th>
                             <th style="text-align: center;">Delete</th>
                         </tr>
@@ -217,6 +218,7 @@
                                 <td><?php echo $operator['name']; ?></td>
                                 <td><?php echo $operator['phone']; ?></td>
                                 <td><?php echo $operator['seat_capacity']; ?></td>
+                                <td><?php echo $operator['type_name']; ?></td>
                                 <td style="text-align: center;">
                                     <a href="#" 
                                    class="edit-btn"

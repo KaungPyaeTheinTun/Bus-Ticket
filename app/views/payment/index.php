@@ -180,7 +180,7 @@
     </div>
     <div class="form-group">
         <label for="edit_scan_image" style="display: block; text-align: left; margin-bottom: 5px;">Scan Image (QR Code)</label>
-        <input type="file" name="scan_image" id="edit_scan_image" accept="image/*">
+        <input type="file" name="scan_image" id="edit_scan_image" accept="image/*" required>
     </div>
     <div class="modal-buttons">
         <button type="submit" class="btn-yes">Update</button>  

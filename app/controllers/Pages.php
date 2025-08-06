@@ -1,5 +1,7 @@
 <?php
 
+require_once APPROOT . '/middleware/authmiddleware.php';
+
 class Pages extends Controller
 {
 
@@ -40,6 +42,8 @@ class Pages extends Controller
     }
     public function dashboard()
     {
+        AuthMiddleware::adminOnly();
+
         $this->view('pages/dashboard');
     }
    

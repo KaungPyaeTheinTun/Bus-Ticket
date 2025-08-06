@@ -1,9 +1,14 @@
 <?php
-session_start();
+        // if(session_status() == PHP_SESSION_NONE) {
+        //     session_start();
+        // }
+require_once APPROOT . '/middleware/authmiddleware.php';
+
 class Payment extends Controller
 {
     public function __construct()
     {
+        AuthMiddleware::adminOnly();
         $this->model('PaymentModel');
         $this->db = new Database();
     }

@@ -59,6 +59,12 @@
                             <i class="fas fa-chair icon"></i> <input type="number" id="seatCapacity" name="seat_capacity" class="text-input number-input" placeholder="Enter seat capacity" min="1" max="44" required>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div>
+                            VIP &nbsp;<input type="radio" id="vip" name="bus_type_id" value="1" alter="VIP"required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Normal<input type="radio" id="normal" name="bus_type_id" value="2" required style="margin-left:20px;">
+                        </div>
+                    </div>
                     <button type="submit" class="confirm-button">Confirm</button>
                     <br>
                     <a href="<?php echo URLROOT; ?>/operator"><i class="fas fa-arrow-left"></i> Back</a>

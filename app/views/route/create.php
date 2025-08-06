@@ -9,13 +9,20 @@
             <form class="route-form" method="POST" action="<?php echo URLROOT; ?>/route/store" enctype="multipart/form-data">    
             <div class="form-group">
                     <label>Operator</label>
-                        <select  class="text-input" style="height:43px;" name="operator_id">
-                            <?php foreach ($data['operator'] as $operator) { ?>
-                            <option value="<?php echo $operator['id']; ?>" selected>
-                                <?php echo $operator['name']; ?>
-                            </option>
-                            <?php } ?>
+                        <select class="text-input" style="height:43px;" name="operator_id" required>
+                            <!-- <option value="">-- Select Operator --</option> -->
+                            <?php foreach ($data['operator'] as $operator): ?>
+                                <option value="<?php echo $operator['id']; ?>">
+                                    <?php echo $operator['name'] . ' (' . $operator['type_name'] . ')'; ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
+                </div>
+                <div class="form-group">
+                    <div class="amount-input-container">
+                        <input type="number" id="amount" name="price" class="text-input amount-input" placeholder="Enter amount" min="0" required>
+                        <span class="amount-currency">MMK</span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="route-inputs">
@@ -39,12 +46,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <div class="amount-input-container">
-                        <input type="number" id="amount" name="price" class="text-input amount-input" placeholder="Enter amount" min="0" required>
-                        <span class="amount-currency">MMK</span>
-                    </div>
-                </div>
+                
 
                 <div class="form-group file-upload-group">
                     <div class="file-upload">
