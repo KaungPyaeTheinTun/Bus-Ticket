@@ -8,6 +8,14 @@ $searchParams = $_SESSION['search_params'] ?? null;
 
 ?>
 <style>
+    .badge {
+        background-color: #eee;
+        color: #777;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
     /* Your existing CSS for .trip-card and .search-bar-top */
     .trip-card {
         background-color: var(--white);
@@ -248,7 +256,7 @@ $searchParams = $_SESSION['search_params'] ?? null;
 
                     <div class="trip-card" data-departure-hour="<?php echo htmlspecialchars($depHour); ?>">
                         <div class="trip-time-info">
-                            <p class="time"><?php echo $departureTimeFormatted; ?></p>
+                            <p class="time"><?php echo $departureTimeFormatted; ?> <span class="badge"><?php echo $route['bus_type']; ?></span></p>
                             <p class="route"><?php echo htmlspecialchars($route['from'] . ' - ' . $route['to']); ?></p>
                             <p class="arrival-details"><?php echo htmlspecialchars($route['from'] . ', ' .$departureDateFormatted .' '. $departureTimeFormatted); ?> (Depart At)</p>
                             <p class="arrival-details"><?php echo htmlspecialchars($route['to'] . ', '.$arrivalDateFormatted .' ' . $arrivalTimeFormatted); ?> (Arrives At)</p>

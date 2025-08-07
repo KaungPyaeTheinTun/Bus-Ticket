@@ -168,6 +168,14 @@ class Database
     //         echo $e;
     //     }
     // }
+    
+    public function getWhere($table, $column, $value)
+    {
+        $this->query("SELECT * FROM $table WHERE $column = :value");
+        $this->bind(':value', $value);
+        return $this->resultSet();
+    }
+
     public function update($table, $id, $data)
     {
         // First, we don't want id from category table

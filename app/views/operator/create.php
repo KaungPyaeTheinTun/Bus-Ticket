@@ -1,4 +1,5 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
+
 <style>
     /* Style for inputs with icons */
         .input-with-icon {

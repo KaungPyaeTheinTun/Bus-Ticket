@@ -1,6 +1,45 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
-
+ <?php if (!empty($_SESSION['success'])): ?>
+            <div id="flashMessage" class="flash-message success-message">
+                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
 <style>
+    .flash-message {
+            position: fixed;
+            top: 28px;
+            left: 50%;
+            /* transform: translateX(0); */
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            animation: fadeInScale 0.3s ease;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            /* border-left: 5px solid #28a745; */
+        }
+
+        .error-message {
+            background-color:rgb(239, 154, 161);
+            color: #721c24;
+            /* border-left: 5px solid #dc3545; */
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform:  scale(0.9);
+            }
+        }
     .status-buttons button {
         font-size: 20px;
     }
@@ -94,6 +133,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Bus Operators</th>
+                            <th>Bus_Type</th>
                             <th>Amount</th>
                             <th>Payment_slip</th>
                             <th>Seat_No</th>
@@ -106,6 +146,7 @@
                             <tr>
                                 <td><?php echo htmlspecialchars($booking['user_name']); ?></td>
                                 <td><?php echo htmlspecialchars($booking['operator_name']); ?></td>
+                                <td><?php echo htmlspecialchars($booking['bus_type']); ?></td>
                                 <td style="color:green;">MMK <?php echo htmlspecialchars(number_format($booking['total_price'])); ?></td>
                                 <td style="text-align:center;">
                                     <?php if (!empty($booking['payment_slip'])): ?>

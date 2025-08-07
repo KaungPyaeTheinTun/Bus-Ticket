@@ -2,81 +2,41 @@
 
 require_once APPROOT . '/middleware/authmiddleware.php';
 
+require_once APPROOT . '/services/OperatorService.php';
+
 class Operator extends Controller
 {
+    private $operatorService;
     private $db;
 
     public function __construct()
     {
         AuthMiddleware::adminOnly();
         $this->model('OperatorModel');
-        $this->db = new Database();
+        $this->operatorService = new OperatorService();
+        $this->db = new Database(); 
     }
 
-    // List all operators
-    // public function index()
-    // {
-    //     $operators = $this->db->readAll('operator');
-    //     $type = $this->db->readAll('bus_type');
-    //     $data = [
-    //         'operator' => $operators,
-    //         'type' => $type,
-    //     ];
-    //     $this->view('operator/index', $data);
-    // }
     public function index()
     {
-        $operators = $this->db->readAll('operator');
-        $type = $this->db->readAll('bus_type');
-        // Map types for easier lookup
-        $typeMap = [];
-        foreach ($type as $t) {
-            $typeMap[$t['id']] = $t['type_name'];
-        }
+        $operators = $this->operatorService->getAllOperators();
+        $types = $this->db->readAll('bus_type');
 
-        // Attach type_name to each operator
+        $typeMap = array_column($types, 'type_name', 'id');
+
         foreach ($operators as &$op) {
             $op['type_name'] = $typeMap[$op['bus_type_id']] ?? 'Unknown';
         }
 
-        $data = [
-            'operator' => $operators
-        ];
-
+        $data = ['operator' => $operators];
         $this->view('operator/index', $data);
     }
 
-    // Show create form
     public function create()
     {
         $this->view('operator/create');
     }
 
-    // Store new operator
-    // public function store()
-    // {
-    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    //         $name = $_POST['name'] ?? '';
-    //         $phone = $_POST['phone'] ?? '';
-    //         $seat_capacity = $_POST['seat_capacity'] ?? '';
-
-    //         // Optional: Validate fields here
-
-    //         $operator = new OperatorModel();
-    //         $operator->setName($name);
-    //         $operator->setPhone($phone);
-    //         $operator->setSeatCapacity($seat_capacity);
-
-    //         $isCreated = $this->db->create('operator', $operator->toArray());
-
-    //         if ($isCreated) {
-    //             setMessage('success', '✅ Successfully added new operator.');
-    //         } else {
-    //             setMessage('error', '⚠️ Failed to add operator.');
-    //         }
-    //         redirect('/operator');
-    //     }
-    // }
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -85,77 +45,46 @@ class Operator extends Controller
             $seat_capacity = $_POST['seat_capacity'] ?? '';
             $bus_type_id = $_POST['bus_type_id'] ?? '';
 
-            if (empty($name) || empty($phone) || $seat_capacity < 1 || $seat_capacity > 44) {
+            if (empty($name) || empty($phone) || $seat_capacity < 1) {
                 setMessage('error', '⚠️ Invalid input data.');
                 redirect('/operator/create');
                 return;
             }
 
-            // $operator = new OperatorModel();
+            if (($bus_type_id == 1 && $seat_capacity > 30) || ($bus_type_id == 2 && $seat_capacity > 44)) {
+                setMessage('error', '⚠️ Seat capacity exceeds limit for selected bus type.');
+                redirect('/operator/create');
+                return;
+            }
+
             $operator = new \App\Models\OperatorModel();
             $operator->name = $name;
             $operator->phone = $phone;
             $operator->seat_capacity = $seat_capacity;
             $operator->bus_type_id = $bus_type_id;
 
-            $isCreated = $this->db->create('operator', $operator->toArray());
+            $created = $this->operatorService->createOperator($operator->toArray());
 
-            if ($isCreated) {
-                setMessage('success', '✅ Successfully added new operator.');
-            } else {
-                setMessage('error', '⚠️ Failed to add operator.');
-            }
+            setMessage($created ? 'success' : 'error', $created ? '✅ Operator added.' : '⚠️ Failed to add operator.');
             redirect('/operator');
         }
     }
 
-
-    // Show edit form
     public function edit($encodedId = null)
     {
-        if ($encodedId === null) {
-            redirect('/operator');
-        }
+        if (!$encodedId) redirect('/operator');
 
         $id = base64_decode($encodedId);
-        $operator = $this->db->getById('operator', $id);
+        $operator = $this->operatorService->getOperatorById($id);
 
         if (!$operator) {
             setMessage('error', '⚠️ Operator not found.');
             redirect('/operator');
         }
 
-        $data = [
-            'operator' => $operator
-        ];
-        $this->view('operator/edit', $data);
+        $this->view('operator/edit', ['operator' => $operator]);
     }
 
-    // Update operator
-    // public function update()
-    // {
-    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    //         $id = $_POST['id'] ?? '';
-    //         $name = $_POST['name'] ?? '';
-    //         $phone = $_POST['phone'] ?? '';
-    //         $seat_capacity = $_POST['seat_capacity'] ?? '';
-
-    //         $operator = new OperatorModel();
-    //         $operator->setId($id);
-    //         $operator->setName($name);
-    //         $operator->setPhone($phone);
-    //         $operator->setSeatCapacity($seat_capacity);
-
-    //         $isUpdated = $this->db->update('operator', $operator->getId(), $operator->toArray());
-
-    //         if ($isUpdated) {
-    //             setMessage('success', '✅ Operator updated successfully!');
-    //         } else {
-    //             setMessage('error', '⚠️ Failed to update operator!');
-    //         }
-    //         redirect('/operator');
-    //     }
-    // }
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -163,62 +92,39 @@ class Operator extends Controller
             $name = $_POST['name'] ?? '';
             $phone = $_POST['phone'] ?? '';
             $seat_capacity = $_POST['seat_capacity'] ?? '';
+            $bus_type_id = $_POST['bus_type_id'] ?? '';
 
             if ($seat_capacity < 1 || $seat_capacity > 44) {
-                // var_dump('error');exit;
-                setMessage('error', '⚠️ Maximun seats is 44 !');
+                setMessage('error', '⚠️ Invalid seat count.');
                 redirect('/operator');
                 return;
             }
-            // $operator = new OperatorModel();
+
             $operator = new \App\Models\OperatorModel();
             $operator->id = $id;
             $operator->name = $name;
             $operator->phone = $phone;
             $operator->seat_capacity = $seat_capacity;
+            $operator->bus_type_id = $bus_type_id;
 
-            $isUpdated = $this->db->update('operator', $operator->id, $operator->toArray());
+            $updated = $this->operatorService->updateOperator($id, $operator->toArray());
 
-            if ($isUpdated) {
-                setMessage('success', '✅ Operator updated successfully!');
-            } else {
-                setMessage('error', '⚠️ Failed to update operator!');
-            }
+            setMessage($updated ? 'success' : 'error', $updated ? '✅ Operator updated.' : '⚠️ Failed to update operator.');
             redirect('/operator');
         }
     }
-    // Delete operator
-    // public function delete($id)
-    // {
-    //     $id = base64_decode($id);
 
-    //     $deleted = $this->db->delete('operator', $id);
-    //     if ($deleted) {
-    //         setMessage('success', '✅ Operator deleted successfully.');
-    //     } else {
-    //         setMessage('error', '⚠️ Failed to delete operator.');
-    //     }
-    //     redirect('/operator');
-    // }
     public function delete($encodedId)
     {
         $id = base64_decode($encodedId);
-
         if (!$id) {
-            setMessage('error', '⚠️ Invalid operator ID.');
+            setMessage('error', '⚠️ Invalid ID.');
             redirect('/operator');
             return;
         }
 
-        $deleted = $this->db->delete('operator', $id);
-
-        if ($deleted) {
-            setMessage('success', '✅ Operator deleted successfully.');
-        } else {
-            setMessage('error', '⚠️ Failed to delete operator.');
-        }
+        $deleted = $this->operatorService->deleteOperator($id);
+        setMessage($deleted ? 'success' : 'error', $deleted ? '✅ Operator deleted.' : '⚠️ Failed to delete operator.');
         redirect('/operator');
     }
 }
-
-?>

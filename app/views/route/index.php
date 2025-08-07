@@ -8,7 +8,30 @@
    $today = date('Y-m-d'); 
 ?>
 <style>
-        .all-button {
+    input[type="date"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 13px;
+        background-color: #f9f9f9;
+        color: #333;
+        width: 120px;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        /* margin-left:-30px; */
+    }
+
+    input[type="date"]:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        outline: none;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(0.5); /* change icon color */
+        cursor: pointer;
+    }
+    .all-button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -260,6 +283,7 @@
                                     <div class="main-route">
                                         <?php echo htmlspecialchars($route['from']); ?> - <?php echo htmlspecialchars($route['to']); ?> 
                                         <span class="badge"><?php echo $badge; ?></span>
+                                        <span class="badge"><?php echo htmlspecialchars($route['bus_type']); ?></span>
                                     </div>
                                     <div class="departure-arrival-info">
                                         <span><?php echo htmlspecialchars($route['from']); ?> - <?php echo htmlspecialchars($depDate); ?> <?php echo $depTime; ?> (Departs At)</span>
