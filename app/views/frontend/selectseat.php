@@ -69,8 +69,8 @@
     }
 
     .seat-box {
-        /* width: 100%; */
-        max-width: 100%;
+        width: 70px;
+        /* max-width: 100%; */
         aspect-ratio: 3 / 2;
         display: flex;
         justify-content: center;
@@ -89,6 +89,12 @@
             font-size: 0.9em;
         }
     }
+    .seat-map-container{
+        max-height:900px;
+    }
+    .selection-card{
+        max-height:900px;
+    }
 </style>
 
 <main class="select-seat-main">
@@ -105,15 +111,40 @@
                             <div class="seat driver-seat">Driver</div>
                         </div>
                         <div class="seat-grid-container">
-                            <?php for ($i = 1; $i <= (int)$trip['seat_capacity']; $i++): ?>
-                                <?php
-                                    $isBooked = in_array($i, $bookedSeatNumbers);
-                                    $seatClass = $isBooked ? 'booked' : 'available';
-                                ?>
-                                <div class="seat-box <?= $seatClass ?>" data-seat-number="<?= $i ?>">
-                                    <?= htmlspecialchars($i) ?>
-                                </div>
-                            <?php endfor; ?>
+                            <?php if (htmlspecialchars($trip['bus_type']) == 'VIP'): ?>
+                                <?php for ($i = 1; $i <= (int)$trip['seat_capacity']; $i += 3): ?>
+                                    <div class="seat-row">
+                                        <?php for ($j = 0; $j < 3; $j++): ?>
+                                            <?php
+                                                $seatNumber = $i + $j;
+                                                if ($seatNumber > (int)$trip['seat_capacity']) break;
+                                                if ($j === 2): // Insert spacer before the 3rd seat
+                                            ?>
+                                                <div class="seat-spacer"></div>
+                                            <?php endif; ?>
+                                            <?php
+                                                $isBooked = in_array($seatNumber, $bookedSeatNumbers);
+                                                $seatClass = $isBooked ? 'booked' : 'available';
+                                            ?>
+                                            <div class="seat-box <?= $seatClass ?>" data-seat-number="<?= $seatNumber ?>">
+                                                <?= htmlspecialchars($seatNumber) ?>
+                                            </div>
+                                        <?php endfor; ?>
+                                    </div>
+                                <?php endfor; ?>
+
+                                
+                                <?php else: ?>
+                                <?php for ($i = 1; $i <= (int)$trip['seat_capacity']; $i++): ?>
+                                    <?php
+                                        $isBooked = in_array($i, $bookedSeatNumbers);
+                                        $seatClass = $isBooked ? 'booked' : 'available';
+                                    ?>
+                                    <div class="seat-box <?= $seatClass ?>" data-seat-number="<?= $i ?>">
+                                        <?= htmlspecialchars($i) ?>
+                                    </div>
+                                <?php endfor; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

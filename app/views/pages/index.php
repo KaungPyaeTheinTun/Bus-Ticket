@@ -2,7 +2,16 @@
 <?php 
    $today = date('Y-m-d'); 
 ?>
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
+    .flatpickr-calendar {
+        font-size: 12px;
+        width: 300px; /* caution: use only if necessary */
+        }
+
        .flash-message {
             position: fixed;
             top: 28px;
@@ -60,7 +69,7 @@
                 </div>
             </div>
             <div class="booking-form-container">
-                <form class="booking-form" id="searchForm" method="get" action="<?php echo URLROOT; ?>/route/searchAndRedirect">
+                <form class="booking-form" id="searchForm" method="get" action="<?php echo URLROOT; ?>/home/searchAndRedirect">
                     <div class="form-group">
                         <input type="text" placeholder="From" id="from-location" name="from" required>
                     </div>
@@ -68,7 +77,7 @@
                         <input type="text" placeholder="To" id="to-location" name="to" required>
                     </div>
                     <div class="form-group">
-                        <input type="date" id="departure-date" name="date" required min="<?php echo $today; ?>">
+                        <input type="text" id="departureDateTime" name="departure_time" class="text-input" placeholder="Departure Date & Time" >
                     </div>
                     <div class="form-group passenger-group">
                         <div class="passenger-control">
@@ -201,6 +210,12 @@
             });
 </script>
 <script>
+    flatpickr("#departureDateTime", {
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        minDate: "today"
+    });
+
     // Auto-hide flash message after 2 seconds
     const flashMessage = document.getElementById('flashMessage');
     if (flashMessage) {

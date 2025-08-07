@@ -225,7 +225,8 @@
                                    data-id="<?php echo htmlspecialchars($operator['id']); ?>"
                                    data-name="<?php echo htmlspecialchars($operator['name']); ?>"
                                    data-phone="<?php echo htmlspecialchars($operator['phone']); ?>"
-                                   data-seat="<?php echo htmlspecialchars($operator['seat_capacity']); ?>">
+                                   data-seat="<?php echo htmlspecialchars($operator['seat_capacity']); ?>"
+                                   data-bus-type-id="<?php echo htmlspecialchars($operator['bus_type_id']); ?>">
                                     <i class="fas fa-edit action-icon edit-icon"></i>
                                 </a>
                                 </td>
@@ -269,6 +270,7 @@
         <form id="editForm" method="POST" action="<?php echo URLROOT; ?>/operator/update">
             <h3>Change operator Info.</h3>
             <input type="hidden" name="id" id="edit-id">
+            <input type="hidden" name="bus_type_id" id="edit-bus-type-id">
 
             <div class="form-group input-with-icon">
                 <input type="text" name="name" id="edit-name" class="text-input" placeholder="Enter bus name" required>
@@ -330,6 +332,7 @@
     const editPhone = document.getElementById('edit-phone');
     const editSeat = document.getElementById('edit-seat');
     const editCancelBtn = document.getElementById('editCancelBtn');
+    const editBusTypeId = document.getElementById('edit-bus-type-id');
 
     editButtons.forEach(button => {
         button.addEventListener('click', function(e) {
@@ -339,6 +342,7 @@
             editPhone.value = this.dataset.phone;
             editSeat.value = this.dataset.seat;
             editModal.style.display = 'flex';
+            editBusTypeId.value = this.dataset.busTypeId; 
         });
     });
 

@@ -7,6 +7,9 @@
     $operatorId = $data['route']['operator_id'] ?? 0;
     $operator = $db->getById('operator', $operatorId);
     $seatCapacity = (int)$operator['seat_capacity'];
+    $busType = $operator['bus_type_id'] ?? null;
+    $busTypeRow = $db->getById('bus_type', $busType);
+    $isVip = strtolower($busTypeRow['type_name']) === 'vip';
     $bookedSeatNumbers = [];
     foreach ($allSeats as $seat) {
         if (((int)$seat['is_booked'] === 1 || (int)$seat['is_booked'] === 2) && (int)$seat['route_id'] === (int)$routeId) {
@@ -86,16 +89,45 @@
         100% { opacity: 0; transform: scale(0.9); }
     }
 
-    /* Seat grid */
+        /* Default layout */
     .seat-grid-container {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr 2fr 1fr;
         gap: 10px;
         margin: 15px 0;
         padding: 10px;
         background: #f4f4f4;
         border-radius: 8px;
     }
+
+    .seat-grid-container.vip-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        background: #f4f4f4;
+        padding: 10px;
+        border-radius: 8px;
+        width: fit-content;
+    }
+
+    .vip-row {
+        display: flex;
+        gap: 25px; /* gap between 2-left and 1-right (aisle) */
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .vip-left {
+        display: flex;
+        gap: 30px;
+    }
+
+    .vip-right {
+        display: flex;
+        margin-left:60px;
+    }
+
+    /* All seat styles */
     .seat-box {
         padding: 12px 0;
         background: #ddd;
@@ -103,6 +135,7 @@
         font-weight: bold;
         border-radius: 5px;
     }
+
     .driver-box {
         grid-column: span 4;
         background-color: #ddd;          /* same as seat-box */
@@ -218,12 +251,38 @@
         <button type="button" class="reset-seats-button" id="openModalBtn">Reset seats</button>
     </div>
 
-    <div class="seat-grid-container">
+      <div class="seat-grid-container <?= $isVip ? 'vip-layout' : '' ?>">
         <div class="driver-box">Driver</div>
+        <?php if ($isVip): ?>
+            <?php
+            for ($i = 1; $i <= $seatCapacity; $i += 3):
+                $leftSeat1 = $i;
+                $leftSeat2 = $i + 1;
+                $rightSeat = $i + 2;
+            ?>
+            <div class="vip-row">
+                <div class="vip-left">
+                    <?php foreach ([$leftSeat1, $leftSeat2] as $seat): ?>
+                        <?php if ($seat <= $seatCapacity): ?>
+                            <?php $seatClass = in_array($seat, $bookedSeatNumbers) ? 'seat-box sold' : 'seat-box available'; ?>
+                            <div class="<?= $seatClass ?>"><?= $seat ?></div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <div class="vip-right">
+                    <?php if ($rightSeat <= $seatCapacity): ?>
+                        <?php $seatClass = in_array($rightSeat, $bookedSeatNumbers) ? 'seat-box sold' : 'seat-box available'; ?>
+                        <div class="<?= $seatClass ?>"><?= $rightSeat ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endfor; ?>
+        <?php else: ?>
         <?php for ($i = 1; $i <= $seatCapacity; $i++): ?>
             <?php $seatClass = in_array($i, $bookedSeatNumbers) ? 'seat-box sold' : 'seat-box available'; ?>
             <div class="<?= $seatClass ?>"><?= $i ?></div>
         <?php endfor; ?>
+    <?php endif; ?>
     </div>
 </section>
 </div>

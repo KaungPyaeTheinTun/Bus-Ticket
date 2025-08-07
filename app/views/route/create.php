@@ -1,22 +1,51 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+<?php 
+   $today = date('Y-m-d\TH:i'); 
+?>
+<style>
+    input[type="datetime-local"] {
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input[type="datetime-local"]:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        outline: none;
+    }
+
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(0.5); /* change icon color */
+        cursor: pointer;
+    }
+</style>
 <div class="container">
     <main class="main-content">
         <?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
         <section class="add-routes-card">
             <div class="card-header">Add Routes</div>
-            
             <form class="route-form" method="POST" action="<?php echo URLROOT; ?>/route/store" enctype="multipart/form-data">    
-            <div class="form-group">
-                    <label>Operator</label>
-                        <select class="text-input" style="height:43px;" name="operator_id" required>
-                            <!-- <option value="">-- Select Operator --</option> -->
-                            <?php foreach ($data['operator'] as $operator): ?>
-                                <option value="<?php echo $operator['id']; ?>">
-                                    <?php echo $operator['name'] . ' (' . $operator['type_name'] . ')'; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                <div class="form-group">
+                <select class="text-input" style="height:43px;" name="operator_id" required>
+                    <!-- <option value="">-- Select Operator --</option> -->
+                    <?php foreach ($data['operator'] as $operator): ?>
+                        <option value="<?php echo $operator['id']; ?>">
+                            <?php echo $operator['name'] . ' (' . $operator['type_name'] . ')'; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
                 </div>
                 <div class="form-group">
                     <div class="amount-input-container">
@@ -31,23 +60,16 @@
                         <input type="text" id="routeTo" name="to" class="text-input" placeholder="To" required>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label for="departureDateTime">Departure Date & Time</label>
                     <div class="input-with-icon">
-                        <input type="datetime-local" id="departureDateTime" name="departure_time" class="text-input" required>
+                        <input type="text" id="departureDateTime" name="departure_time" class="text-input" placeholder="Departure Date & Time" required>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label for="arrivalDateTime">Arrival Date & Time<span class="estimate-text">( Estimate )</span></label>
                     <div class="input-with-icon">
-                        <input type="datetime-local" id="arrivalDateTime" name="arrival_time" class="text-input" required>
+                        <input type="text" id="arrivalDateTime" name="arrival_time" class="text-input" placeholder="Arrival Date & Time ( Estimate )" required>
                     </div>
                 </div>
-
-                
-
                 <div class="form-group file-upload-group">
                     <div class="file-upload">
                         <label for="routeFile" class="custom-file-upload">
@@ -66,6 +88,17 @@
 </div>
 
 <script>
+    flatpickr("#departureDateTime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today"
+    });
+
+    flatpickr("#arrivalDateTime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today"
+    });
     // Show selected file name
     const fileInput = document.getElementById('routeFile');
     const fileNameSpan = document.querySelector('.file-name');

@@ -182,7 +182,14 @@ $tickets = $data['userTickets'][$user['id']] ?? [];
             <td>MMK <?php echo htmlspecialchars(number_format($t['price'])); ?></td>
             <td><?php echo htmlspecialchars($t['seat_number']); ?></td>
             <td><?php echo htmlspecialchars($t['created_at_formatted']); ?></td>
-            <td><?php echo htmlspecialchars($t['operator_name']); ?></td>
+            <td>    
+                  <?php 
+                    echo htmlspecialchars($t['operator_name']); 
+                    if (!empty($t['bus_type'])) {
+                        echo ' (' . htmlspecialchars($t['bus_type']) . ')';
+                    }
+                ?>
+            </td>
         </tr>
         <?php endforeach; ?>
         </tbody>
