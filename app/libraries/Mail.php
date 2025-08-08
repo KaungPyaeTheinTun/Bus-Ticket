@@ -28,7 +28,7 @@ class Mail
             $mail->Port       = 587;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
             //Recipients
-            $mail->setFrom('kkpp42877@gmail.com', 'Cash Flow');  
+            $mail->setFrom('kkpp42877@gmail.com', ' My Bus Ticket');  
             $mail->addAddress($recipient_mail,$recipient_name);     // Add a recipient
 
             // Content
@@ -66,13 +66,13 @@ class Mail
             $mail->Port       = 587;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 
             //Recipients
-            $mail->setFrom('kkpp42877@gmail.com', 'Cash Flow');  
+            $mail->setFrom('kkpp42877@gmail.com', 'My Bus Ticket.');  
             $mail->addAddress($recipient_mail);     // Add a recipient
 
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Verify Mail';
-            $mail->Body    = "<b> $otp' Click here </a></b> to verify your registration.";
+            $mail->Body    = "<b> $otp' </a></b> to reset your password.";
             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
             $success = $mail->send();

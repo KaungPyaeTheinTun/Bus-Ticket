@@ -1,7 +1,17 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
- <?php if (!empty($_SESSION['success'])): ?>
+        <?php if (!empty($_SESSION['success'])): ?>
             <div id="flashMessage" class="flash-message success-message">
                 <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($_SESSION['error'])): ?>
+            <div id="flashMessage" class="flash-message error-message">
+                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($_SESSION['pending'])): ?>
+            <div id="flashMessage" class="flash-message pending-message">
+                <?php echo $_SESSION['pending']; unset($_SESSION['pending']); ?>
             </div>
         <?php endif; ?>
 <style>
@@ -28,6 +38,11 @@
         .error-message {
             background-color:rgb(239, 154, 161);
             color: #721c24;
+            /* border-left: 5px solid #dc3545; */
+        }
+        .pending-message {
+            background-color:#f1c40f;
+            color:rgb(255, 255, 255);
             /* border-left: 5px solid #dc3545; */
         }
         @keyframes fadeOut {
@@ -283,6 +298,10 @@
         }
     });
 
+// Flash message auto hide
+const flash = document.getElementById('flashMessage');
+if(flash){
+    setTimeout(()=>{flash.style.animation="fadeOut 0.5s forwards"; setTimeout(()=>flash.remove(),500);},2000);
+}
 </script>
-</body>
-</html>
+
