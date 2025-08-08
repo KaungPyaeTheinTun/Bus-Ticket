@@ -90,21 +90,51 @@ $user = $_SESSION['post_mail'];
             }
 
             // OTP input auto-focus and backspace logic
-            otpInputs.forEach((input, index) => {
-                input.addEventListener('input', function() {
-                    // Hide error message on input
-                    otpErrorMessage.style.display = 'none';
+                otpInputs.forEach((input, index) => {
+                // Handle normal typing
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value;
 
-                    if (this.value.length === this.maxLength && index < otpInputs.length - 1) {
+                    // Keep only the last digit if user pastes or types more than one char
+                    if (value.length > 1) {
+                        value = value.slice(-1);
+                        e.target.value = value;
+                    }
+
+                    // Move to next input if filled
+                    if (value && index < otpInputs.length - 1) {
                         otpInputs[index + 1].focus();
+                    }
+
+                    // If user pastes the whole OTP into the first field
+                    if (value.length > 1 && e.inputType !== 'deleteContentBackward') {
+                        const chars = value.split('');
+                        otpInputs.forEach((inputBox, i) => {
+                            inputBox.value = chars[i] || '';
+                        });
+                        otpInputs[Math.min(chars.length, otpInputs.length) - 1].focus();
                     }
                 });
 
-                input.addEventListener('keydown', function(event) {
-                    if (event.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                // Handle backspace: go back to previous field
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
                         otpInputs[index - 1].focus();
                     }
                 });
+            });
+
+            // Allow pasting directly to the first box
+            otpInputs[0].addEventListener('paste', function(e) {
+                const pasteData = e.clipboardData.getData('text').trim();
+                if (/^\d+$/.test(pasteData)) { // only numbers
+                    const chars = pasteData.split('');
+                    otpInputs.forEach((inputBox, i) => {
+                        inputBox.value = chars[i] || '';
+                    });
+                    otpInputs[Math.min(chars.length, otpInputs.length) - 1].focus();
+                    e.preventDefault();
+                }
             });
 
             // Initially show the error message as per the image

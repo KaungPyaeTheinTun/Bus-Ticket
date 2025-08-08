@@ -1,39 +1,29 @@
 <?php
-
 require_once APPROOT . '/middleware/authmiddleware.php';
+
+require_once APPROOT . '/services/BookingService.php';
 
 class Booking extends Controller
 {
-    private $db;
+    private $bookingService;
+
     public function __construct()
     {
         AuthMiddleware::adminOnly();
-        $this->db = new Database();
+        $repository = new BookingRepository();
+        $this->bookingService = new BookingService($repository);
     }
 
     public function index()
     {
-        $bookings = $this->db->readAll('view_booking');
-        // var_dump($bookings);
-        // exit;
-        $data =[
-            'booking' => $bookings,
-        ];
-        $this->view('booking/index',$data);
+        $data = ['booking' => $this->bookingService->getAllBookings()];
+        $this->view('booking/index', $data);
     }
 
     public function deleteseat($encodedSeatNumber)
     {
-        $seat_number = base64_decode($encodedSeatNumber);
-
-        $deleted = $this->db->deleteByColumn('seats', 'seat_number', $seat_number);
-
-        if ($deleted) {
-            $_SESSION['success'] = 'Seat deleted successfully';
-        } else {
-            $_SESSION['error'] = 'Failed to delete seat';
-        }
-
+        $result = $this->bookingService->deleteSeat($encodedSeatNumber);
+        $_SESSION[$result ? 'success' : 'error'] = $result ? 'Seat deleted successfully' : 'Failed to delete seat';
         redirect('/booking'); 
     }
 
@@ -42,20 +32,23 @@ class Booking extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $status = $_POST['status'] ?? null;
             if (!in_array($status, ['0', '1', '2'])) {
-                $_SESSION['error'] = 'Invalid status value.';
-                redirect('/booking'); 
+                $_SESSION['error'] = '❌ Invalid status value.';
+            } else {
+                $success = $this->bookingService->updateBookingStatus((int)$id, (int)$status);
+
+                if (!$success) {
+                    $_SESSION['error'] = '❌ Booking update failed!';
+                } else {
+                    $messages = [
+                        0 => ['error', '❌ Booking canceled!'],
+                        1 => ['pending', '⏳ Booking is Pending.'],
+                        2 => ['success', '✅ Booking confirmed.']
+                    ];
+                    [$type, $msg] = $messages[(int)$status] ?? ['error', '❌ Invalid status!'];
+                    $_SESSION[$type] = $msg;
+                }
             }
-
-            $id = (int)$id;
-            $this->db->update('seats', $id, ['is_booked' => $status]);
-
-            $_SESSION['success'] = 'Booking status updated successfully.';
-            redirect('/booking');  
-        } else {
-            redirect('/booking');
         }
+        redirect('/booking');
     }
-
-
-
 }

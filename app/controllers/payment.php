@@ -32,13 +32,11 @@ class Payment extends Controller
                 'method' => trim($_POST['name'] ?? ''),
                 'phone' => trim($_POST['phone'] ?? '')
             ];
-
             $this->paymentService->createPayment($data, $_FILES);
             $_SESSION['success'] = "✅ Payment Method added successfully.";
         } catch (\Exception $e) {
             $_SESSION['error'] = "❌ " . $e->getMessage();
         }
-
         redirect('/payment');
     }
 
@@ -54,18 +52,15 @@ class Payment extends Controller
             if (!$id) {
                 throw new \Exception("Invalid payment ID.");
             }
-
             $data = [
                 'method' => trim($_POST['name'] ?? ''),
                 'phone' => trim($_POST['phone'] ?? '')
             ];
-
             $this->paymentService->updatePayment($id, $data, $_FILES);
             $_SESSION['success'] = "✅ Payment method updated successfully.";
         } catch (\Exception $e) {
             $_SESSION['error'] = "❌ " . $e->getMessage();
         }
-
         redirect('/payment');
     }
 
@@ -73,11 +68,8 @@ class Payment extends Controller
     {
         $id = base64_decode($encodedId);
 
-        if ($this->paymentService->deletePayment($id)) {
-            $_SESSION['success'] = '✅ Payment deleted successfully.';
-        } else {
-            $_SESSION['error'] = '⚠️ Failed to delete payment.';
-        }
+        $deleted = $this->paymentService->deletePayment($id);
+        $_SESSION[$deleted ? 'success' : 'error'] = $deleted? '✅ Payment deleted successfully.': '⚠️ Failed to delete payment.';
 
         redirect('/payment');
     }

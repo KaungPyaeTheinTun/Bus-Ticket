@@ -78,7 +78,6 @@ class Route extends Controller
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/route');
         }
-
         try {
             $this->routeService->createRoute($_POST);
             $_SESSION['success'] = "✅ Route created successfully.";
@@ -93,11 +92,8 @@ class Route extends Controller
     {
         $id = base64_decode($id);
 
-        if ($this->routeService->deleteRoute($id)) {
-            $_SESSION['success'] = "✅ Route deleted successfully.";
-        } else {
-            $_SESSION['error'] = "❌ Failed to delete route.";
-        }
+        $result = $this->routeService->deleteRoute($id);
+        $_SESSION[$result ? 'success' : 'error'] = $result ? "✅ Route deleted successfully." : "❌ Failed to delete route.";
 
         redirect('/route');
     }
@@ -149,20 +145,14 @@ class Route extends Controller
 
                 $encodedId = base64_encode($route_id);
 
-                if ($success) {
-                    $_SESSION['success'] = "✅ Seats have been reset.";
-                } else {
-                    $_SESSION['error'] = "❌ No seats found for reset.";
-                }
+                $_SESSION[$success ? 'success' : 'error'] = $success ? "✅ Seats have been reset." : "❌ No seats found for reset.";
 
                 redirect('route/detail?id=' . $encodedId);
                 return;
             }
         }
-
         $_SESSION['error'] = "❌ Invalid request!";
         redirect('/route');
     }
-
 
 }

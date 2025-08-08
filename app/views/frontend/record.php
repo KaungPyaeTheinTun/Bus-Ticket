@@ -1,5 +1,45 @@
 <?php require_once APPROOT . '/views/inc/nav.php' ?>
+<?php if (!empty($_SESSION['success'])): ?>
+    <div id="flashMessage" class="flash-message success-message">
+        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+    </div>
+<?php endif; ?>
 <style>
+    .flash-message {
+            position: fixed;
+            top: 80px;
+            left: 30%;
+            /* transform: translateX(0); */
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            animation: fadeInScale 0.3s ease;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            /* border-left: 5px solid #28a745; */
+        }
+
+        .error-message {
+            background-color:rgb(239, 154, 161);
+            color: #721c24;
+            /* border-left: 5px solid #dc3545; */
+        }
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform:  scale(0.9);
+            }
+        }
     .print-btn {
         margin-top: 16px;
         color: black;
@@ -163,71 +203,79 @@
 <br><br><br>
 <?php require_once APPROOT . '/views/inc/footer.php' ?>
 <script>
-function printVoucher() {
-    const content = document.querySelector('.receipt-content').innerHTML;
+    function printVoucher() {
+        const content = document.querySelector('.receipt-content').innerHTML;
 
-    const printWindow = window.open('', '', 'height=700,width=600');
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>Voucher</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        padding: 40px;
-                        line-height: 1.6;
-                        color: #333;
-                    }
-                    h2 {
-                        text-align: center;
-                        margin-bottom: 30px;
-                    }
-                    p {
-                        margin: 10px 0;
-                        font-size: 16px;
-                    }
-                    span {
-                        font-weight: bold;
-                        color: #000;
-                    }
-                </style>
-            </head>
-            <body>
-                <h2>Receipt / Voucher</h2>
-                ${content}
-            </body>
-        </html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-}
+        const printWindow = window.open('', '', 'height=700,width=600');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Voucher</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            padding: 40px;
+                            line-height: 1.6;
+                            color: #333;
+                        }
+                        h2 {
+                            text-align: center;
+                            margin-bottom: 30px;
+                        }
+                        p {
+                            margin: 10px 0;
+                            font-size: 16px;
+                        }
+                        span {
+                            font-weight: bold;
+                            color: #000;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>Receipt / Voucher</h2>
+                    ${content}
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('receiptModal');
-    const closeModal = document.querySelector('.close-modal');
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('receiptModal');
+        const closeModal = document.querySelector('.close-modal');
 
-    document.querySelectorAll('.view-receipt-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const card = btn.closest('.ticket-card');
+        document.querySelectorAll('.view-receipt-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.ticket-card');
 
-            document.getElementById('modalRoute').textContent = card.querySelector('.detail-item:nth-child(1) .value').textContent;
-            document.getElementById('modalDeparture').textContent = card.querySelector('.detail-item:nth-child(2) .value').textContent;
-            document.getElementById('modalOperator').textContent = card.querySelector('.detail-item:nth-child(3) .value').textContent;
-            document.getElementById('modalSeats').textContent = card.querySelector('.detail-item:nth-child(4) .value').textContent;
-            document.getElementById('modalTotal').textContent = card.querySelector('.detail-item:nth-child(5) .value').textContent;
+                document.getElementById('modalRoute').textContent = card.querySelector('.detail-item:nth-child(1) .value').textContent;
+                document.getElementById('modalDeparture').textContent = card.querySelector('.detail-item:nth-child(2) .value').textContent;
+                document.getElementById('modalOperator').textContent = card.querySelector('.detail-item:nth-child(3) .value').textContent;
+                document.getElementById('modalSeats').textContent = card.querySelector('.detail-item:nth-child(4) .value').textContent;
+                document.getElementById('modalTotal').textContent = card.querySelector('.detail-item:nth-child(5) .value').textContent;
 
-            modal.style.display = 'flex';
+                modal.style.display = 'flex';
+            });
+        });
+
+        closeModal.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
         });
     });
-
-    closeModal.addEventListener('click', () => modal.style.display = 'none');
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-});
+    // Auto-hide flash message after 2 seconds
+    const flashMessage = document.getElementById('flashMessage');
+    if (flashMessage) {
+        setTimeout(() => {
+            flashMessage.style.animation = "fadeOut 0.5s forwards";
+            setTimeout(() => flashMessage.remove(), 500); // Remove after fadeOut completes
+        },1500); // Show for 2 seconds
+    }
 </script>
 
