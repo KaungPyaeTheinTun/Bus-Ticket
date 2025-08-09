@@ -128,7 +128,7 @@
             <h2 class="section-title">Bought Tickets</h2>
             <hr><br>
             <?php if (empty($data['record'])): ?>
-                <p style="text-align:center; color:red;">There is no record of your trip !</p>
+                <p style="text-align:center; color:red;">There is no record yet !</p>
             <?php endif; ?>
             <?php foreach ($data['record'] as $record): ?>
                 <?php  

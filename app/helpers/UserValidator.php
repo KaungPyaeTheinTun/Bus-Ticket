@@ -92,4 +92,11 @@ class UserValidator
         $this->errors[$key] = $val;
     }
 
+    public function validatePasswordOnly()
+    {
+        $this->errors = []; // clear previous errors
+        $this->validatePassword(); // call the private method internally
+        return $this->errors;
+    }
+
 }
