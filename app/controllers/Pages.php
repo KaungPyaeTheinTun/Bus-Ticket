@@ -43,7 +43,6 @@ class Pages extends Controller
     public function dashboard()
     {
         AuthMiddleware::adminOnly();
-
         $this->view('pages/dashboard');
     }
    
