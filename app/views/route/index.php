@@ -1,12 +1,15 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
-        <?php if (!empty($_SESSION['success'])): ?>
-            <div id="flashMessage" class="flash-message success-message">
-                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
+
+<?php if (!empty($_SESSION['success'])): ?>
+    <div id="flashMessage" class="flash-message success-message">
+        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+    </div>
+<?php endif; ?>
+
 <?php 
    $today = date('Y-m-d'); 
 ?>
+
 <style>
     input[type="date"] {
         padding: 10px;
@@ -212,7 +215,8 @@
             background-color: #95a5a6;
         }
 
-</style>       
+</style>
+
     <div class="container">  
         <main class="main-content">
             <?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
@@ -253,41 +257,32 @@
                     <?php if (!empty($data['route']) && is_array($data['route'])): ?>
                         <?php foreach ($data['route'] as $route): ?>
                             <?php
-                            $depRaw = $route['departure_time'];
-                            $arrRaw = $route['arrival_time'];
+                                $depRaw = $route['departure_time'];
+                                $arrRaw = $route['arrival_time'];
 
-                            $depDateTime = new DateTime($depRaw);
-                            $arrDateTime = new DateTime($arrRaw);
+                                $depDateTime = new DateTime($depRaw);
+                                $arrDateTime = new DateTime($arrRaw);
 
-                            // Format date as: July 28
-                            $depDate = $depDateTime->format('F j');
-                            $arrDate = $arrDateTime->format('F j');
-
-                            // Format time as: 7:00 PM
-                            $depTime = $depDateTime->format('g:i A');
-                            $arrTime = $arrDateTime->format('g:i A');
-
-                            // Detect badge based on departure hour
-                            $hour = (int)$depDateTime->format('H'); // 24-hour format
-                            if ($hour >= 5 && $hour < 12) {
-                                $badge = "Day";
-                            } elseif ($hour >= 12 && $hour < 17) {
-                                $badge = "Afternoon";
-                            } else {
-                                $badge = "Night";
-                            }
+                                // Detect badge based on departure hour
+                                $hour = (int)$depDateTime->format('H'); // 24-hour format
+                                    if ($hour >= 5 && $hour < 12) {
+                                        $badge = "Day";
+                                    } elseif ($hour >= 12 && $hour < 17) {
+                                        $badge = "Afternoon";
+                                    } else {
+                                        $badge = "Night";
+                                    }
                             ?>
                             <div class="route-card">
                                 <div class="route-details">
-                                    
                                     <div class="main-route">
                                         <?php echo htmlspecialchars($route['from']); ?> - <?php echo htmlspecialchars($route['to']); ?> 
                                         <span class="badge"><?php echo $badge; ?></span>
                                         <span class="badge"><?php echo htmlspecialchars($route['bus_type']); ?></span>
                                     </div>
                                     <div class="departure-arrival-info">
-                                        <span><?php echo htmlspecialchars($route['from']); ?> - <?php echo htmlspecialchars($depDate); ?> <?php echo $depTime; ?> (Departs At)</span>
-                                        <span><?php echo htmlspecialchars($route['to']); ?> - <?php echo htmlspecialchars($arrDate); ?> <?php echo $arrTime; ?> (Estimate Arrival)</span>
+                                        <span><?php echo htmlspecialchars($route['from']); ?> - <?php echo formatDate($route['departure_time']); ?> (Departs At)</span>
+                                        <span><?php echo htmlspecialchars($route['to']); ?> - <?php echo formatDate($route['arrival_time']); ?> (Estimate Arrival)</span>
                                     </div>
                                     <div class="bus-operator-info">
                                         <span><?php echo htmlspecialchars($route['operator_name']); ?></span>

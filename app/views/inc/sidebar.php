@@ -1,7 +1,9 @@
 <?php
     $currentUrl = $_SERVER['REQUEST_URI']; 
-    // example: /mvc-bus-ticket/pages/dashboard
 ?>
+
+<?php require_once APPROOT . '/helpers/date_helper.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +99,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo URLROOT; ?>/user/logout">
+                        <a href="<?php echo URLROOT; ?>/auth/logout">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Logout</span>
                         </a>

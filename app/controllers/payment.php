@@ -10,7 +10,8 @@ class Payment extends Controller
 
     public function __construct()
     {
-        AuthMiddleware::adminOnly();
+        AuthMiddleware::requireRole(1);
+        
         $this->paymentService = new PaymentService();
     }
 

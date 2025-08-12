@@ -1,15 +1,17 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 
-        <?php if (!empty($_SESSION['success'])): ?>
-            <div id="flashMessage" class="flash-message success-message">
-                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
-        <?php if (!empty($_SESSION['error'])): ?>
-            <div id="flashMessage" class="flash-message error-message">
-                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
+<?php if (!empty($_SESSION['success'])): ?>
+    <div id="flashMessage" class="flash-message success-message">
+        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['error'])): ?>
+    <div id="flashMessage" class="flash-message error-message">
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+    </div>
+<?php endif; ?>
+
 <style>
     
     .modal-content form .form-group {
@@ -25,7 +27,7 @@
     .flash-message {
         position: fixed;
         top: 28px;
-        left: 50%;
+        left: 45%;
         /* transform: translateX(-50%); */
         padding: 16px 24px;
         border-radius: 8px;

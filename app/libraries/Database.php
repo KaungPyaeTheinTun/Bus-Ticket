@@ -18,7 +18,7 @@ class Database
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false // For General Error
+            PDO::ATTR_EMULATE_PREPARES   => false 
         );
 
         try {
@@ -31,27 +31,6 @@ class Database
         }
     }
 
-    // public function create($table, $data)
-    // {
-    //     try {
-    //         $column = array_keys($data);
-    //         $columnSql = implode(', ', $column);
-    //         $bindingSql = ':' . implode(',:', $column);
-    //         // echo $bindingSql;
-    //         $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
-    //         // echo $sql;
-    //         $stm = $this->pdo->prepare($sql);
-    //         foreach ($data as $key => $value) {
-    //             $stm->bindValue(':' . $key, $value);
-    //         }
-    //         // print_r($stm);
-    //         $status = $stm->execute();
-    //         // echo $status;
-    //         return ($status) ? $this->pdo->lastInsertId() : false;
-    //     } catch (PDOException $e) {
-    //         echo $e;
-    //     }
-    // }
     public function routeProcedure($name, $params = [])
     {
         try {
@@ -106,69 +85,6 @@ class Database
         }
     }
 
-    // public function create($table, $data)
-    // {
-    //     try {
-    //         $column = array_keys($data);
-    //         $columnSql = implode(', ', $column);
-    //         $bindingSql = ':' . implode(',:', $column);
-    //         // echo $bindingSql;
-    //             // $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
-    //         $sql = "INSERT INTO $table ($columnSql) VALUES ($bindingSql)";
-    //         $stm = $this->pdo->prepare($sql);
-    //         foreach ($data as $key => $value) {
-    //             $stm->bindValue(':' . $key, $value);
-    //         }
-    //         // print_r($stm);
-    //         for($i=0;$i < 1000; $i++){
-    //             $status = $stm->execute();
-    //         }
-    //         return ($status) ? $this->pdo->lastInsertId() : false;
-
-    //         // $query = "INSERT INTO isec_test(sms_id,status,msgid) values ('1','OK','123-123')";
-    //         // $query = mysql_query($sql);
-    //         //echo $sql;
-           
-    //         // echo $status;
-    //     } catch (PODException $e) {
-    //         echo $e;
-    //     }
-    // }
-
-    // Update Query
-    // public function update($table, $id, $data)
-    // {   
-    //     // First, we don't want id from category table
-    //     if (isset($data['id'])) {
-    //         unset($data['id']);
-    //     }
-
-    //     try {
-    //         $columns = array_keys($data);
-    //         function map ($item) {
-    //             return $item . '=:' . $item;
-    //         }
-    //         $columns = array_map('map', $columns);
-    //         $bindingSql = implode(',', $columns);
-    //         // echo $bindingSql;
-    //         // exit;
-    //         $sql = 'UPDATE ' .  $table . ' SET ' . $bindingSql . ' WHERE `id` =:id';
-    //         $stm = $this->pdo->prepare($sql);
-
-    //         // Now, we assign id to bind
-    //         $data['id'] = $id;
-
-    //         foreach ($data as $key => $value) {
-    //             $stm->bindValue(':' . $key, $value);
-    //         }
-    //         $status = $stm->execute();
-    //         // print_r($status);
-    //         return $status;
-    //     } catch (PDOException $e) {
-    //         echo $e;
-    //     }
-    // }
-    
     public function getWhere($table, $column, $value)
     {
         $this->query("SELECT * FROM $table WHERE $column = :value");
@@ -289,8 +205,8 @@ class Database
            $stm        = $this->pdo->prepare($sql);
            $stm->bindValue(':false','0');
            $stm->bindValue(':id',$id);
-           $success = $stm->execute();
-           $row     = $stm->fetch(PDO::FETCH_ASSOC);
+           $success    = $stm->execute();
+           $row        = $stm->fetch(PDO::FETCH_ASSOC);
            return ($success) ? $row : [];
         }
         catch( Exception $e)
@@ -318,15 +234,6 @@ class Database
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    // public function categoryView()
-    // {
-    //     $sql = 'SELECT * FROM vw_categories_type';
-    //     $sql = 'SELECT categories.id, categories.name, categories.description, types.name AS type_name FROM categories LEFT JOIN types ON categories.type_id = types.id';
-    //     $stm = $this->pdo->prepare($sql);
-    //     $success = $stm->execute();
-    //     $row = $stm->fetchAll(PDO::FETCH_ASSOC);
-    //     return ($success) ? $row : [];
-    // }
 
     public function getByRole($table, $roleid)
     {
@@ -350,55 +257,5 @@ class Database
         return ($success) ? $row : [];
     }
 
-    public function getByCategoryId($table, $column)
-    {
-        $stm = $this->pdo->prepare('SELECT * FROM ' . $table . ' WHERE name =:column');
-        $stm->bindValue(':column', $column);
-        $success = $stm->execute();
-        $row = $stm->fetch(PDO::FETCH_ASSOC);
-       //  print_r($row);
-        return ($success) ? $row : [];
-    }
-
-    // For Dashboard
-    public function incomeTransition()
-    {
-       try{
-
-           $sql        = "SELECT *,SUM(amount) AS amount FROM incomes WHERE
-           (date = { fn CURDATE() }) ";
-           $stm = $this->pdo->prepare($sql);
-           $success = $stm->execute();
-
-           $row     = $stm->fetch(PDO::FETCH_ASSOC);
-           return ($success) ? $row : [];
-
-        }
-        catch( Exception $e)
-        {
-            echo($e);
-        }
-     
-    }
-
-    public function expenseTransition()
-    {
-       try{
-
-           $sql        = "SELECT * ,SUM(amount*qty) AS amount FROM expenses WHERE
-           (date = { fn CURDATE() }) ";
-           $stm = $this->pdo->prepare($sql);
-           $success = $stm->execute();
-
-           $row     = $stm->fetch(PDO::FETCH_ASSOC);
-           return ($success) ? $row : [];
-
-        }
-        catch( Exception $e)
-        {
-            echo($e);
-        }
-     
-    }
 }
 

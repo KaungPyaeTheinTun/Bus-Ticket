@@ -1,6 +1,45 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
-
+<?php if (!empty($_SESSION['error'])): ?>
+    <div id="flashMessage" class="flash-message error-message">
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+     </div>
+<?php endif; ?>
 <style>
+    .flash-message {
+        position: fixed;
+        top: 28px;
+        left: 44%;
+        /* transform: translateX(-50%); */
+        padding: 16px 24px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        z-index: 9999;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        animation: fadeInScale 0.3s ease;
+    }
+
+    .success-message {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .error-message {
+        background-color:rgb(239, 154, 161);
+        color: #721c24;
+    }
+
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform:  scale(0.9);
+        }
+    }
+
     /* Style for inputs with icons */
         .input-with-icon {
             position: relative; /* Needed for absolute positioning of the icon */
@@ -75,7 +114,7 @@
     </div>
 </body>
 <script>
-function togglePasswordVisibility(id) {
+    function togglePasswordVisibility(id) {
             const passwordInput = document.getElementById(id);
             const toggleIcon = passwordInput.nextElementSibling.querySelector('i');
             if (passwordInput.type === 'password') {
@@ -124,6 +163,13 @@ function togglePasswordVisibility(id) {
                 // In a real application, you'd load/filter seat data here based on the selected tab (Morning/Evening)
             });
         });
-
+    // Auto-hide flash message after 2 seconds
+    const flashMessage = document.getElementById('flashMessage');
+    if (flashMessage) {
+        setTimeout(() => {
+            flashMessage.style.animation = "fadeOut 0.5s forwards";
+            setTimeout(() => flashMessage.remove(), 500);
+        }, 2000);
+    }
     </script>
 </html>

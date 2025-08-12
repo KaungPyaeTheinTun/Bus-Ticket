@@ -1,6 +1,10 @@
 
 <?php require_once APPROOT . '/views/inc/header.php'; ?>
+
+<?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
+
 <?php session_start(); ?>
+
     <div class="register-container">
         <div class="left-panel">
             <div class="logo">
@@ -14,6 +18,7 @@
             <?php require_once APPROOT . '/views/components/auth_message.php';?>
             <h2>Register</h2>
             <form class="register-form" name="contactForm" method="POST" action="<?php echo URLROOT; ?>/auth/register">
+				<?= SessionHelper::csrfInput(); ?>
                 <p class="text-danger ml-4">
 						<?php
 							if(isset($data['name-err']))

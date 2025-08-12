@@ -1,27 +1,26 @@
 <?php
 
+require_once APPROOT . '/helpers/SessionHelper.php';
+
 class AuthMiddleware
 {
-    public static function adminOnly()
+    public static function requireRole($allowedRoles = null)
     {
-        session_start();
+        SessionHelper::startSecureSession();
 
-        if (!defined('admin')) define('admin', 1);
-        if (!isset($_SESSION['session_loginuserid']) || $_SESSION['role_id'] != admin) {
+        if (!isset($_SESSION['session_loginuserid'])) {
+            $_SESSION['error'] = "Please login first.";
             header("Location: " . URLROOT . "/pages/login");
             exit();
         }
-    }
 
-    public static function userOnly()
-    {
-        session_start();
-
-        if (!defined('user')) define('user', 2);
-        // var_dump($_SESSION['role_id']);exit;
-        if (!isset($_SESSION['session_loginuserid']) || $_SESSION['role_id'] != user) {
-            header("Location: " . URLROOT . "/pages/login");
-            exit();
+        if ($allowedRoles !== null) {
+            $allowedRoles = (array)$allowedRoles;
+            if (!in_array($_SESSION['role_id'], $allowedRoles)) {
+                header("Location: " . URLROOT . "/pages/unauthorized");
+                exit();
+            }
         }
     }
 }
+

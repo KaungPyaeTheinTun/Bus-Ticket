@@ -9,20 +9,14 @@ class User extends Controller
 
     public function __construct()
     {
-        AuthMiddleware::adminOnly();
+        AuthMiddleware::requireRole(1);
+        
         $this->userService = new UserService();
     }
 
     public function index()
     {
         $this->view('backend/adminprofile');
-    }
-
-    public function logout()
-    {
-        session_unset();
-        session_destroy();
-        redirect('pages/login');
     }
 
     public function profile()

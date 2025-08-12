@@ -1,27 +1,28 @@
 <?php
+
 require_once APPROOT . '/interfaces/BookingRepositoryInterface.php';
 
-class BookingRepository implements BookingRepositoryInterface
-{
-    private $db;
+require_once APPROOT . '/config/DBconnection.php';
 
+class BookingRepository extends DBconnection implements BookingRepositoryInterface
+{
     public function __construct()
     {
-        $this->db = new Database();
+        parent::__construct();
     }
 
     public function getAllBookings(): array
     {
-        return $this->db->readAll('view_booking');
+        return $this->getDB()->readAll('view_booking');
     }
 
     public function deleteSeatByNumber(string $seatNumber): bool
     {
-        return $this->db->deleteByColumn('seats', 'seat_number', $seatNumber);
+        return $this->getDB()->deleteByColumn('seats', 'seat_number', $seatNumber);
     }
 
     public function updateSeatStatus(int $seatId, int $status): bool
     {
-        return $this->db->update('seats', $seatId, ['is_booked' => $status]);
+        return $this->getDB()->update('seats', $seatId, ['is_booked' => $status]);
     }
 }

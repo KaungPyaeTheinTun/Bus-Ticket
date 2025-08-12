@@ -1,9 +1,11 @@
 <?php require_once APPROOT . '/views/inc/nav.php' ?>
+
 <?php if (!empty($_SESSION['success'])): ?>
     <div id="flashMessage" class="flash-message success-message">
         <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
     </div>
 <?php endif; ?>
+
 <style>
     .flash-message {
             position: fixed;
@@ -122,6 +124,7 @@
     }
 
 </style>
+
 <br><br><br>
     <main class="record-main" style="margin-top:-6%;">
         <section class="ticket-card-section">
@@ -131,9 +134,7 @@
                 <p style="text-align:center; color:red;">There is no record yet !</p>
             <?php endif; ?>
             <?php foreach ($data['record'] as $record): ?>
-                <?php  
-                    $departureFormatted = $record['departure_time'] ?  date('F j g:i A', strtotime($record['departure_time'])) : '';
-                ?>
+
                 <div class="ticket-card">
                     <div class="ticket-details-grid">
                         <div class="detail-item">
@@ -142,7 +143,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="label">Departure Date</span>
-                            <span class="value"><?php echo $departureFormatted ?></span>
+                            <span class="value"><?php echo formatDate($record['departure_time']) ?></span>
                         </div>
                         <div class="detail-item">
                             <span class="label">Bus Operator</span>

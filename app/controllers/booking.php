@@ -9,9 +9,9 @@ class Booking extends Controller
 
     public function __construct()
     {
-        AuthMiddleware::adminOnly();
-        $repository = new BookingRepository();
-        $this->bookingService = new BookingService($repository);
+        AuthMiddleware::requireRole(1);
+        
+        $this->bookingService = new BookingService();
     }
 
     public function index()

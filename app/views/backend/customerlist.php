@@ -116,7 +116,7 @@
 <?php foreach ($data['user'] as $user): 
     $stats = $data['ticketStats'][$user['id']] ?? null;
     $total = $stats['total_tickets'] ?? 0;
-    $last = $stats['last_booking'] ?? '-';
+    $last = $stats ['last_booking'] ?? '-';
 ?>
 <tr>
     <td><?php echo htmlspecialchars($user['name']); ?></td>
