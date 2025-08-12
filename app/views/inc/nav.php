@@ -3,6 +3,9 @@
             session_start();
         }
 ?>
+
+<?php require_once APPROOT . '/helpers/date_helper.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,7 +111,7 @@
                     <li><a href="<?php echo URLROOT; ?>/pages/index/#operator">Bus Operator</a></li>
                     <?php if (isset($_SESSION['session_loginuserid'])): ?>
                         <li><a href="<?php echo URLROOT; ?>/home/record">Record</a></li>
-                        <li><a href="<?php echo URLROOT; ?>/user/logout">Logout</a></li>
+                        <li><a href="<?php echo URLROOT; ?>/auth/logout">Logout</a></li>
                     <?php else: ?>
                         <li><a href="<?php echo URLROOT; ?>/pages/login">Login</a></li>
                     <?php endif; ?>

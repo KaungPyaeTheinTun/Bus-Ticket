@@ -28,7 +28,7 @@ class AuthService
             'name'          => $formData['name'],
             'phone'         => $formData['phone'],
             'email'         => $formData['email'],
-            'password'      => base64_encode($formData['password']), // ❗ Ideally password_hash
+            'password'      => base64_encode($formData['password']), // Ideally password_hash
             'profile_image' => 'default_profile.jpg',
             'token'         => bin2hex(random_bytes(50)),
             'is_confirmed'  => 0,
@@ -75,7 +75,6 @@ class AuthService
     {
         $user = $this->repo->findByEmail($email);
         if (!$user) return false;
-
         return $this->repo->updatePassword($user['id'], base64_encode($newPassword));
     }
 

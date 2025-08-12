@@ -232,20 +232,12 @@
         <div class="info-item"><span class="label">Price :</span><span class="value" style="color:green;">MMK <?= htmlspecialchars($data['route']['price']) ?></span></div>
         <div class="info-item"><span class="label">Departure :</span><span class="value">
             <?php
-            $depRaw = $data['route']['departure_time'] ?? null;
-            if($depRaw){
-                $depDt = new DateTime($depRaw);
-                echo htmlspecialchars($depDt->format('F j') . ' at ' . $depDt->format('g:i A'));
-            }
+                echo formatDate($data['route']['departure_time']);
             ?>
         </span></div>
         <div class="info-item"><span class="label">Arrival :</span><span class="value">
             <?php
-            $arrRaw = $data['route']['arrival_time'] ?? null;
-            if($arrRaw){
-                $arrDt = new DateTime($arrRaw);
-                echo htmlspecialchars($arrDt->format('F j') . ' at ' . $arrDt->format('g:i A'));
-            }
+                echo formatDate($data['route']['arrival_time']);            
             ?>
         </span></div>
     </div>

@@ -1,7 +1,9 @@
 <?php require_once APPROOT . '/views/inc/header.php'; ?>
-<?php
-    session_start();
-?>
+
+<?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
+
+<?php session_start(); ?>
+
     <div class="login-container">
         <div class="left-panel">
             <div class="logo">
@@ -15,6 +17,7 @@
             <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
             <h2>Login</h2>
             <form class="login-form" method="POST" action="<?php echo URLROOT; ?>/auth/login">
+				<?= SessionHelper::csrfInput(); ?>
                 <div class="form-group">
                     <label for="email" data-validate = "Valid email is required: ex@abc.xyz"></label>
                     <input type="text" id="email" name="email" placeholder="Email" required>

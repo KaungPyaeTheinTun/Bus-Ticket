@@ -2,17 +2,17 @@
 
 require_once APPROOT . '/interfaces/SeatRepositoryInterface.php';
 
-class SeatRepository implements SeatRepositoryInterface
-{
-    private $db;
+require_once APPROOT . '/config/DBconnection.php';
 
+class SeatRepository extends DBconnection implements SeatRepositoryInterface
+{
     public function __construct()
     {
-        $this->db = new Database();
+        parent::__construct();
     }
 
     public function createSeat(array $seatData): bool
     {
-        return $this->db->create('seats', $seatData);
+        return $this->getDB()->create('seats', $seatData);
     }
 }

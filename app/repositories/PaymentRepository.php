@@ -2,37 +2,37 @@
 
 require_once APPROOT . '/interfaces/PaymentRepositoryInterface.php';
 
-class PaymentRepository implements PaymentRepositoryInterface
-{
-    private $db;
+require_once APPROOT . '/config/DBconnection.php';
 
+class PaymentRepository extends DBconnection implements PaymentRepositoryInterface
+{
     public function __construct()
     {
-        $this->db = new Database();
+        parent::__construct();
     }
 
     public function getAll()
     {
-        return $this->db->readAll('payments');
+        return $this->getDB()->readAll('payments');
     }
 
     public function getById(int $id)
     {
-        return $this->db->getById('payments', $id);
+        return $this->getDB()->getById('payments', $id);
     }
 
     public function create(array $data)
     {
-        return $this->db->create('payments', $data);
+        return $this->getDB()->create('payments', $data);
     }
 
     public function update(int $id, array $data)
     {
-        return $this->db->update('payments', $id, $data);
+        return $this->getDB()->update('payments', $id, $data);
     }
 
     public function delete(int $id)
     {
-        return $this->db->delete('payments', $id);
+        return $this->getDB()->delete('payments', $id);
     }
 }

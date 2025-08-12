@@ -1,15 +1,13 @@
 <?php
 require_once APPROOT . '/interfaces/RouteRepositoryInterface.php';
 
-use App\Interfaces\RouteRepositoryInterface;
+require_once APPROOT . '/config/DBconnection.php';
 
-class RouteRepository implements RouteRepositoryInterface
+class RouteRepository extends DBconnection implements RouteRepositoryInterface
 {
-    private $db;
-
     public function __construct()
     {
-        $this->db = new Database();
+        parent::__construct();
     }
 
     public function getAll(array $filters = [])
@@ -34,36 +32,36 @@ class RouteRepository implements RouteRepositoryInterface
                 $params[':date'] = $filters['date'];
             }
 
-            return $this->db->runQuery($sql, $params);//dynamic SQL.
+            return $this->getDB()->runQuery($sql, $params);//dynamic SQL.
         }
 
-        return $this->db->readAll('view_route_operator');
+        return $this->getDB()->readAll('view_route_operator');
     }
 
     public function getById(int $id)
     {
-        return $this->db->getById('route', $id);
+        return $this->getDB()->getById('route', $id);
     }
 
     public function create(array $params)
     {
-        return $this->db->routeProcedure('sp_insert_route', $params);
+        return $this->getDB()->routeProcedure('sp_insert_route', $params);
     }
 
     public function delete(int $id)
     {
-        return $this->db->delete('route', $id);
+        return $this->getDB()->delete('route', $id);
     }
 
     public function resetSeatsByRoute(int $route_id)
         {
-            $allSeats = $this->db->readAll('seats');
+            $allSeats = $this->getDB()->readAll('seats');
 
             $deletedCount = 0;
 
             foreach ($allSeats as $seat) {
                 if ((int)$seat['route_id'] === $route_id) {
-                    $this->db->delete('seats', $seat['id']);
+                    $this->getDB()->delete('seats', $seat['id']);
                     $deletedCount++;
                 }
             }

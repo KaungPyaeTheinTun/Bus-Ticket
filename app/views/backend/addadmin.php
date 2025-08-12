@@ -1,5 +1,7 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 
+<?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
+
 <style>
     .error-message {
         color: red;
@@ -12,6 +14,7 @@
             <section class="add-admin-card"> 
                 <?php require APPROOT . '/views/components/auth_message.php'; ?>         
                 <form class="admin-form" name="contactForm" method="POST" action="<?php echo URLROOT; ?>/auth/adminRegister">
+				<?= SessionHelper::csrfInput(); ?>
                     <p class="error-message">
 						<?php
 							if(isset($data['name-err']))

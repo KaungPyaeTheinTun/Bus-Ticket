@@ -1,6 +1,7 @@
 <?php
 
 require_once APPROOT . '/middleware/AuthMiddleware.php';
+
 require_once APPROOT . '/services/HomeService.php';
 
 class Home extends Controller
@@ -37,7 +38,8 @@ class Home extends Controller
 
     public function record()
     {
-        AuthMiddleware::userOnly();
+        AuthMiddleware::requireRole(2);
+        
         if(session_status() == PHP_SESSION_NONE) {
             session_start();
         }
@@ -89,7 +91,7 @@ class Home extends Controller
 
     public function payment()
     {
-        AuthMiddleware::userOnly();
+        AuthMiddleware::requireRole(2);
 
         $selectedId = $_GET['payment_method'] ?? null;
         $data = $this->homeService->getPayments($selectedId);

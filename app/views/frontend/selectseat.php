@@ -2,8 +2,6 @@
 <?php
     $trip = $data['trip'] ?? [];
     $bookedSeatNumbers = $data['bookedSeatNumbers'];
-    $departureFormatted = $trip['departure_time'] ? date('F j g:i A', strtotime($trip['departure_time'])) : '';
-    $arrivalFormatted = $trip['arrival_time'] ? date('F j g:i A', strtotime($trip['arrival_time'])) : '';
 ?>
 <?php if (!empty($_SESSION['error'])): ?>
     <div id="flashMessage" class="flash-message error-message">
@@ -154,11 +152,11 @@
                     <div class="summary-details">
                         <p>
                             <span id="summaryFromLocation"><?= htmlspecialchars($trip['from']) ?></span>
-                            <span class="date" id="summaryDepartureDateTime"><?= htmlspecialchars($departureFormatted) ?></span>
+                            <span class="date" id="summaryDepartureDateTime"><?= formatDate($trip['departure_time']) ?></span>
                         </p>
                         <p>
                             <span id="summaryToLocation"><?= htmlspecialchars($trip['to']) ?></span>
-                            <span class="date" id="summaryArrivalDateTime"><?= htmlspecialchars($arrivalFormatted) ?></span>
+                            <span class="date" id="summaryArrivalDateTime"><?= formatDate($trip['arrival_time']) ?></span>
                         </p>
                         <p class="small-text">*Arrival times are estimates and may be subject to change.</p>
                         <hr>

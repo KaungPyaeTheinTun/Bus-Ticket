@@ -6,7 +6,7 @@ class SeatService
 {
     private $seatRepo;
 
-    public function __construct(SeatRepositoryInterface $seatRepo = null)
+    public function __construct(SeatRepositoryInterface $seatRepo = null)//dependency injection
     {
         $this->seatRepo = $seatRepo ?: new SeatRepository();
     }

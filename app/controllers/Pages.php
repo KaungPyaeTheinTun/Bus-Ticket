@@ -4,8 +4,8 @@ require_once APPROOT . '/middleware/authmiddleware.php';
 
 class Pages extends Controller
 {
-
     private $db;
+
     public function __construct()
     {
         $this->db = new Database();
@@ -42,7 +42,8 @@ class Pages extends Controller
     }
     public function dashboard()
     {
-        AuthMiddleware::adminOnly();
+        AuthMiddleware::requireRole(1);
+        
         $this->view('pages/dashboard');
     }
    

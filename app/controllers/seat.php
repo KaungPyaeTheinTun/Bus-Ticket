@@ -12,7 +12,6 @@ class Seat extends Controller
 
     public function __construct()
     {
-        $db = new Database();
         $this->seatService = new SeatService();
     }
 
