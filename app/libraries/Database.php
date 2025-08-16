@@ -31,7 +31,7 @@ class Database
         }
     }
 
-    public function routeProcedure($name, $params = [])
+    public function callProcedure($name, $params = [])
     {
         try {
             $placeholders = implode(',', array_fill(0, count($params), '?'));
@@ -92,7 +92,7 @@ class Database
         return $this->resultSet();
     }
 
-    public function update($table, $id, $data)
+    /*public function update($table, $id, $data)
     {
         // First, we don't want id from category table
         if (isset($data['id'])) {
@@ -122,6 +122,52 @@ class Database
             return $stm->execute();
         } catch (PDOException $e) {
             echo $e;
+        }
+    }*/
+    public function update($table, $id, $data)
+    {
+        if (isset($data['id'])) {
+            unset($data['id']);
+        }
+
+        try {
+            /* All queries between beginTransaction() and commit() are treated as a single atomic operation.
+             If anything goes wrong, you can roll back and nothing will be saved.*/
+            $this->pdo->beginTransaction();
+
+            /*row-level locking to prevent race conditions
+              FOR UPDATE locks the selected row until the transaction ends.
+              Row-level locking*/
+            $lockSql = "SELECT * FROM `$table` WHERE `id` = :id FOR UPDATE";
+            $lockStmt = $this->pdo->prepare($lockSql);
+            $lockStmt->bindValue(':id', $id, PDO::PARAM_INT);//safely binds the parameter to prevent SQL injection.
+            $lockStmt->execute();
+
+            // Prepare update query
+            $columns = array_map(function($col) {
+                return "`$col` = :$col";
+            }, array_keys($data));
+
+            $bindingSql = implode(',', $columns);
+            $sql = "UPDATE `$table` SET $bindingSql WHERE `id` = :id";
+
+            $stm = $this->pdo->prepare($sql);
+
+            // Bind parameters
+            $data['id'] = $id;
+            foreach ($data as $key => $value) {
+                $stm->bindValue(':' . $key, $value);
+            }
+
+            // Execute update
+            $success = $stm->execute();
+
+            $this->pdo->commit(); //Finalizes the transaction.
+
+            return $success;
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();//Cancels the transaction.
+            throw $e;
         }
     }
 

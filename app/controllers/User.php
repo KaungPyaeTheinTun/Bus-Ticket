@@ -7,11 +7,11 @@ class User extends Controller
 {
     private $userService;
 
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         AuthMiddleware::requireRole(1);
         
-        $this->userService = new UserService();
+        $this->userService = $userService;
     }
 
     public function index()

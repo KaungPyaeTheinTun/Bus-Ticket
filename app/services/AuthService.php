@@ -6,19 +6,27 @@ class AuthService
 {
     private $repo;
 
-    public function __construct(AuthRepositoryInterface $repo = null)
+    public function __construct(AuthRepository $repo)
     {
-        $this->repo = $repo ?: new AuthRepository();
+        $this->repo = $repo;
     }
 
-    public function registerUser(array $formData, int $roleId = ROLE_USER)
+    public function registerUser(array $formData, int $roleId = 2, bool $skipValidation = false)//ROLE_USER
     {
         if ($this->repo->findByEmail($formData['email'])) {
             return ['error' => 'This email is already registered!'];
         }
 
-        $validator = new UserValidator($formData);
-        $errors = $validator->validateForm();
+        // $validator = new UserValidator($formData);
+        // $errors = $validator->validateForm();
+
+          if (!$skipValidation) {
+            $validator = new UserValidator($formData);
+            $errors = $validator->validateForm();
+            if (!empty($errors)) {
+                return ['errors' => $errors];
+            }
+        }
 
         if (!empty($errors)) {
             return ['errors' => $errors];
@@ -51,7 +59,7 @@ class AuthService
         return $user;
     }
 
-    public function sendOTP(string $email)
+    public function sendsOTP(string $email)
     {
         $user = $this->repo->findByEmail($email);
         if (!$user) return false;

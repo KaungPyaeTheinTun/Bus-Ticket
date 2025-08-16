@@ -222,7 +222,7 @@
             <?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
        <section class="all-routes-section">
                 <div class="routes-header-controls">
-                    <h2 class="section-title">All Routes</h2>
+                    <h2 class="section-title"><i class="fas fa-route"></i>&nbsp;&nbsp;&nbsp;All Routes</h2>
                     <div class="search-and-add">
                         <!-- <div class="search-bar">
                             <input type="text" placeholder="From" class="search-input">

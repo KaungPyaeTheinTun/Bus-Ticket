@@ -6,9 +6,9 @@ class OperatorService
 {
     private $repository;
 
-    public function __construct(OperatorRepositoryInterface $repository = null)
+    public function __construct(OperatorRepository $repository)
     {
-        $this->repository = $repository ?: new OperatorRepository();
+        $this->repository = $repository;
     }
 
     public function getBusTypes()

@@ -25,17 +25,18 @@
             <?php require_once APPROOT . '/views/components/auth_message.php';?>
             <h2>Change Password</h2>
             <form class="change-password-form" method = 'POST' action='<?php echo URLROOT; ?>/auth/changepassword'>
-                <p class="text-danger ml-4">
+			<?php echo SessionHelper::csrfInput(); ?>    
+            <p class="text-danger ml-4">
 					<?php
 						if(isset($data['password-err']))
 						echo $data['password-err'];
 					?>
 				</p>
                 <div class="form-group">
-                    <input type="password" id="new-password" name="password" placeholder="New Password" class="password-input" required>
+                    <input type="password" id="new-password" name="password" placeholder="New Password" class="password-input" value="<?php echo htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm New Password" class="password-input" required>
+                    <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm New Password" class="password-input" value="<?php echo htmlspecialchars($_POST['confirm_password'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
                 </div>
                 <input type="checkbox"> Show Password
                 <br><br>

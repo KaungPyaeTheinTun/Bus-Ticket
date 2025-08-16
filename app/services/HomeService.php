@@ -7,9 +7,9 @@ class HomeService
     private $homeRepository;
 
     // Dependency Injection, fallback to default repository
-    public function __construct(HomeRepositoryInterface $homeRepository = null)
+    public function __construct(HomeRepository $homeRepository)
     {
-        $this->homeRepository = $homeRepository ?: new HomeRepository();
+        $this->homeRepository = $homeRepository;
     }
 
     public function getUserRecords($userId)

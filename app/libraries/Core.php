@@ -1,68 +1,146 @@
 <?php
 
-// define url
 class Core
 {
-    // App core class
-    // create url & load controllers
-    // URL method -/controller/method/params
-
-    protected $currentController = "Pages";
-    protected $currentMethod = "index";
+    protected $currentController = 'Pages';
+    protected $currentMethod = 'index';
     protected $params = [];
+
+    // Cache of instantiated dependencies
+    protected $container = [];
+
+    // Map class names (or keywords) to their folders
+    protected $classMap = [
+        'Controller'           => '../app/controllers/',
+        'Service'              => '../app/services/',
+        'Repository'           => '../app/repositories/',
+        'Interface'            => '../app/interfaces/',
+        'Helper'               => '../app/helpers/',
+        'Library'              => '../app/libraries/',
+        'DBconnection'         => '../app/config/',
+        // Add more mappings if needed
+    ];
 
     public function __construct()
     {
         $url = $this->getURL();
-        // print_r($url);
-        // exit;
 
-        // check the first value of URL in controllers
-        if (isset($url[0])) { // pages/ Category
-            // ucwords means change lowercase to uppercase 
-            if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
-                $this->currentController = ucwords($url[0]); // Pages
+        // Controller detection
+        if (isset($url[0])) {
+            $controllerName = ucwords($url[0]);
+            if (file_exists('../app/controllers/' . $controllerName . '.php')) {
+                $this->currentController = $controllerName;
                 unset($url[0]);
             }
         }
 
+        // Require controller file
         require_once('../app/controllers/' . $this->currentController . '.php');
 
-        // create new object
-        $this->currentController = new $this->currentController;
-        // $Pages = new Pages();
-        // $Category = new Category();
+        // Instantiate controller with dependencies injected
+        $this->currentController = $this->resolveController($this->currentController);
 
-        // Check there is any method in controller
-        if (isset($url[1])) {
-            if (method_exists($this->currentController, $url[1])) {
-                $this->currentMethod = $url[1];
-                unset($url[1]);
-            }
-            // print_r($this->currentMethod);
+        // Method detection
+        if (isset($url[1]) && method_exists($this->currentController, $url[1])) {
+            $this->currentMethod = $url[1];
+            unset($url[1]);
         }
 
-        // Get params
+        // Parameters for the method
         $this->params = $url ? array_values($url) : [];
-        // print_r($this->params);
-        // exit();
 
+        // Call the controller method with params
         call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
-        // print_r($this->params);
-        // print_r($url);
-        // exit();
-        // echo $this->currentMethod;
     }
 
-    public function getURL()
+    protected function resolveController(string $controllerName)
+    {
+        $reflection = new ReflectionClass($controllerName);
+        $constructor = $reflection->getConstructor();
+
+        if (!$constructor || $constructor->getNumberOfParameters() === 0) {
+            return new $controllerName;
+        }
+
+        $dependencies = [];
+        foreach ($constructor->getParameters() as $param) {
+            $depClass = $param->getType() && !$param->getType()->isBuiltin()
+                ? $param->getType()->getName()
+                : null;
+
+            if ($depClass) {
+                if (!isset($this->container[$depClass])) {
+                    $this->container[$depClass] = $this->resolveDependency($depClass);
+                }
+                $dependencies[] = $this->container[$depClass];
+            } elseif ($param->isDefaultValueAvailable()) {
+                $dependencies[] = $param->getDefaultValue();
+            } else {
+                throw new Exception("Cannot resolve dependency '{$param->getName()}' for controller '{$controllerName}'");
+            }
+        }
+
+        return $reflection->newInstanceArgs($dependencies);
+    }
+
+    protected function resolveDependency(string $className)
+    {
+        $filePath = $this->getFilePathForClass($className);
+        if (!$filePath || !file_exists($filePath)) {
+            throw new Exception("Class file for '{$className}' not found at '{$filePath}'");
+        }
+
+        require_once $filePath;
+
+        $reflection = new ReflectionClass($className);
+        $constructor = $reflection->getConstructor();
+
+        if (!$constructor || $constructor->getNumberOfParameters() === 0) {
+            return new $className;
+        }
+
+        $dependencies = [];
+        foreach ($constructor->getParameters() as $param) {
+            $depClass = $param->getType() && !$param->getType()->isBuiltin()
+                ? $param->getType()->getName()
+                : null;
+
+            if ($depClass) {
+                if (!isset($this->container[$depClass])) {
+                    $this->container[$depClass] = $this->resolveDependency($depClass);
+                }
+                $dependencies[] = $this->container[$depClass];
+            } elseif ($param->isDefaultValueAvailable()) {
+                $dependencies[] = $param->getDefaultValue();
+            } else {
+                throw new Exception("Cannot resolve dependency '{$param->getName()}' for class '{$className}'");
+            }
+        }
+
+        return $reflection->newInstanceArgs($dependencies);
+    }
+
+    protected function getFilePathForClass(string $className): ?string
+    {
+        // Find mapping by matching any keyword in class name
+        foreach ($this->classMap as $keyword => $folder) {
+            if (stripos($className, $keyword) !== false) {
+                return $folder . $className . '.php';
+            }
+        }
+
+        // Default to app root folder (change if needed)
+        $defaultPath = '../app/' . $className . '.php';
+        return file_exists($defaultPath) ? $defaultPath : null;
+    }
+
+    public function getURL(): array
     {
         if (isset($_GET['url'])) {
             $url = rtrim($_GET['url'], '/');
-            // FILTER_SANITIZE_URL filter removes all illegal URL characters from a string.
-            // This filter allows all letters, digits and $-_.+!*'(),{}|\\^~[]`"><#%;/?:@&=
-            $url = filter_var($url, FILTER_SANITIZE_URL); //remove illegal
-            $url = explode('/', $url); //Break a string into an array
-            return $url;
+            $url = filter_var($url, FILTER_SANITIZE_URL);
+            return explode('/', $url);
         }
+        return [];
     }
 }

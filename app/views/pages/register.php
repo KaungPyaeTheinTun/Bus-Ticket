@@ -3,7 +3,7 @@
 
 <?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
 
-<?php session_start(); ?>
+<!-- <?php session_start(); ?> -->
 
     <div class="register-container">
         <div class="left-panel">
@@ -18,7 +18,7 @@
             <?php require_once APPROOT . '/views/components/auth_message.php';?>
             <h2>Register</h2>
             <form class="register-form" name="contactForm" method="POST" action="<?php echo URLROOT; ?>/auth/register">
-				<?= SessionHelper::csrfInput(); ?>
+				<?php echo SessionHelper::csrfInput(); ?>
                 <p class="text-danger ml-4">
 						<?php
 							if(isset($data['name-err']))
@@ -27,7 +27,7 @@
 					</p>
                 <div class="form-group" data-validate = "Valid Name is required:">
                     <!-- <label for="name">Name</label> -->
-                    <input type="text" id="name" name="name" placeholder="Name">
+                    <input type="text" id="name" name="name" placeholder="Name" value="<?php echo htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
 				<p class="text-danger ml-4">
 						<?php
@@ -37,7 +37,7 @@
 				</p>
                 <div class="form-group" data-validate = "Valid phone is required:">
                     <!-- <label for="phone">Phone</label> -->
-                    <input type="text" id="phone" name="phone" placeholder="Phone">
+                    <input type="text" id="phone" name="phone" placeholder="Phone" value="<?php echo htmlspecialchars($_POST['phone'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
                 <p class="text-danger ml-4">
 						<?php
@@ -47,7 +47,7 @@
 				</p>
                 <div class="form-group" data-validate = "Valid email is required: ex@abc.xyz">
                     <!-- <label for="phone">Email</label> -->
-                    <input type="text" id="email" name="email" placeholder="Email">
+                    <input type="text" id="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
 
                 <p class="text-danger ml-4">
@@ -58,7 +58,7 @@
 					</p>
                 <div class="form-group password-group" data-validate = "Password is required">
                     <!-- <label for="password">Password</label> -->
-                    <input type="password" id="myInput" name="password" placeholder="Password">
+                    <input type="password" id="myInput" name="password" placeholder="Password" value="<?php echo htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
 				<input type="checkbox" onclick="myFunction()"> Show Password
 				<br><br>

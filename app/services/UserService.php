@@ -5,9 +5,9 @@ class UserService
 {
     private $userRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository = null)
+    public function __construct(UserRepository $userRepository)
     {
-        $this->userRepository = $userRepository ?: new UserRepository();
+        $this->userRepository = $userRepository;
     }
 
     public function getAdmins()

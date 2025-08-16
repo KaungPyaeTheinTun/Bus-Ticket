@@ -45,7 +45,7 @@ class RouteRepository extends DBconnection implements RouteRepositoryInterface
 
     public function create(array $params)
     {
-        return $this->getDB()->routeProcedure('sp_insert_route', $params);
+        return $this->getDB()->callProcedure('sp_insert_route', $params);
     }
 
     public function delete(int $id)

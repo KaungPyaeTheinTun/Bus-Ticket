@@ -1,19 +1,25 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
-        <?php if (!empty($_SESSION['success'])): ?>
-            <div id="flashMessage" class="flash-message success-message">
-                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
-        <?php if (!empty($_SESSION['error'])): ?>
-            <div id="flashMessage" class="flash-message error-message">
-                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-        <?php if (!empty($_SESSION['pending'])): ?>
-            <div id="flashMessage" class="flash-message pending-message">
-                <?php echo $_SESSION['pending']; unset($_SESSION['pending']); ?>
-            </div>
-        <?php endif; ?>
+
+<?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
+
+<?php if (!empty($_SESSION['success'])): ?>
+    <div id="flashMessage" class="flash-message success-message">
+        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['error'])): ?>
+    <div id="flashMessage" class="flash-message error-message">
+        <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($_SESSION['pending'])): ?>
+    <div id="flashMessage" class="flash-message pending-message">
+        <?php echo $_SESSION['pending']; unset($_SESSION['pending']); ?>
+    </div>
+<?php endif; ?>
+
 <style>
     .flash-message {
             position: fixed;
@@ -134,9 +140,81 @@
         color: #555;
         line-height: 1;
     }
+
+    /* New Status Control Styles */
+    .status-control-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .status-dropdown {
+        padding: 0px 12px;
+        border: 1px solid #ddd;
+        border-radius: 19px;
+        font-size: 14px;
+        max-width: 128px;
+        height:30px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+
+
+
+    .status-dropdown:hover {
+        border-color: #007bff;
+    }
+
+    .status-dropdown option {
+        padding: 8px;
+    }
+
+    /* Style the select based on selected value */
+    .status-dropdown.status-pending {
+        border-color:rgb(255, 191, 0);
+        background-color: #fff9e6;
+    }
+
+    .status-dropdown.status-approved {
+        border-color:rgb(22, 201, 64);
+        background-color: #e8f5e8;
+    }
+
+    .status-dropdown.status-declined {
+        border-color:rgb(226, 5, 28);
+        background-color: #fdeaea;
+    }
+
+    /* Current status badge */
+    .current-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
+    .current-status.status-pending {
+        background-color:rgb(255, 196, 0);
+        color: #856404;
+    }
+
+    .current-status.status-approved {
+        background-color:rgb(0, 203, 129);
+        color: #0c5460;
+    }
+
+    .current-status.status-declined {
+        background-color:rgb(254, 0, 21);
+        color: #721c24;
+    }
 </style>
-</head>
-<body>
+
 <div class="container">
     <main class="main-content">
         <?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
@@ -148,7 +226,6 @@
                         <tr>
                             <th>Name</th>
                             <th>Bus Operators</th>
-                            <th>Bus_Type</th>
                             <th>Amount</th>
                             <th>Payment_slip</th>
                             <th>Seat_No</th>
@@ -157,11 +234,11 @@
                         </tr>
                     </thead>
                     <tbody>
+                      <?php if (!empty($data['booking']) && is_array($data['booking'])): ?>
                         <?php foreach ($data['booking'] as $booking): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($booking['user_name']); ?></td>
                                 <td><?php echo htmlspecialchars($booking['operator_name']); ?></td>
-                                <td><?php echo htmlspecialchars($booking['bus_type']); ?></td>
                                 <td style="color:green;">MMK <?php echo htmlspecialchars(number_format($booking['total_price'])); ?></td>
                                 <td style="text-align:center;">
                                     <?php if (!empty($booking['payment_slip'])): ?>
@@ -184,25 +261,44 @@
                                     ?>
                                 </td>                          
                                 
-                                <td>
-                                <form class="status-buttons" action="<?php echo URLROOT; ?>/booking/updateStatus/<?php echo $booking['booking_id']; ?>" method="POST" style="display:flex; gap:5px;">
-                                    <button type="submit" name="status" value="1" 
-                                        title="Pending"
-                                        style="background: none; border: none; cursor:pointer; color: <?php echo ($booking['is_booked']=='1' ? '#f1c40f' : '#ccc'); ?>;">
-                                        <i class="fas fa-hourglass-half"></i>
-                                    </button>
-                                    <button type="submit" name="status" value="2" 
-                                        title="Approved"
-                                        style="background: none; border: none; cursor:pointer; color: <?php echo ($booking['is_booked']=='2' ? '#27ae60' : '#ccc'); ?>;">
-                                        <i class="fas fa-check-circle"></i>
-                                    </button>
-                                    <button type="submit" name="status" value="0" 
-                                        title="Declined"
-                                        style="background: none; border: none; cursor:pointer; color: <?php echo ($booking['is_booked']=='0' ? '#e74c3c' : '#ccc'); ?>;">
-                                        <i class="fas fa-times-circle"></i>
-                                    </button>
-                                </form>
-                            </td>
+                                <td style="text-align: center;">
+                                    <div class="status-control-container">
+                                        <!-- Current Status Badge -->
+                                        <!-- <div class="current-status status-<?php echo ($booking['is_booked']=='1' ? 'pending' : ($booking['is_booked']=='2' ? 'approved' : 'declined')); ?>">
+                                            <?php 
+                                                if ($booking['is_booked'] == '1') echo '⏳ Pending';
+                                                elseif ($booking['is_booked'] == '2') echo '✅ Approved'; 
+                                                else echo '❌ Canceled';
+                                            ?>
+                                        </div> -->
+                                        <!-- Status Control Form -->
+                                        <form class="status-form" action="<?php echo URLROOT; ?>/booking/updateStatus/<?php echo $booking['booking_id']; ?>" method="POST">
+				                            <?php echo SessionHelper::csrfInput(); ?>
+                                            <select class="status-dropdown status-<?php echo ($booking['is_booked']=='1' ? 'pending' : ($booking['is_booked']=='2' ? 'approved' : 'declined')); ?>" 
+                                                    name="status" 
+                                                    data-booking-id="<?php echo $booking['booking_id']; ?>" 
+                                                    data-current-status="<?php echo $booking['is_booked']; ?>"
+                                                    onchange="this.form.submit()">
+                                                <option value="<?php echo $booking['is_booked']; ?>" selected>
+                                                    <?php 
+                                                        if ($booking['is_booked'] == '1') echo '⏳Pending';
+                                                        elseif ($booking['is_booked'] == '2') echo '✅Confirmed'; 
+                                                        else echo '❌Canceled';
+                                                    ?>
+                                                </option>
+                                                <?php if ($booking['is_booked'] != '1'): ?>
+                                                    <option value="1">⏳Pending</option>
+                                                <?php endif; ?>
+                                                <?php if ($booking['is_booked'] != '2'): ?>
+                                                    <option value="2">✅Confirmed</option>
+                                                <?php endif; ?>
+                                                <?php if ($booking['is_booked'] != '0'): ?>
+                                                    <option value="0">❌Declined</option>
+                                                <?php endif; ?>
+                                            </select>
+                                        </form>
+                                    </div>
+                                </td>
                                 
                                 <td style="text-align: center;">
                                    <a href="<?php echo URLROOT; ?>/booking/deleteseat/<?php echo base64_encode($booking['seat_number']); ?>" 
@@ -213,6 +309,11 @@
                                 </td>
                             </tr>                                
                         <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="7" style="text-align:center;">No Booking !</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -244,7 +345,9 @@
         </div>
     </div>
 </div>
+
 <script>
+    // Original delete functionality
     const deleteButtons = document.querySelectorAll('.delete-admin-btn');
     const deleteModal = document.getElementById('deleteConfirmationModal');
     const adminNameToDeleteSpan = document.getElementById('adminNameToDelete');
@@ -272,7 +375,7 @@
         }
     });
 
-        // Payment slip modal logic
+    // Original payment slip modal logic
     const paymentSlipModal = document.getElementById('paymentSlipModal');
     const paymentSlipImage = document.getElementById('paymentSlipImage');
     const closePaymentSlipModalBtn = document.getElementById('closePaymentSlipModal');
@@ -290,7 +393,6 @@
         paymentSlipImage.src = '';
     });
 
-    // Also close modal when clicking outside modal-content
     paymentSlipModal.addEventListener('click', (e) => {
         if (e.target === paymentSlipModal) {
             paymentSlipModal.style.display = 'none';
@@ -298,10 +400,31 @@
         }
     });
 
-// Flash message auto hide
-const flash = document.getElementById('flashMessage');
-if(flash){
-    setTimeout(()=>{flash.style.animation="fadeOut 0.5s forwards"; setTimeout(()=>flash.remove(),500);},2000);
-}
-</script>
+    // New Status Control Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusDropdowns = document.querySelectorAll('.status-dropdown');
 
+        // Handle dropdown changes with visual feedback
+        statusDropdowns.forEach(dropdown => {
+            dropdown.addEventListener('change', function() {
+                const selectedValue = this.value;
+                
+                // Update dropdown styling based on selection
+                this.classList.remove('status-pending', 'status-approved', 'status-declined');
+                
+                if (selectedValue === '1') {
+                    this.classList.add('status-pending');
+                } else if (selectedValue === '2') {
+                    this.classList.add('status-approved');
+                } else if (selectedValue === '0') {
+                    this.classList.add('status-declined');
+                }
+            });
+        });
+    });
+        // Flash message auto hide
+    const flash = document.getElementById('flashMessage');
+    if(flash){
+        setTimeout(()=>{flash.style.animation="fadeOut 0.5s forwards"; setTimeout(()=>flash.remove(),500);},2000);
+    }
+</script>

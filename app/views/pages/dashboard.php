@@ -1,6 +1,7 @@
 
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 
+</style>
     <div class="container">
         <main class="main-content">
             <?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
@@ -12,102 +13,77 @@
                     </div>
                     <div class="details">
                         <p>Total Operators</p>
-                        <span>8</span>
+                        <span><?= $data['totalOperators']; ?></span>
                     </div>
                 </div>
+
                 <div class="summary-card">
                     <div class="icon-wrapper green">
                         <i class="fas fa-globe-asia"></i>
                     </div>
                     <div class="details">
                         <p>Total Routes</p>
-                        <span>16</span>
+                        <span><?= $data['totalRoutes']; ?></span>
                     </div>
                 </div>
+
                 <div class="summary-card">
                     <div class="icon-wrapper yellow">
                         <i class="fas fa-ticket-alt"></i>
                     </div>
                     <div class="details">
                         <p>Total Bookings</p>
-                        <span>10</span>
+                        <span><?= $data['totalBookings']; ?></span>
                     </div>
                 </div>
+
                 <div class="summary-card">
                     <div class="icon-wrapper blue">
                         <i class="fas fa-bus"></i>
                     </div>
                     <div class="details">
                         <p>Ongoing Bus</p>
-                        <span>5</span>
+                        <span><?= $data['ongoingBusCount']; ?></span>
                     </div>
                 </div>
-                <div class="summary-card">
-                    <div class="icon-wrapper green">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="details">
-                        <p>Active Bus</p>
-                        <span>7</span>
-                    </div>
-                </div>
+
                 <div class="summary-card">
                     <div class="icon-wrapper orange">
                         <i class="fas fa-exclamation-circle"></i>
                     </div>
                     <div class="details">
                         <p>Pending Transaction</p>
-                        <span>7</span>
+                        <span><?= $data['pendingBookings']; ?></span>
                     </div>
                 </div>
+
                 <div class="summary-card revenue">
                     <div class="icon-wrapper green">
                         <i class="fas fa-building"></i>
                     </div>
                     <div class="details">
-                        <p>Revenue Today</p>
-                        <span>700,000 MMK</span>
+                        <p>Revenue</p>
+                        <span><?= number_format($data['revenue']); ?> MMK</span>
                     </div>
                 </div>
+
             </section>
 
             <section class="ongoing-bus">
                 <h3>Ongoing Bus</h3>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Shwe Mandalar</th>
-                            <th>Yangon - Mandalay</th>
-                            <th>May 14, 7:30 AM</th>
-                        </tr>
-                    </thead>
                     <tbody>
-                        <tr>
-                            <td>Lumbini</td>
-                            <td>Yangon - NayPyiTaw</td>
-                            <td>May 14, 7:30 AM</td>
-                        </tr>
-                        <tr>
-                            <td>JJ Express</td>
-                            <td>Yangon - TaungGyi</td>
-                            <td>May 14, 7:30 AM</td>
-                        </tr>
-                        <tr>
-                            <td>Elite Express</td>
-                            <td>Yangon - Meiktila</td>
-                            <td>May 14, 7:30 AM</td>
-                        </tr>
-                        <tr>
-                            <td>Lumbini</td>
-                            <td>Yangon - Mandalay</td>
-                            <td>May 14, 7:30 AM</td>
-                        </tr>
-                        <tr>
-                            <td>Shwe Mandalar</td>
-                            <td>Yangon - Mandalay</td>
-                            <td>May 14, 7:30 AM</td>
-                        </tr>
-                        
+                        <?php if (empty($data['ongoingBuses'])): ?>
+                            <tr><td colspan="3">No ongoing bus!</td></tr>
+                        <?php else: ?>
+                            <?php foreach ($data['ongoingBuses'] as $bus): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($bus['operator_name']); ?></td>
+                                    <td><?= htmlspecialchars($bus['from_location'] . ' - ' . $bus['to_location']); ?></td>
+                                    <td><?= date('M d, h:i A', strtotime($bus['departure_time'])); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </section>

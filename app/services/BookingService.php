@@ -6,9 +6,9 @@ class BookingService
 {
     private $bookingRepository;
 
-    public function __construct(BookingRepositoryInterface $bookingRepository = null)
+    public function __construct(BookingRepository $bookingRepository)
     {
-        $this->bookingRepository = $bookingRepository ?: new BookingRepository();
+        $this->bookingRepository = $bookingRepository;
     }
 
     public function getAllBookings(): array

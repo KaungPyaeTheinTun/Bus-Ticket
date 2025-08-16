@@ -9,7 +9,7 @@ class AuthMiddleware
         SessionHelper::startSecureSession();
 
         if (!isset($_SESSION['session_loginuserid'])) {
-            $_SESSION['error'] = "Please login first.";
+            $_SESSION['error'] = "⚠️ Access denied !";
             header("Location: " . URLROOT . "/pages/login");
             exit();
         }

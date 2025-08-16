@@ -6,10 +6,10 @@ class PaymentService
 {
     private $paymentRepo;
 
-    public function __construct(PaymentRepositoryInterface $paymentRepo = null)
+    public function __construct(PaymentRepository $paymentRepo)
     {
         // Dependency Injection 
-        $this->paymentRepo = $paymentRepo ?: new PaymentRepository();
+        $this->paymentRepo = $paymentRepo;
     }
 
     public function getAllPayments()

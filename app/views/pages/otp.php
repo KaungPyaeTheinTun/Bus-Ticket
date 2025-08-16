@@ -49,126 +49,99 @@ $user = $_SESSION['post_mail'];
                     <input type="text" name="otp[]" maxlength="1" class="otp-input">
                     <input type="text" name="otp[]" maxlength="1" class="otp-input">
                 </div>
+                <button type="submit" class="submit-button">Submit</button></a>
+            </form><br>
+            <form method="POST" action="<?php echo URLROOT; ?>/auth/forgetpassword">
                 <div class="resend-section">
                     <span id="resendTimer">Didn't get code?</span>
                     <a href="#" id="requestAgainLink" class="disabled">Request again</a>
                 </div>
-                <button type="submit" class="submit-button">Submit</button></a>
             </form>
         </div>
     </div>
 
-    <script>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
-            const otpInputs = document.querySelectorAll('.otp-input');
-            const otpErrorMessage = document.getElementById('otpErrorMessage');
-            const requestAgainLink = document.getElementById('requestAgainLink');
-            const resendTimerSpan = document.getElementById('resendTimer');
-            let countdown = 60; // 60 seconds for resend timer
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const otpErrorMessage = document.getElementById('otpErrorMessage');
+        const requestAgainLink = document.getElementById('requestAgainLink');
+        const resendTimerSpan = document.getElementById('resendTimer');
+        let countdown = 5;
+        let timer = null;
 
-            // Function to start the resend countdown
-            function startResendCountdown() {
-                countdown = 60; // Reset countdown
-                requestAgainLink.classList.add('disabled');
-                requestAgainLink.style.pointerEvents = 'none'; // Disable clicking
-                requestAgainLink.style.color = '#ccc'; // Gray out link
+        function startResendCountdown() {
+            countdown = 5;
+            requestAgainLink.classList.add('disabled');
+            requestAgainLink.style.pointerEvents = 'none';
+            requestAgainLink.style.color = '#ccc';
 
-                resendTimerSpan.textContent = `Didn't get code? ${countdown}s`;
+            updateTimerText();
 
-                const timer = setInterval(() => {
-                    countdown--;
-                    if (countdown <= 0) {
-                        clearInterval(timer);
-                        resendTimerSpan.textContent = `Didn't get code?`;
-                        requestAgainLink.classList.remove('disabled');
-                        requestAgainLink.style.pointerEvents = 'auto'; // Re-enable clicking
-                        requestAgainLink.style.color = 'var(--primary-blue)'; // Restore color
-                    } else {
-                        resendTimerSpan.textContent = `Didn't get code? ${countdown}s`;
-                    }
-                }, 1000);
+            // Clear any existing timer to avoid multiple intervals running
+            if (timer) clearInterval(timer);
+
+            timer = setInterval(() => {
+                countdown--;
+                updateTimerText();
+
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    timer = null;
+                    requestAgainLink.classList.remove('disabled');
+                    requestAgainLink.style.pointerEvents = 'auto';
+                    requestAgainLink.style.color = 'var(--primary-blue)';
+                    resendTimerSpan.textContent = `Didn't get code?`;
+                }
+            }, 1000);
+        }
+
+        function updateTimerText() {
+            resendTimerSpan.textContent = `Didn't get code? ${countdown}s`;
+        }
+
+        // Event listener for "Request again"
+        requestAgainLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            if (!this.classList.contains('disabled')) {
+                startResendCountdown();
             }
+        });
 
-            // OTP input auto-focus and backspace logic
-                otpInputs.forEach((input, index) => {
-                // Handle normal typing
-                input.addEventListener('input', function(e) {
-                    let value = e.target.value;
+        // Start countdown on page load
+        startResendCountdown();
 
-                    // Keep only the last digit if user pastes or types more than one char
-                    if (value.length > 1) {
-                        value = value.slice(-1);
-                        e.target.value = value;
-                    }
+        // OTP auto-focus and backspace logic
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value;
+                if (value.length > 1) value = value.slice(-1);
+                e.target.value = value;
 
-                    // Move to next input if filled
-                    if (value && index < otpInputs.length - 1) {
-                        otpInputs[index + 1].focus();
-                    }
-
-                    // If user pastes the whole OTP into the first field
-                    if (value.length > 1 && e.inputType !== 'deleteContentBackward') {
-                        const chars = value.split('');
-                        otpInputs.forEach((inputBox, i) => {
-                            inputBox.value = chars[i] || '';
-                        });
-                        otpInputs[Math.min(chars.length, otpInputs.length) - 1].focus();
-                    }
-                });
-
-                // Handle backspace: go back to previous field
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                        otpInputs[index - 1].focus();
-                    }
-                });
+                if (value && index < otpInputs.length - 1) otpInputs[index + 1].focus();
             });
 
-            // Allow pasting directly to the first box
-            otpInputs[0].addEventListener('paste', function(e) {
-                const pasteData = e.clipboardData.getData('text').trim();
-                if (/^\d+$/.test(pasteData)) { // only numbers
-                    const chars = pasteData.split('');
-                    otpInputs.forEach((inputBox, i) => {
-                        inputBox.value = chars[i] || '';
-                    });
-                    otpInputs[Math.min(chars.length, otpInputs.length) - 1].focus();
-                    e.preventDefault();
-                }
-            });
-
-            // Initially show the error message as per the image
-            otpErrorMessage.style.display = 'block';
-
-            // Start countdown on page load (assuming OTP just sent)
-            startResendCountdown();
-
-            // Event listener for "Request again"
-            requestAgainLink.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default link behavior
-                if (!this.classList.contains('disabled')) {
-                    alert('OTP requested again!'); // In a real app, send new OTP
-                    startResendCountdown(); // Restart the countdown
-                }
-            });
-
-            // Example: Hide error message on form submission (simulate a retry)
-            const otpForm = document.querySelector('.otp-form');
-            otpForm.addEventListener('submit', (event) => {
-                event.preventDefault(); // Prevent default form submission
-                otpErrorMessage.style.display = 'none'; // Hide error when submitting
-
-                // Simulate OTP validation
-                const enteredOtp = Array.from(otpInputs).map(input => input.value).join('');
-                if (enteredOtp === '123456') { // Example correct OTP
-                    alert('OTP Verified Successfully!');
-                } else {
-                    setTimeout(() => {
-                        otpErrorMessage.style.display = 'block'; // Show error after a short delay
-                    }, 500);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
                 }
             });
         });
-    </script>
+
+        // Allow pasting into first input
+        otpInputs[0].addEventListener('paste', function(e) {
+            const pasteData = e.clipboardData.getData('text').trim();
+            if (/^\d+$/.test(pasteData)) {
+                const chars = pasteData.split('');
+                otpInputs.forEach((inputBox, i) => {
+                    inputBox.value = chars[i] || '';
+                });
+                otpInputs[Math.min(chars.length, otpInputs.length) - 1].focus();
+                e.preventDefault();
+            }
+        });
+    });
+
+</script>
+
 </body>
 </html>
