@@ -6,9 +6,9 @@ class RouteService
 {
     private $routeRepository;
 
-    public function __construct(RouteRepositoryInterface $routeRepository = null)
+    public function __construct(RouteRepository $routeRepository)
     {
-        $this->routeRepository = $routeRepository ?: new RouteRepository();
+        $this->routeRepository = $routeRepository;
     }
 
     public function getRoutes(array $filters = [])

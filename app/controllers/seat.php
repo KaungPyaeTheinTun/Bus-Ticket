@@ -10,9 +10,9 @@ class Seat extends Controller
 {
     private $seatService;
 
-    public function __construct()
+    public function __construct(SeatService $seatService)
     {
-        $this->seatService = new SeatService();
+        $this->seatService = $seatService;
     }
 
     public function store()

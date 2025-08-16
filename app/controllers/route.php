@@ -2,7 +2,7 @@
 // if(session_status() == PHP_SESSION_NONE) {
 //     session_start();
 // }
-require_once APPROOT . '/services/Service_route.php';
+require_once APPROOT . '/services/RouteService.php';
 
 require_once APPROOT . '/middleware/authmiddleware.php';
 
@@ -10,11 +10,11 @@ class Route extends Controller
 {
     private $routeService;
 
-    public function __construct()
+    public function __construct(RouteService $routeService)
     {
         AuthMiddleware::requireRole(1);
         
-        $this->routeService = new RouteService();
+        $this->routeService = $routeService;
     }
 
     public function index()
@@ -98,62 +98,30 @@ class Route extends Controller
 
         redirect('/route');
     }
-    
-    // public function resetSeats() 
-    // {
-    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    //         $route_id = $_POST['route_id'] ?? null;
 
-    //         if ($route_id) {
-    //             $allSeats = $this->db->readAll('seats');
-
-    //             $seatsToDelete = [];
-    //             foreach ($allSeats as $seat) {
-    //                 if ((int)$seat['route_id'] === (int)$route_id) {
-    //                     $seatsToDelete[] = $seat['id'];
-    //                 }
-    //             }
-
-    //             $encodedId = base64_encode($route_id);
-
-    //             if (empty($seatsToDelete)) {
-    //                 $_SESSION['error'] = "❌ No booked seats to reset!";
-    //                 redirect('route/detail?id=' . $encodedId);
-    //                 return;
-    //             }
-
-    //             foreach ($seatsToDelete as $seatId) {
-    //                 $this->db->delete('seats', $seatId);
-    //             }
-
-    //             $_SESSION['success'] = "✅ Seats have been reset successfully.";
-    //             redirect('route/detail?id=' . $encodedId);
-    //             return;
-    //         }
-    //     }
-
-    //     $_SESSION['error'] = "❌ Invalid request!";
-    //     redirect('/route');
-    // }
     public function resetSeats()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $route_id = $_POST['route_id'] ?? null;
 
             if ($route_id) {
-                $service = new RouteService();
-                $success = $service->resetSeats((int)$route_id);
+                // Use the injected service instead of creating a new one
+                $success = $this->routeService->resetSeats((int)$route_id);
 
                 $encodedId = base64_encode($route_id);
 
-                $_SESSION[$success ? 'success' : 'error'] = $success ? "✅ Seats have been reset." : "❌ No seats found for reset.";
+                $_SESSION[$success ? 'success' : 'error'] = $success 
+                    ? "✅ Seats have been reset." 
+                    : "❌ No seats found for reset.";
 
                 redirect('route/detail?id=' . $encodedId);
                 return;
             }
         }
+
         $_SESSION['error'] = "❌ Invalid request!";
         redirect('/route');
     }
+
 
 }

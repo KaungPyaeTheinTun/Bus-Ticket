@@ -3,15 +3,27 @@ require_once APPROOT . '/middleware/authmiddleware.php';
 
 require_once APPROOT . '/services/BookingService.php';
 
+require_once APPROOT . '/helpers/SessionHelper.php';
+
 class Booking extends Controller
 {
     private $bookingService;
 
-    public function __construct()
+    public function __construct(BookingService $bookingService)
     {
         AuthMiddleware::requireRole(1);
         
-        $this->bookingService = new BookingService();
+        $this->bookingService = $bookingService;
+    }
+
+    private function startSessionAndValidateCsrf()
+    {
+        SessionHelper::startSecureSession();
+        if (!SessionHelper::validateCsrfToken($_POST['csrf_token'] ?? null)) {
+            setMessage('error', '⚠️ Invalid request (CSRF).');
+            redirect($_SERVER['HTTP_REFERER'] ?? 'pages/login');
+            exit;
+        }
     }
 
     public function index()
@@ -30,6 +42,7 @@ class Booking extends Controller
     public function updateStatus($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->startSessionAndValidateCsrf();
             $status = $_POST['status'] ?? null;
             if (!in_array($status, ['0', '1', '2'])) {
                 $_SESSION['error'] = '❌ Invalid status value.';

@@ -1,6 +1,7 @@
 <?php
 class SessionHelper
 {
+    //static means you can call it without creating an object
     public static function startSecureSession()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -44,7 +45,7 @@ class SessionHelper
         if (empty($token) || empty($_SESSION['csrf_token'])) {
             return false;
         }
-
+        //prevents timing attacks
         $valid = hash_equals($_SESSION['csrf_token'], $token);
 
         // Optional: expire tokens after e.g. 30 minutes

@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 class Mail
 {
 
-    public function verifyMail($recipient_mail,$recipient_name,$token)
+    /*public function verifyMail($recipient_mail,$recipient_name,$token)
     {
         // Load Composer's autoloader
         require '../vendor/autoload.php';
@@ -43,7 +43,7 @@ class Mail
             //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
 
-    }
+    }*/
 
     public function sendOtp($recipient_mail,$otp)
     {
@@ -70,10 +70,88 @@ class Mail
             $mail->addAddress($recipient_mail);     // Add a recipient
 
             // Content
-            $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = 'Verify Mail';
-            $mail->Body    = "<b> $otp' </a></b> to reset your password.";
-            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+            $mail->Subject = 'Your OTP for My Bus Ticket';
+            $mail->isHTML(true);
+
+            $mail->Body = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>My Bus Ticket OTP</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f7f7f7;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 20px auto;
+                        background-color: #ffffff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    }
+                    .header {
+                        text-align: center;
+                        color: #2E86C1;
+                    }
+                    .otp-code {
+                        font-size: 28px;
+                        font-weight: bold;
+                        color: #ffffff;
+                        background-color: #2E86C1;
+                        padding: 15px 25px;
+                        border-radius: 5px;
+                        display: inline-block;
+                        margin: 20px 0;
+                        letter-spacing: 3px;
+                    }
+                    .content p {
+                        font-size: 16px;
+                        color: #333333;
+                        line-height: 1.5;
+                    }
+                    .footer {
+                        font-size: 12px;
+                        color: #777777;
+                        text-align: center;
+                        margin-top: 30px;
+                    }
+                    @media only screen and (max-width: 480px) {
+                        .container {
+                            padding: 15px;
+                        }
+                        .otp-code {
+                            font-size: 24px;
+                            padding: 12px 20px;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h2 class="header">My Bus Ticket</h2>
+                    <div class="content">
+                        <p>Dear User,</p>
+                        <p>Use the following <strong>OTP code</strong> to reset your password:</p>
+                        <div class="otp-code">' . $otp . '</div>
+                        <p>If you did not request a password reset, please ignore this email.</p>
+                    </div>
+                    <div class="footer">
+                        &copy; ' . date('Y') . ' My Bus Ticket. All rights reserved.
+                    </div>
+                </div>
+            </body>
+            </html>
+            ';
+
+            $mail->AltBody = "Your OTP for My Bus Ticket: $otp. This OTP is valid for 10 minutes. If you did not request a password reset, please ignore this email.";
+
+
 
             $success = $mail->send();
             //echo 'Message has been sent';

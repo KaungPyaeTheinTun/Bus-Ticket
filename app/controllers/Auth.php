@@ -10,9 +10,9 @@ class Auth extends Controller
 {
     private $authService;
 
-    public function __construct()
+    public function __construct(AuthService $authService)
     {
-        $this->authService = new AuthService();
+        $this->authService = $authService;
     }
 
     private function ensurePost()
@@ -27,7 +27,7 @@ class Auth extends Controller
     {
         SessionHelper::startSecureSession();
         if (!SessionHelper::validateCsrfToken($_POST['csrf_token'] ?? null)) {
-            setMessage('error', 'Invalid request (CSRF).');
+            setMessage('error', '⚠️ Invalid request (CSRF).');
             redirect($_SERVER['HTTP_REFERER'] ?? 'pages/login');
             exit;
         }
@@ -121,6 +121,7 @@ class Auth extends Controller
     public function forgetpassword()
     {
         $this->ensurePost();
+        // $this->startSessionAndValidateCsrf();
 
         if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
             setMessage('error', '⚠️ Valid email is required.');
@@ -128,7 +129,7 @@ class Auth extends Controller
             return;
         }
 
-        if ($this->authService->sendOTP($_POST['email'])) {
+        if ($this->authService->sendsOTP($_POST['email'])) {
             session_start();
             $_SESSION['post_mail'] = $_POST['email'];
             redirect('pages/otp');
@@ -141,6 +142,7 @@ class Auth extends Controller
     public function otp()
     {
         $this->ensurePost();
+        // $this->startSessionAndValidateCsrf();
 
         $otp = implode('', $_POST['otp'] ?? []);
         if (!preg_match('/^\d{6}$/', $otp)) {
@@ -169,6 +171,7 @@ class Auth extends Controller
     public function changepassword()
     {
         $this->ensurePost();
+        // $this->startSessionAndValidateCsrf();
 
         session_start();
         $email = $_SESSION['otp'] ?? null;
@@ -205,6 +208,7 @@ class Auth extends Controller
     public function changepasswordadmin()
     {
         $this->ensurePost();
+        // $this->startSessionAndValidateCsrf();
 
         session_start();
         $adminId = $_SESSION['session_loginuserid'] ?? null;

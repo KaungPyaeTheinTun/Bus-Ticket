@@ -1,31 +1,45 @@
 <?php
 // tests/bootstrap.php
-// adjust APPROOT to your structure if needed
-define('APPROOT', realpath(__DIR__ . '/../app')); // edit if app path differs
 
-// autoload vendor if you use composer for other libs
-require_once __DIR__ . '/../vendor/autoload.php';
+// Define APPROOT for consistent absolute paths in tests
+if (!defined('APPROOT')) {
+    define('APPROOT', realpath(__DIR__ . '/../app'));
+}
 
-// ensure session available in tests
-if (session_status() == PHP_SESSION_NONE) {
+// Load Composer's autoloader if available
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
+
+// Start a session if not already started (some classes may rely on sessions)
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Provide a safe redirect() implementation for tests (so the app's redirect helper doesn't call header+exit)
+// Provide a safe redirect() helper for tests to avoid headers + exit()
+// Instead, throw an exception to allow testing redirections
 if (!function_exists('redirect')) {
+
     class RedirectException extends \Exception
     {
-        public $path;
-        public function __construct($path)
+        public string $path;
+
+        public function __construct(string $path)
         {
             parent::__construct("REDIRECT:$path");
             $this->path = $path;
         }
     }
 
-    function redirect($path)
+    /**
+     * Simulates redirect by throwing an exception with target path.
+     *
+     * @param string $path Target path for redirection.
+     * @throws RedirectException
+     */
+    function redirect(string $path): void
     {
-        // throw instead of sending header+exit so tests can assert redirects
         throw new RedirectException($path);
     }
 }

@@ -4,15 +4,35 @@ require_once APPROOT . '/middleware/authmiddleware.php';
 
 require_once APPROOT . '/services/PaymentService.php';
 
+require_once APPROOT . '/helpers/SessionHelper.php';
+
 class Payment extends Controller
 {
     private $paymentService;
 
-    public function __construct()
+    public function __construct(PaymentService $paymentService)
     {
         AuthMiddleware::requireRole(1);
         
-        $this->paymentService = new PaymentService();
+        $this->paymentService = $paymentService;
+    }
+
+    private function startSessionAndValidateCsrf()
+    {
+        SessionHelper::startSecureSession();
+        if (!SessionHelper::validateCsrfToken($_POST['csrf_token'] ?? null)) {
+            setMessage('error', '⚠️ Invalid request (CSRF).');
+            redirect($_SERVER['HTTP_REFERER'] ?? 'pages/login');
+            exit;
+        }
+    }
+
+    private function ensurePost()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('payment'); 
+            exit;
+        }
     }
 
     public function index()
@@ -23,11 +43,8 @@ class Payment extends Controller
 
     public function store()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/payment');
-            return;
-        }
-
+        $this->ensurePost();
+        $this->startSessionAndValidateCsrf();
         try {
             $data = [
                 'method' => trim($_POST['name'] ?? ''),
@@ -43,10 +60,8 @@ class Payment extends Controller
 
     public function update()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/payment');
-            return;
-        }
+        $this->ensurePost();
+        $this->startSessionAndValidateCsrf();
 
         try {
             $id = intval($_POST['id'] ?? 0);

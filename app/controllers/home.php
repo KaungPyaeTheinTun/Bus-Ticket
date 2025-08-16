@@ -8,9 +8,9 @@ class Home extends Controller
 {
     private $homeService;
 
-    public function __construct()
+    public function __construct(HomeService $homeService)
     {
-        $this->homeService = new HomeService();
+        $this->homeService = $homeService;
     }
 
     public function index()

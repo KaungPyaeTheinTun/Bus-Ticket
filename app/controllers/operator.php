@@ -8,11 +8,11 @@ class Operator extends Controller
 {
     private $operatorService;
 
-    public function __construct()
+    public function __construct(OperatorService $operatorService)
     {
         AuthMiddleware::requireRole(1);
         
-        $this->operatorService = new OperatorService();
+        $this->operatorService = $operatorService;
     }
 
     public function index()

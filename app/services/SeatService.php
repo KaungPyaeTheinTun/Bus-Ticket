@@ -6,9 +6,9 @@ class SeatService
 {
     private $seatRepo;
 
-    public function __construct(SeatRepositoryInterface $seatRepo = null)//dependency injection
+    public function __construct(SeatRepository $seatRepo)//dependency injection
     {
-        $this->seatRepo = $seatRepo ?: new SeatRepository();
+        $this->seatRepo = $seatRepo;
     }
 
     public function storeBookingSession($route_id, array $selectedSeats, $user_id, $passengers)

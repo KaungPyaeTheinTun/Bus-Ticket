@@ -113,6 +113,7 @@
 </tr>
 </thead>
 <tbody>
+<?php if (!empty($data['user']) && is_array($data['user'])): ?>
 <?php foreach ($data['user'] as $user): 
     $stats = $data['ticketStats'][$user['id']] ?? null;
     $total = $stats['total_tickets'] ?? 0;
@@ -136,6 +137,11 @@
     </td>
 </tr>
 <?php endforeach; ?>
+<?php else: ?>
+    <tr>
+        <td colspan="7" style="text-align:center;">No customer !</td>
+    </tr>
+<?php endif; ?>
 </tbody>
 </table>
 </div>

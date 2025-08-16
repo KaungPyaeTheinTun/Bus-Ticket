@@ -22,7 +22,7 @@
 						?>
 					</p>
                     <div class="form-group">
-                        <input type="text" id="name" required name="name" class="input-field" placeholder="Name">
+                        <input type="text" id="name" required name="name" class="input-field" placeholder="Name" value="<?php echo htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
 
                     <p class="error-message">
@@ -32,7 +32,7 @@
 						?>
 				    </p>
                     <div class="form-group">
-                        <input type="text" id="phone" required name="phone" class="input-field" placeholder="Phone">
+                        <input type="text" id="phone" required name="phone" class="input-field" placeholder="Phone" value="<?php echo htmlspecialchars($_POST['phone'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
 
                     <p class="error-message">
@@ -42,7 +42,7 @@
 						?>
 				    </p>
                     <div class="form-group">
-                        <input type="text" id="email" required name="email" class="input-field" placeholder="Email">
+                        <input type="text" id="email" required name="email" class="input-field" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
 
                     <p class="error-message">
@@ -53,7 +53,7 @@
 					</p>
                     <div class="form-group">
                         <div class="password-field-container">
-                            <input type="password" required id="password" name="password" class="input-field password-input" placeholder="Enter Password">
+                            <input type="password" required id="password" name="password" class="input-field password-input" placeholder="Enter Password" value="<?php echo htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                         </div>
                     </div> 
                     <input type="checkbox" onclick="myFunction()"> Show Password                

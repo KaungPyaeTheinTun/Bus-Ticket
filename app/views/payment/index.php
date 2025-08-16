@@ -1,5 +1,7 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 
+<?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
+
         <?php if (!empty($_SESSION['success'])): ?>
             <div id="flashMessage" class="flash-message success-message">
                 <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
@@ -105,17 +107,18 @@
                 <tr>
                     <th>Method</th>
                     <th>Phone Number</th>
-                    <th>Scan_Image</th>
+                    <th style="text-align: center;">Scan_Image</th>
                     <th style="text-align: center;">Edit</th>
                     <th style="text-align: center;">Delete</th>
                 </tr>
             </thead>
             <tbody>
+                <?php if (!empty($data['payments'])): ?>
                 <?php foreach($data['payments'] as $payment): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($payment['method']); ?></td>
                     <td><?php echo htmlspecialchars($payment['phone']); ?></td>
-                    <td>
+                    <td style="text-align: center;">
                         <?php if (!empty($payment['scan_image'])): ?>
                             <img src="<?php echo URLROOT; ?>/public/uploads/scan_image/<?php echo htmlspecialchars($payment['scan_image']); ?>" width="50">
                         <?php endif; ?>
@@ -137,6 +140,9 @@
                     </td>
                 </tr>
                 <?php endforeach; ?>
+                <?php else: ?>
+                        <td colspan="5" style="text-align:center;">No Payment.</td>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -147,16 +153,17 @@
 <div id="addModal" class="modal-overlay">
 <div class="modal-content">
     <form method="POST" action="<?php echo URLROOT; ?>/payment/store" enctype="multipart/form-data">
+	<?= SessionHelper::csrfInput() ?>
     <h3>Add Payment Method</h3>
     <div class="form-group input-with-icon">
-        <input type="text" name="name" class="text-input" placeholder="Enter method name" required>
+        <input type="text" name="name" class="text-input" placeholder="Enter method name" value="<?php echo htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
     </div>
     <div class="form-group input-with-icon">
-        <input type="text" name="phone" class="text-input" placeholder="Enter phone number" required>
+        <input type="text" name="phone" class="text-input" placeholder="Enter phone number" value="<?php echo htmlspecialchars($_POST['phone'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
     </div>
     <div class="form-group">
         <label for="scan_image" style="display: block; text-align: left; margin-bottom: 5px;">Scan Image (QR Code)</label>
-        <input type="file" name="scan_image" id="scan_image" accept="image/*" required>
+        <input type="file" name="scan_image" id="scan_image" accept="image/*" value="<?php echo htmlspecialchars($_POST['scan_image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
     </div>
 
     <div class="modal-buttons">
@@ -170,6 +177,7 @@
 <div id="editModal" class="modal-overlay">
 <div class="modal-content">
     <form id="editForm" method="POST" action="<?php echo URLROOT; ?>/payment/update" enctype="multipart/form-data">
+    <?= SessionHelper::csrfInput() ?>
     <h3>Edit Payment Method</h3>
     <input type="hidden" name="id" id="edit-id">
     <div class="form-group input-with-icon">

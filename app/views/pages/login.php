@@ -17,14 +17,14 @@
             <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
             <h2>Login</h2>
             <form class="login-form" method="POST" action="<?php echo URLROOT; ?>/auth/login">
-				<?= SessionHelper::csrfInput(); ?>
+				<?php echo SessionHelper::csrfInput(); ?>
                 <div class="form-group">
                     <label for="email" data-validate = "Valid email is required: ex@abc.xyz"></label>
-                    <input type="text" id="email" name="email" placeholder="Email" required>
+                    <input type="text" id="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
                 </div>
                 <div class="form-group password-group">
                     <label for="password" data-validate = "Password is required"></label>
-                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <input type="password" id="password" name="password" placeholder="Password" value="<?php echo htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
                 </div>
                 <input type="checkbox" onclick="myFunction()"> Show Password
                 <div class="forgot-password">

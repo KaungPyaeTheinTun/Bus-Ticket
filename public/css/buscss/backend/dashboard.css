@@ -234,7 +234,7 @@ body {
 }
 
 .summary-card.revenue {
-    grid-column: 3 / -1; /* Spans across all columns */
+    grid-column: 2 / -1; /* Spans across all columns */
     display: flex;
     align-items: center;
     justify-content: center;
