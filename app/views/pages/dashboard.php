@@ -1,6 +1,14 @@
 
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
-
+<style>
+    .summary-card.revenue {
+        grid-column: 2 / -1; /* Spans across all columns */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 30px 20px;
+    }
 </style>
     <div class="container">
         <main class="main-content">

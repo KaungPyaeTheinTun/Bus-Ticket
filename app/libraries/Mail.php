@@ -70,86 +70,94 @@ class Mail
             $mail->addAddress($recipient_mail);     // Add a recipient
 
             // Content
-            $mail->Subject = 'Your OTP for My Bus Ticket';
-            $mail->isHTML(true);
+            $mail->isHTML(true);                                  // Set email format to HTML
+            
+$mail->Subject = 'Verify Your Email - MyBusTicket';
+$mail->isHTML(true);
 
-            $mail->Body = '
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>My Bus Ticket OTP</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f7f7f7;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    .container {
-                        max-width: 600px;
-                        margin: 20px auto;
-                        background-color: #ffffff;
-                        padding: 20px;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                    }
-                    .header {
-                        text-align: center;
-                        color: #2E86C1;
-                    }
-                    .otp-code {
-                        font-size: 28px;
-                        font-weight: bold;
-                        color: #ffffff;
-                        background-color: #2E86C1;
-                        padding: 15px 25px;
-                        border-radius: 5px;
-                        display: inline-block;
-                        margin: 20px 0;
-                        letter-spacing: 3px;
-                    }
-                    .content p {
-                        font-size: 16px;
-                        color: #333333;
-                        line-height: 1.5;
-                    }
-                    .footer {
-                        font-size: 12px;
-                        color: #777777;
-                        text-align: center;
-                        margin-top: 30px;
-                    }
-                    @media only screen and (max-width: 480px) {
-                        .container {
-                            padding: 15px;
-                        }
-                        .otp-code {
-                            font-size: 24px;
-                            padding: 12px 20px;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h2 class="header">My Bus Ticket</h2>
-                    <div class="content">
-                        <p>Dear User,</p>
-                        <p>Use the following <strong>OTP code</strong> to reset your password:</p>
-                        <div class="otp-code">' . $otp . '</div>
-                        <p>If you did not request a password reset, please ignore this email.</p>
-                    </div>
-                    <div class="footer">
-                        &copy; ' . date('Y') . ' My Bus Ticket. All rights reserved.
-                    </div>
-                </div>
-            </body>
-            </html>
-            ';
+$mail->Body = '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Your Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header h1 {
+            color: #333333;
+        }
+        .content {
+            padding: 20px 0;
+            color: #555555;
+        }
+        .otp-code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: 4px;
+        }
+        .button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 12px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #999999;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>MyBusTicket</h1>
+        </div>
+        <div class="content">
+            <p>Hi there,</p>
+            <p>Thank you for registering. Please verify your email using the code below:</p>
+            <div class="otp-code">' . $otp . '</div>
+            <a href="http://localhost/mvc-bus-ticket/pages/otp?otp=' . $otp . '" class="button">Verify Email</a>
+            <p>If you did not request this, please ignore this email.</p>
+        </div>
+        <div class="footer">
+            &copy; ' . date('Y') . ' MyBusTicket. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
+';
 
-            $mail->AltBody = "Your OTP for My Bus Ticket: $otp. This OTP is valid for 10 minutes. If you did not request a password reset, please ignore this email.";
+$mail->AltBody = "Your OTP is: $otp. Visit https://yourwebsite.com/verify to complete verification.";
 
 
 
