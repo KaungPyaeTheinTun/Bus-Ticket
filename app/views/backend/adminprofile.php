@@ -1,6 +1,13 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 
+<?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
+
 <style>
+    /* Add Admin Modal */
+        #addAdminModal .modal-content {
+            max-width: 400px;
+            text-align: left;
+        }
         .flash-message {
             position: fixed;
             top: 28px;
@@ -188,7 +195,29 @@
         cursor: pointer;
         user-select: none;
     }
- 
+    #addAdminModal form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    #addAdminModal input[type="password"],
+    #addAdminModal input[type="text"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.95em;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #addAdminModal input[type="password"]:focus,
+    #addAdminModal input[type="text"]:focus {
+        border-color: #3f51b5;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    }
         /* Customize the checkbox itself */
         /* Show password checkbox container */
         @keyframes fadeInScale {
@@ -202,7 +231,6 @@
             }
         }
 </style>
-<!--  -->
         <?php if (!empty($_SESSION['error'])): ?>
             <div id="flashMessage" class="flash-message error-message">
                 <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
@@ -219,9 +247,6 @@
                 <?php require_once APPROOT . '/views/inc/profileHeader.php' ?>
             <main class="content-area">
                 <section class="profile-card">
-                    <!-- <div class="card-header">
-                        <i class="fas fa-user-circle profile-icon"></i> Profile
-                    </div> -->
                     <div class="user-overview">
                         <img src="<?php echo URLROOT; ?>/images/pf.png" alt="User Profile" class="user-avatar">
                         <div class="user-info">
@@ -259,9 +284,10 @@
             <section class="admin-list-section">
                 <div class="section-header">
                     <h2>Sub Admin List</h2>
-                    <a href="<?php echo URLROOT; ?>/user/addadmin" style="text-decoration: none;"><button class="add-admin-btn"><i class="fas fa-plus"></i> Add admin</button></a>
+                    <button id="openAddAdminModal" class="add-admin-btn">
+                            <i class="fas fa-plus"></i> Add Sub Admin
+                        </button>              
                 </div>
-
                 <div class="admin-table-container">
         <table class="admin-table">
             <thead>
@@ -325,20 +351,66 @@
             </form>
         </div>
     </div>
+<!-- Add Admin Modal -->
+<div id="addAdminModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Add Sub Admin</h3>
+        <?php require APPROOT . '/views/components/auth_message.php'; ?>
+        <form method="POST" action="<?php echo URLROOT; ?>/auth/adminRegister">
+            <?= SessionHelper::csrfInput(); ?>
+            <input type="text" name="name" placeholder="Name" required value="<?php echo htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="text" name="phone" placeholder="Phone" required value="<?php echo htmlspecialchars($_POST['phone'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="text" name="email" placeholder="Email" required value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="password" id="adminPassword" name="password" placeholder="Password" required>
 
+            <label class="show-password-container">
+                <input type="checkbox" id="showAdminPassword"> Show Password
+            </label>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-yes">Add Sub Admin</button>
+                <button type="button" class="btn-no" id="closeAddAdminModal">No, Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
 </main>
 </div>
-<script>
-    document.getElementById('showPassword').addEventListener('change', function() {
-        const newPass = document.getElementById('newPassword');
-        const confirmPass = document.getElementById('confirmNewPassword');
-        const type = this.checked ? 'text' : 'password';
-        newPass.type = type;
-        confirmPass.type = type;
-    });
-</script>
-<script>
-        const deleteButtons = document.querySelectorAll('.delete-admin-btn');
+<script> 
+    //addadmin
+    document.addEventListener("DOMContentLoaded", function() {
+        const addAdminBtn = document.getElementById('openAddAdminModal');
+        const addAdminModal = document.getElementById('addAdminModal');
+        const closeAddAdminBtn = document.getElementById('closeAddAdminModal');
+        const showAdminPassword = document.getElementById('showAdminPassword');
+        const adminPasswordInput = document.getElementById('adminPassword');
+
+        if(addAdminBtn && addAdminModal) {
+            // Open modal
+            addAdminBtn.addEventListener('click', () => {
+                addAdminModal.style.display = 'flex';
+            });
+
+            // Close modal
+            closeAddAdminBtn.addEventListener('click', () => {
+                addAdminModal.style.display = 'none';
+            });
+
+            // Close modal by clicking outside content
+            addAdminModal.addEventListener('click', (e) => {
+                if(e.target === addAdminModal) {
+                    addAdminModal.style.display = 'none';
+                }
+            });
+
+            // Show/hide password
+            showAdminPassword.addEventListener('change', () => {
+                adminPasswordInput.type = showAdminPassword.checked ? 'text' : 'password';
+            });
+        }
+    }); 
+    //delete
+     const deleteButtons = document.querySelectorAll('.delete-admin-btn');
         const deleteModal = document.getElementById('deleteConfirmationModal');
         const adminNameToDeleteSpan = document.getElementById('adminNameToDelete');
         const confirmDeleteNoBtn = document.getElementById('confirmDeleteNo');
@@ -383,9 +455,14 @@
             changePasswordModal.style.display = 'none';
         });
 
-
-</script>
-<script>
+    //showpassword
+    document.getElementById('showPassword').addEventListener('change', function() {
+        const newPass = document.getElementById('newPassword');
+        const confirmPass = document.getElementById('confirmNewPassword');
+        const type = this.checked ? 'text' : 'password';
+        newPass.type = type;
+        confirmPass.type = type;
+    });
     // Auto-hide flash message after 2 seconds
     const flashMessage = document.getElementById('flashMessage');
     if (flashMessage) {
@@ -395,3 +472,7 @@
         },1500); // Show for 2 seconds
     }
 </script>
+
+
+
+

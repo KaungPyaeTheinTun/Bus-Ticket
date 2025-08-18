@@ -76,16 +76,25 @@ class Auth extends Controller
 
         $validator = new UserValidator($_POST);
         $errors = $validator->validateForm();
-        if ($errors) return $this->view('backend/addadmin', $errors);
+       
+        if (!empty($errors)) {
+            foreach (['name-err', 'phone-err', 'email-err', 'password-err'] as $field) {
+                if (isset($errors[$field])) {
+                    setMessage('error', $errors[$field]);
+                    redirect('/user/profile');
+                    return;
+                }
+            }
+        }
 
         $result = $this->authService->registerUser($_POST, ROLE_ADMIN);
         if (!empty($result['error'])) {
             setMessage('error', $result['error']);
-            redirect('user/addadmin');
+            redirect('user/profile');
             return;
         }
         if (!empty($result['errors'])) {
-            return $this->view('backend/addadmin', $result['errors']);
+            return $this->view('backend/adminprofile', $result['errors']);
         }
 
         setMessage('success', '✅ Admin registered successfully.');
@@ -142,8 +151,7 @@ class Auth extends Controller
     public function otp()
     {
         $this->ensurePost();
-        // $this->startSessionAndValidateCsrf();
-
+        
         $otp = implode('', $_POST['otp'] ?? []);
         if (!preg_match('/^\d{6}$/', $otp)) {
             setMessage('error', '⚠️ Invalid OTP format.');
@@ -167,6 +175,27 @@ class Auth extends Controller
             redirect('pages/otp');
         }
     }
+
+    public function resendOtp()
+    {
+        session_start();
+        $email = $_SESSION['post_mail'] ?? null;
+
+        if (!$email) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => '⚠️ Session expired.']);
+            exit;
+        }
+
+        if ($this->authService->sendsOTP($email)) {
+            echo json_encode(['success' => true, 'message' => '✅ A new OTP has been sent to your email.']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => '⚠️ Failed to resend OTP.']);
+        }
+        exit;
+    }
+
 
     public function changepassword()
     {

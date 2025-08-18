@@ -47,21 +47,25 @@ class Seat extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payment_id = $_POST['payment_method'] ?? null;
-            $imageName = $this->handlePaymentSlipUpload();
 
             $bookingData = $_SESSION['booking_data'] ?? null;
             if (!$bookingData) {
-                die('Booking data missing in session');
+               $_SESSION['error'] = "Booking data missing in session";
             }
 
+            $imageName = $this->seatService->handlePaymentSlipUpload($_FILES['payment_slip'] ?? null);
+
             $success = $this->seatService->finalizeBooking($bookingData, $payment_id, $imageName);
-            $_SESSION[$success ? 'success' : 'error'] = $success ? '✅ Booking has been submitted. Please wait for confimation.' : '❌ Failed to store booking.';
+            $_SESSION[$success ? 'success' : 'error'] = $success ? 
+                '✅ Booking has been submitted. Please wait for confirmation.' : 
+                '❌ Failed to store booking.';
             redirect($success ? 'home/record' : 'home/payment');
         }
         die('Invalid request method');
     }
 
-    private function handlePaymentSlipUpload(): string
+
+    /*private function handlePaymentSlipUpload(): string
     {
         if (!isset($_FILES['payment_slip']) || $_FILES['payment_slip']['error'] !== 0) {
             die('Payment slip is required.');
@@ -87,5 +91,5 @@ class Seat extends Controller
         }
 
         return $uniqueName;
-    }
+    }*/
 }
