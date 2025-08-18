@@ -57,18 +57,27 @@ class UserValidator
     private function validateEmail()
     {
         $val = trim($this->data['email']);
+
         if (empty($val)) {
-            $this->addError('email-err', 'Email can not be empty!');
-        } else {
-            
-            // Remove all illegal characters from email
-            // $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-            // Check if the variable $email is a valid email address
+            $this->addError('email-err', 'Email cannot be empty!');
+            return;
+        }
+
+        // Normalize email
+        $val = strtolower($val);
+
+        // Basic PHP validation
         if (!filter_var($val, FILTER_VALIDATE_EMAIL)) {
-            $this->addError('email-err', 'email must be a valid email!');
-            }
+            $this->addError('email-err', 'Email must be a valid format.');
+            return;
+        }
+
+        // Extra regex to enforce stricter rule (e.g. domain.tld must be at least 2 chars)
+        if (!preg_match('/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/', $val)) {
+            $this->addError('email-err', 'Email format is invalid or domain not allowed.');
         }
     }
+
 
     private function validatePassword()
     {

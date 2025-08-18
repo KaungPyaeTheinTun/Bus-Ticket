@@ -110,9 +110,7 @@ class Route extends Controller
 
                 $encodedId = base64_encode($route_id);
 
-                $_SESSION[$success ? 'success' : 'error'] = $success 
-                    ? "✅ Seats have been reset." 
-                    : "❌ No seats found for reset.";
+                $_SESSION[$success ? 'success' : 'error'] = $success ? "✅ Seats have been reset." : "❌ No seats found for reset.";
 
                 redirect('route/detail?id=' . $encodedId);
                 return;

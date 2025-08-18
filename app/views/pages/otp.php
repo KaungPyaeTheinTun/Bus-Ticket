@@ -1,12 +1,12 @@
 <?php 
-session_start();
-if (!isset($_SESSION['post_mail'])) {
-    header('Location: ' . URLROOT . '/pages/forgetpassword');
-    exit;
-}
-$user = $_SESSION['post_mail'];
+    session_start();
+    if (!isset($_SESSION['post_mail'])) {
+        header('Location: ' . URLROOT . '/pages/forgetpassword');
+        exit;
+    }
+    $user = $_SESSION['post_mail'];
 
-$prefillOtp = isset($_GET['otp']) ? $_GET['otp'] : '';
+    $prefillOtp = isset($_GET['otp']) ? $_GET['otp'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +34,7 @@ $prefillOtp = isset($_GET['otp']) ? $_GET['otp'] : '';
     <div class="right-panel">
         <div class="icon-circle"><i class="fas fa-envelope"></i></div>
         <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
+        <p id="resendMessage" style="color:green; margin-top:5px;font-size:17px;"></p>       
         
         <h2>Enter OTP</h2>
         <p class="instruction-text">An OTP has been sent to</p>
@@ -47,10 +48,10 @@ $prefillOtp = isset($_GET['otp']) ? $_GET['otp'] : '';
             </div>
             <button type="submit" class="submit-button">Submit</button>
         </form>
-
+        <br>
         <div class="resend-section">
             <span id="resendTimer">Didn't get code?</span>
-            <a href="#" id="requestAgainLink" class="disabled">Request again</a>
+            <a href="javascript:void(0)" id="requestAgainLink" class="disabled">Request again</a>
         </div>
     </div>
 </div>
@@ -60,11 +61,11 @@ $prefillOtp = isset($_GET['otp']) ? $_GET['otp'] : '';
         const otpInputs = document.querySelectorAll('.otp-input');
         const requestAgainLink = document.getElementById('requestAgainLink');
         const resendTimerSpan = document.getElementById('resendTimer');
-        let countdown = 5, timer = null;
+        let countdown = 30, timer = null;
 
         // Start resend countdown
         function startResendCountdown() {
-            countdown = 5;
+            countdown = 30;
             requestAgainLink.classList.add('disabled');
             requestAgainLink.style.pointerEvents = 'none';
             requestAgainLink.style.color = '#ccc';
@@ -90,8 +91,34 @@ $prefillOtp = isset($_GET['otp']) ? $_GET['otp'] : '';
 
         requestAgainLink.addEventListener('click', function(e) {
             e.preventDefault();
-            if (!this.classList.contains('disabled')) startResendCountdown();
+            if (this.classList.contains('disabled')) return;
+
+            // Call backend resendOtp
+            fetch("<?php echo URLROOT; ?>/auth/resendOtp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const msgBox = document.getElementById('resendMessage');
+                if (data.success) {
+                    msgBox.style.color = "green";
+                    msgBox.textContent = data.message;
+                    startResendCountdown(); // restart timer
+                } else {
+                    msgBox.style.color = "red";
+                    msgBox.textContent = data.message;
+                }
+            })
+            .catch(() => {
+                const msgBox = document.getElementById('resendMessage');
+                msgBox.style.color = "red";
+                msgBox.textContent = "⚠️ Error contacting server.";
+            });
         });
+
 
         startResendCountdown();
 

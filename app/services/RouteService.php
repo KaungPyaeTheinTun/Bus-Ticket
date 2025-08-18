@@ -28,7 +28,7 @@ class RouteService
         $operator = $db->getById('operator', $operatorId);
 
         if (!$operator) {
-            throw new Exception("Operator not found.");
+            $_SESSION['error'] = "Operator not found.";
         }
 
         $imageName = $this->handleImageUpload();
@@ -47,7 +47,7 @@ class RouteService
         return $this->routeRepository->create($params);
     }
 
-    private function handleImageUpload(): ?string
+    /*private function handleImageUpload(): ?string
     {
         if (empty($_FILES['image']['tmp_name'])) {
             return null;
@@ -63,6 +63,41 @@ class RouteService
         $path = $dir . $filename;
 
         return move_uploaded_file($_FILES['image']['tmp_name'], $path) ? $filename : null;
+    }*/
+    private function handleImageUpload(): ?string
+    {
+        if (empty($_FILES['image']['tmp_name'])) {
+            return null;
+        }
+
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $_FILES['image']['tmp_name']);
+        finfo_close($finfo);
+
+        if (!in_array($mime, $allowedMimeTypes)) {
+            $_SESSION['error'] = "Invalid image type. Only JPG, PNG, GIF allowed.";
+        }
+
+        $maxFileSize = 2 * 1024 * 1024; // 2MB
+        if ($_FILES['image']['size'] > $maxFileSize) {
+            $_SESSION['error'] = "Image size exceeds 2MB.";
+        }
+
+        $dir = dirname(APPROOT) . '/public/uploads/routes_images/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $ext = strtolower(pathinfo(basename($_FILES['image']['name']), PATHINFO_EXTENSION));
+        $filename = uniqid('route_', true) . '.' . $ext;
+        $path = $dir . $filename;
+
+        if (!move_uploaded_file($_FILES['image']['tmp_name'], $path)) {
+            $_SESSION['error'] = "Failed to move uploaded file.";
+        }
+
+        return $filename;
     }
 
     public function deleteRoute(int $id)
