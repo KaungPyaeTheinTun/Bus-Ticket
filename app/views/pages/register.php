@@ -4,7 +4,12 @@
 <?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
 
 <!-- <?php session_start(); ?> -->
-
+<style>
+	.g-recaptcha {
+		transform: scale(0.7);
+		transform-origin: 0 0; 
+	}
+</style>
     <div class="register-container">
         <div class="left-panel">
             <div class="logo">
@@ -61,6 +66,9 @@
                     <input type="password" id="myInput" name="password" placeholder="Password" value="<?php echo htmlspecialchars($_POST['password'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
 				<input type="checkbox" onclick="myFunction()"> Show Password
+
+				<!-- <div class="g-recaptcha" data-sitekey="6Lf786orAAAAAEAAoPJqQnq6NZ8oFsi7wF8R5noA"></div> -->
+				<!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
 				<br><br>
                 <button type="submit" class="submit-button">Submit</button>
                 <div class="login-link">
@@ -84,8 +92,7 @@
 	});
 </script>
 
-<script>
-
+<!-- <script>
 $(function () {
     var str = $('#name').val();
     if(/^[a-zA-Z- ]*$/.test(str) == false) {
@@ -270,4 +277,4 @@ $(function () {
 		
 		});
 	});
-</script>
+</script> -->

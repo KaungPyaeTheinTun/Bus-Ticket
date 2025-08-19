@@ -32,17 +32,25 @@ class DashboardService
         // Calculate booking stats
         foreach ($bookings as $booking) {
             if (isset($booking['is_booked'])) {
-                if ($booking['is_booked'] == 2) {
+                if ($booking['is_booked'] == 2) { // approved booking
                     $totalApprovedBookings++;
-                    $routeId = $booking['route_id'] ?? null;
-                    if ($routeId && isset($routePriceMap[$routeId])) {
-                        $revenue += $routePriceMap[$routeId];
+
+                    // ✅ If booking comes from view_booking, use total_price
+                    if (isset($booking['total_price'])) {
+                        $revenue += (float)$booking['total_price'];
+                    } else {
+                        // fallback to route price if total_price not available
+                        $routeId = $booking['route_id'] ?? null;
+                        if ($routeId && isset($routePriceMap[$routeId])) {
+                            $revenue += $routePriceMap[$routeId];
+                        }
                     }
-                } elseif ($booking['is_booked'] == 1) {
+                } elseif ($booking['is_booked'] == 1) { // pending booking
                     $pendingBookings++;
                 }
             }
         }
+
 
         // Find ongoing buses
         date_default_timezone_set('Asia/Yangon');

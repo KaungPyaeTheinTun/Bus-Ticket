@@ -6,6 +6,8 @@ require_once APPROOT . '/helpers/UserValidator.php';
 
 require_once APPROOT . '/helpers/SessionHelper.php';
 
+require_once APPROOT . '/helpers/RateLimiter.php';
+
 class Auth extends Controller
 {
     private $authService;
@@ -48,8 +50,32 @@ class Auth extends Controller
 
     public function register()
     {
+    /*$recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
+
+    if (empty($recaptchaResponse)) {
+        setMessage('error', '⚠️ Please complete the CAPTCHA.');
+        redirect('pages/register');
+        return;
+    }
+
+    $secretKey = '6Lf786orAAAAAMEqrJs4FZ4Wob-FXHUGHVL7m_Y0';
+    $response = @file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$secretKey}&response={$recaptchaResponse}");
+    $responseData = json_decode($response);
+
+    if (empty($responseData) || !$responseData->success) {
+        setMessage('error', '⚠️ CAPTCHA verification failed.');
+        redirect('pages/register');
+        return;
+    }*/
+
         $this->ensurePost();
         $this->startSessionAndValidateCsrf();
+
+        if (!RateLimiter::check('register', 2, 60)) {
+            setMessage('error', '⚠️ Too many registration attempts. Please wait 1 minute.');
+            redirect('pages/register');
+            return;
+        }
 
         $validator = new UserValidator($_POST);
         $errors = $validator->validateForm();
@@ -73,6 +99,12 @@ class Auth extends Controller
     {
         $this->ensurePost();
         $this->startSessionAndValidateCsrf();
+
+        if (!RateLimiter::check('register', 2, 60)) {
+            setMessage('error', '⚠️ Too many registration attempts. Please wait 1 minute.');
+            redirect('/user/profile');
+            return;
+        }
 
         $validator = new UserValidator($_POST);
         $errors = $validator->validateForm();
@@ -106,6 +138,12 @@ class Auth extends Controller
         $this->ensurePost();
         $this->startSessionAndValidateCsrf();
 
+        if (!RateLimiter::check('login', 2, 60)) {
+            setMessage('error', '⚠️ Too many login attempts. Please wait 1 minute.');
+            redirect('pages/login');
+            return;
+        }
+
         if (empty($_POST['email']) || empty($_POST['password'])) {
             setMessage('error', 'Email and Password are required.');
             redirect('pages/login');
@@ -122,7 +160,7 @@ class Auth extends Controller
 
             redirect($user['role_id'] == ROLE_ADMIN ? 'pages/dashboard' : 'pages/index');
         } else {
-            setMessage('error', '⚠️ Fail to login!');
+            setMessage('error', '⚠️ Invalid email or password !');
             redirect('pages/login');
         }
     }
@@ -202,7 +240,12 @@ class Auth extends Controller
         $this->ensurePost();
         // $this->startSessionAndValidateCsrf();
 
-        session_start();
+        if (!RateLimiter::check('changepassword', 2, 60)) {
+            setMessage('error', '⚠️ Too many attempts. Please wait 1 minute.');
+            redirect('pages/changepassword');
+            return;
+        }
+
         $email = $_SESSION['otp'] ?? null;
         if (!$email) {
             setMessage('error', '⚠️ Session expired. Please try again.');

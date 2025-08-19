@@ -98,6 +98,8 @@
 <section class="customers-list-card">
 <div class="card-header">
     <i class="fas fa-users"></i> &nbsp; Customers List
+        <input type="text" id="operatorSearch" placeholder="Search by operator name..." 
+        style="width: 250px; padding: 9px 10px; border-radius: 5px; border:1px solid #ccc;margin-left:53%;">
 </div>
 
 <div class="customer-table-container">
@@ -113,6 +115,9 @@
 </tr>
 </thead>
 <tbody>
+    <tr id="noResultsRow" style="display:none; text-align:center;">
+    <td colspan="7">No customers found for this operator !</td>
+</tr>
 <?php if (!empty($data['user']) && is_array($data['user'])): ?>
 <?php foreach ($data['user'] as $user): 
     $stats = $data['ticketStats'][$user['id']] ?? null;
@@ -210,27 +215,60 @@ $tickets = $data['userTickets'][$user['id']] ?? [];
 </div>
 
 <script>
-// Flash message auto hide
-const flash = document.getElementById('flashMessage');
-if(flash){
-    setTimeout(()=>{flash.style.animation="fadeOut 0.5s forwards"; setTimeout(()=>flash.remove(),500);},2000);
-}
+    // Search customers by operator name
+    const searchInput = document.getElementById('operatorSearch');
+    const noResultsRow = document.getElementById('noResultsRow');
 
-// Delete modal logic
-const deleteBtns=document.querySelectorAll('.delete-admin-btn');
-const deleteModal=document.getElementById('deleteConfirmationModal');
-const deleteForm=document.getElementById('deleteForm');
-const adminNameSpan=document.getElementById('adminNameToDelete');
-const cancelDelete=document.getElementById('cancelDelete');
+    searchInput.addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('.customer-table tbody tr');
+        let anyVisible = false;
 
-deleteBtns.forEach(btn=>{
-    btn.addEventListener('click',e=>{
-        e.preventDefault();
-        deleteForm.action=btn.getAttribute('href');
-        adminNameSpan.textContent=btn.dataset.name;
-        deleteModal.style.display='flex';
+        rows.forEach(row => {
+            // skip the noResultsRow itself
+            if(row.id === 'noResultsRow') return;
+
+            const userId = row.querySelector('button.eye-button')?.getAttribute('onclick')?.match(/\d+/)?.[0];
+            if(!userId) return;
+
+            const tickets = <?php echo json_encode($data['userTickets']); ?>;
+            const userTickets = tickets[userId] || [];
+            let match = false;
+
+            userTickets.forEach(t => {
+                if(t.operator_name.toLowerCase().includes(filter)) {
+                    match = true;
+                }
+            });
+
+            row.style.display = match || filter === "" ? "" : "none";
+            if(row.style.display === "") anyVisible = true;
+        });
+
+        // Show no results row if nothing is visible
+        noResultsRow.style.display = anyVisible ? "none" : "table-row";
     });
-});
-cancelDelete.addEventListener('click',()=>deleteModal.style.display='none');
-deleteModal.addEventListener('click',e=>{ if(e.target==deleteModal) deleteModal.style.display='none'; });
+    // Flash message auto hide
+    const flash = document.getElementById('flashMessage');
+    if(flash){
+        setTimeout(()=>{flash.style.animation="fadeOut 0.5s forwards"; setTimeout(()=>flash.remove(),500);},2000);
+    }
+
+    // Delete modal logic
+    const deleteBtns=document.querySelectorAll('.delete-admin-btn');
+    const deleteModal=document.getElementById('deleteConfirmationModal');
+    const deleteForm=document.getElementById('deleteForm');
+    const adminNameSpan=document.getElementById('adminNameToDelete');
+    const cancelDelete=document.getElementById('cancelDelete');
+
+    deleteBtns.forEach(btn=>{
+        btn.addEventListener('click',e=>{
+            e.preventDefault();
+            deleteForm.action=btn.getAttribute('href');
+            adminNameSpan.textContent=btn.dataset.name;
+            deleteModal.style.display='flex';
+        });
+    });
+    cancelDelete.addEventListener('click',()=>deleteModal.style.display='none');
+    deleteModal.addEventListener('click',e=>{ if(e.target==deleteModal) deleteModal.style.display='none'; });
 </script>

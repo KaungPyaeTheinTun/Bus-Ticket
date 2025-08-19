@@ -10,6 +10,11 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
+    public function getAllOperators()
+    {
+        return $this->userRepository->getAllOperators('operator');
+    }
+
     public function getAdmins()
     {
         return $this->userRepository->getByRole('users', 1);
