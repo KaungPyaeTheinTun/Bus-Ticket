@@ -23,6 +23,6 @@ class DashboardRepository extends DBconnection implements DashboardRepositoryInt
 
     public function getAllBookings(): array
     {
-        return $this->getDB()->readAll('seats');
+        return $this->getDB()->readAll('view_booking');
     }
 }

@@ -54,8 +54,12 @@ class User extends Controller
     }
 
     public function customer()
-    {
+    {   
         $data = $this->userService->getCustomersWithTickets();
+        
+        // Add all operators for the dropdown
+        $data['operators'] = $this->userService->getAllOperators();
+
         $this->view('backend/customerlist', $data);
     }
 }

@@ -103,7 +103,8 @@
     <header class="main-header">
         <div class="header-content">
             <div class="logo">
-                <h1>MYTICKET</h1>
+                <img src="<?php echo URLROOT; ?>/images/icons/icon.png">
+                <h1>MYBUSTICKET</h1>
             </div>
             <nav class="main-nav" id="main-nav">
                 <ul>

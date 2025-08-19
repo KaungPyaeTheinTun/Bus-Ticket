@@ -30,4 +30,9 @@ class UserRepository extends DBconnection implements UserRepositoryInterface
     {
         return $this->getDB()->readAll($table);
     }
+
+    public function getAllOperators(string $table)
+    {
+        return $this->getDB()->readAll($table);
+    }
 }

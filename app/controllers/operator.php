@@ -31,7 +31,7 @@ class Operator extends Controller
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/operator/create');
+            redirect('/operator');
             return;
         }
 
@@ -46,7 +46,7 @@ class Operator extends Controller
 
         if (!empty($result['errors'])) {
             setMessage('error', implode(' ', $result['errors']));
-            redirect('/operator/create');
+            redirect('/operator');
             return;
         }
 

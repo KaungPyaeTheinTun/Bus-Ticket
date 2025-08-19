@@ -13,7 +13,26 @@
 <?php endif; ?>
 
 <style>
-    
+    .radio-group {
+        display: flex;
+        justify-content: space-between;  /* pushes VIP left, Normal right */
+        width: 100%;
+        margin-top: 10px;
+        
+    }
+
+    .radio-group label {
+        font-size: 15px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .modal-content .input-with-icon .text-input {
+            padding-left: 35px; /* Make space for the icon on the left */
+            width: 100%; /* Ensure input fills the wrapper */
+        }
+
     .modal-content form .form-group {
         margin-bottom: 15px;
     }
@@ -126,6 +145,7 @@
         color: #333;
         font-size: 1.5em;
         margin-bottom: 20px;
+        text-align:left;
     }
 
     .modal-buttons {
@@ -198,7 +218,7 @@
         <section class="operators-list-card">
             <div class="card-header-with-button">
                 <h2 class="card-title"><i class="fas fa-bus"></i>&nbsp;&nbsp;&nbsp;Operators List</h2>
-                <a href="<?php echo URLROOT; ?>/operator/create"><button class="add-button"><i class="fas fa-plus"></i> Add Operators</button></a>
+                <button class="add-button" id="openAddOperatorModal"><i class="fas fa-plus"></i> Add Operator</button>
             </div>
             
             <div class="operator-table-container">
@@ -256,7 +276,7 @@
 <div id="deleteConfirmationModal" class="modal-overlay">
     <div class="modal-content">                         
         <form id="deleteForm" method="POST">
-            <h3>Are you sure you want to delete <span id="adminNameToDelete"></span>?</h3>
+            <h3>Are you sure you want to delete "<span style="color:#3f51b5;" id="adminNameToDelete"></span>" ?</h3>
             <p>This action cannot be undone.</p>
             <div class="modal-buttons">
                 <button type="submit" class="btn-yes" id="confirmDeleteYes">Yes, Delete</button>  
@@ -270,19 +290,21 @@
 <div id="editModal" class="modal-overlay">
     <div class="modal-content">
         <form id="editForm" method="POST" action="<?php echo URLROOT; ?>/operator/update">
-            <h3>Change operator Info.</h3>
+            <h3>Change <span style="color:#3f51b5;" id="adminNameToDelete"></span> Info.</h3>
             <input type="hidden" name="id" id="edit-id">
             <input type="hidden" name="bus_type_id" id="edit-bus-type-id">
 
             <div class="form-group input-with-icon">
+                <i class="fas fa-bus icon"></i>
                 <input type="text" name="name" id="edit-name" class="text-input" placeholder="Enter bus name" required>
             </div>
-
             <div class="form-group input-with-icon">
+                <i class="fas fa-phone icon"></i>
                 <input type="text" name="phone" id="edit-phone" class="text-input" placeholder="Enter phone number" required>
             </div>
 
             <div class="form-group input-with-icon">
+                <i class="fas fa-chair icon"></i>
                 <input type="number" name="seat_capacity" id="edit-seat" class="text-input" placeholder="Enter seat capacity" min="1" required>
             </div>
 
@@ -294,8 +316,61 @@
     </div>
 </div>
 
+<!-- ADD OPERATOR MODAL -->
+<div id="addOperatorModal" class="modal-overlay">
+    <div class="modal-content">
+        <form method="POST" action="<?php echo URLROOT; ?>/operator/store">
+            <h3>Add New Operator</h3>
+            
+            <div class="form-group input-with-icon">
+                <i class="fas fa-bus icon"></i>
+                <input type="text" name="name" class="text-input" placeholder="Enter operator name" required>
+            </div>
 
+            <div class="form-group input-with-icon">
+                <i class="fas fa-phone icon"></i>
+                <input type="text" name="phone" class="text-input" placeholder="Enter phone number" required>
+            </div>
+
+            <div class="form-group input-with-icon">
+                <i class="fas fa-chair icon"></i>
+                <input type="number" name="seat_capacity" class="text-input" placeholder="Enter seat capacity" min="1" max="44" required>
+            </div>
+
+            <div class="form-group radio-group">
+                <label>
+                    <input type="radio" name="bus_type_id" value="1" required> VIP
+                    <input type="radio" name="bus_type_id" value="2" required> Normal
+                </label>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-yes">Yes, Confirm</button>  
+                <button type="button" class="btn-no" id="cancelAddOperator">No, Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
+    // Add Operator modal
+    const addOperatorModal = document.getElementById('addOperatorModal');
+    const openAddOperatorBtn = document.getElementById('openAddOperatorModal');
+    const cancelAddOperatorBtn = document.getElementById('cancelAddOperator');
+
+    openAddOperatorBtn.addEventListener('click', function() {
+        addOperatorModal.style.display = 'flex';
+    });
+
+    cancelAddOperatorBtn.addEventListener('click', function() {
+        addOperatorModal.style.display = 'none';
+    });
+
+    addOperatorModal.addEventListener('click', function(event) {
+        if (event.target === addOperatorModal) {
+            addOperatorModal.style.display = 'none';
+        }
+    });
+
     // Delete modal elements
     const deleteButtons = document.querySelectorAll('.delete-admin-btn');
     const deleteModal = document.getElementById('deleteConfirmationModal');

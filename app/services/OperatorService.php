@@ -39,6 +39,8 @@ class OperatorService
 
         if (empty($data['phone'])) {
             $errors[] = 'Phone is required.';
+        } elseif (!ctype_digit($data['phone'])) { 
+            $errors[] = 'Phone must contain digits only.';
         }
 
         if (!isset($data['seat_capacity']) || !is_numeric($data['seat_capacity']) || $data['seat_capacity'] < 1) {

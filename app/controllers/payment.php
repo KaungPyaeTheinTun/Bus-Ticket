@@ -50,9 +50,18 @@ class Payment extends Controller
                 'method' => trim($_POST['name'] ?? ''),
                 'phone' => trim($_POST['phone'] ?? '')
             ];
+
+            if (!empty($data['phone']) && !ctype_digit($data['phone'])) 
+            {
+                throw new \Exception("Phone must contain digits only.");
+            }
+
             $this->paymentService->createPayment($data, $_FILES);
+
             $_SESSION['success'] = "✅ Payment Method added successfully.";
-        } catch (\Exception $e) {
+
+        } catch (\Exception $e) 
+        {
             $_SESSION['error'] = "❌ " . $e->getMessage();
         }
         redirect('/payment');
