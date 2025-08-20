@@ -24,6 +24,32 @@
 <link rel="stylesheet" href="<?php echo URLROOT; ?>/vendor/css-hamburgers/hamburgers.min.css">
 <link rel="stylesheet" href="<?php echo URLROOT; ?>/vendor/select2/select2.min.css">
 </head>
+<style>
+    .success-tick {
+        color: green;
+        font-size: 18px;
+        margin-left: 6px;
+        display: none;
+        vertical-align: middle;
+    }
+    .loader {
+        border: 3px solid #f3f3f3; /* Light grey */
+        border-top: 3px solid var(--primary-blue); /* Blue */
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+</style>
 <body>
 <div class="otp-container">
     <div class="left-panel">
@@ -52,20 +78,23 @@
         <div class="resend-section">
             <span id="resendTimer">Didn't get code?</span>
             <a href="javascript:void(0)" id="requestAgainLink" class="disabled">Request again</a>
+            <span id="loadingSpinner" class="loader" style="display:none;"></span>
+            <i id="successTick" class="fas fa-check-circle success-tick"></i>
         </div>
     </div>
 </div>
 
 <script>
+    //opt
     document.addEventListener('DOMContentLoaded', function() {
         const otpInputs = document.querySelectorAll('.otp-input');
         const requestAgainLink = document.getElementById('requestAgainLink');
         const resendTimerSpan = document.getElementById('resendTimer');
-        let countdown = 30, timer = null;
+        let countdown = 10, timer = null;
 
         // Start resend countdown
         function startResendCountdown() {
-            countdown = 30;
+            countdown = 10;
             requestAgainLink.classList.add('disabled');
             requestAgainLink.style.pointerEvents = 'none';
             requestAgainLink.style.color = '#ccc';
@@ -89,36 +118,42 @@
             resendTimerSpan.textContent = `Didn't get code? ${countdown}s`;
         }
 
-        requestAgainLink.addEventListener('click', function(e) {
+        requestAgainLink.addEventListener('click', function(e) 
+        {
             e.preventDefault();
             if (this.classList.contains('disabled')) return;
 
-            // Call backend resendOtp
+            const spinner = document.getElementById('loadingSpinner');
+            const tick = document.getElementById('successTick');
+            tick.style.display = "none";          // hide tick before request
+            spinner.style.display = "inline-block"; // show spinner
+
             fetch("<?php echo URLROOT; ?>/auth/resendOtp", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                }
+                headers: { "Content-Type": "application/json" }
             })
             .then(res => res.json())
             .then(data => {
+                spinner.style.display = "none"; // hide spinner
                 const msgBox = document.getElementById('resendMessage');
+
                 if (data.success) {
                     msgBox.style.color = "green";
                     msgBox.textContent = data.message;
-                    startResendCountdown(); // restart timer
+                    tick.style.display = "inline"; // show tick ✅
+                    startResendCountdown();
                 } else {
                     msgBox.style.color = "red";
                     msgBox.textContent = data.message;
                 }
             })
             .catch(() => {
+                spinner.style.display = "none"; // hide spinner
                 const msgBox = document.getElementById('resendMessage');
                 msgBox.style.color = "red";
                 msgBox.textContent = "⚠️ Error contacting server.";
             });
         });
-
 
         startResendCountdown();
 
