@@ -1,6 +1,24 @@
 <?php require_once APPROOT . '/views/inc/header.php'; ?>
 <?php session_start(); ?>
+<style>
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--primary-blue);
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
 
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+</style>
     <div class="forget-password-container">
         <div class="left-panel">
             <div class="logo">
@@ -26,7 +44,7 @@
                     <input type="text" id="email" name="email" placeholder="Email" value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="submit-button">Submit</button></a>
+                    <button type="submit" class="submit-button">Submit<span id="submitSpinner" class="spinner" style="display:none;"></span></button></a>
                     <a href="<?php echo URLROOT; ?>/pages/login"><button type="button" class="cancel-button">Cancel</button></a>
                 </div>
             </form>
@@ -34,3 +52,17 @@
     </div>
 </body>
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('.forget-password-form');
+        const submitButton = form.querySelector('.submit-button');
+        const spinner = document.getElementById('submitSpinner');
+
+        form.addEventListener('submit', function() {
+            // Show spinner
+            spinner.style.display = 'inline-block';
+            // Disable button to prevent multiple clicks
+            submitButton.disabled = true;
+        });
+    });
+</script>

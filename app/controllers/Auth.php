@@ -226,7 +226,7 @@ class Auth extends Controller
         }
 
         if ($this->authService->sendsOTP($email)) {
-            echo json_encode(['success' => true, 'message' => '✅ A new OTP has been sent to your email.']);
+            echo json_encode(['success' => true, 'message' => '']);//✅ A new OTP has been sent.
         } else {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => '⚠️ Failed to resend OTP.']);
