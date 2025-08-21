@@ -14,17 +14,62 @@ class HomeService
 
     public function getUserRecords($userId)
     {
+        // 1) All history records
         $allRecords = $this->homeRepository->getAllRecords();
-        $userRecords = array_filter($allRecords, function($rec) use ($userId) {
-            return $rec['user_id'] == $userId;
-        });
+
+        // 2) Only this user's records (reindex to 0..n)
+        $userRecords = array_values(array_filter($allRecords, function ($rec) use ($userId) {
+            return (int)$rec['user_id'] === (int)$userId;
+        }));
+
+        // 3) Prefetch all operators once
+        $allOperators = $this->homeRepository->getAllOperator();
+
+        // Build lookup maps (adjust column names if yours differ)
+        $opById = [];
+        $opByName = [];
+        foreach ($allOperators as $op) {
+            // assuming columns: id, name, phone
+            if (isset($op['id'])) {
+                $opById[(string)$op['id']] = $op;
+            }
+            if (isset($op['name'])) {
+                $opByName[strtolower(trim($op['name']))] = $op;
+            }
+        }
+
+        // 4) Enrich each record with operator_phone
+        foreach ($userRecords as &$rec) {
+            $phone = 'N/A';
+
+            // Prefer exact id match when available
+            if (!empty($rec['operator_id'])) {
+                $key = (string)$rec['operator_id'];
+                if (isset($opById[$key])) {
+                    $phone = $opById[$key]['phone'] ?? 'N/A';
+                }
+            }
+            // Fallback to name match if id is missing in your view_history
+            elseif (!empty($rec['operator_name'])) {
+                $nameKey = strtolower(trim($rec['operator_name']));
+                if (isset($opByName[$nameKey])) {
+                    $phone = $opByName[$nameKey]['phone'] ?? 'N/A';
+                }
+            }
+
+            $rec['operator_phone'] = $phone;
+        }
+        unset($rec);
+
+        // 5) User
         $user = $this->homeRepository->getUserById($userId);
 
         return [
             'record' => $userRecords,
-            'user' => $user
+            'user'   => $user,
         ];
     }
+
 
     public function getTripDetails($routeId)
     {

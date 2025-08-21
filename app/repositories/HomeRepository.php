@@ -16,6 +16,11 @@ class HomeRepository extends DBconnection implements HomeRepositoryInterface
         return $this->getDB()->readAll('view_history');
     }
 
+    public function getAllOperator()
+    {
+        return $this->getDB()->readAll('operator');
+    }
+
     public function getUserById($id)
     {
         return $this->getDB()->getById('users', $id);

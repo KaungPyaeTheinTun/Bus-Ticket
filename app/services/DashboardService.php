@@ -16,9 +16,11 @@ class DashboardService
         $operators = $this->repo->getAllOperators();
         $routes = $this->repo->getAllRoutes();
         $bookings = $this->repo->getAllBookings();
+        $payment = $this->repo->getAllPayment();
 
         $totalOperators = count($operators);
         $totalRoutes = count($routes);
+        $totalPayment = count($payment);
         $totalApprovedBookings = 0;
         $pendingBookings = 0;
         $revenue = 0;
@@ -77,6 +79,7 @@ class DashboardService
         return [
             'totalOperators' => $totalOperators,
             'totalRoutes' => $totalRoutes,
+            'totalPayment' => $totalPayment,
             'totalBookings' => $totalApprovedBookings,
             'pendingBookings' => $pendingBookings,
             'revenue' => $revenue,

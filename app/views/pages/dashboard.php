@@ -2,7 +2,7 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php' ?>
 <style>
     .summary-card.revenue {
-        grid-column: 2 / -1; /* Spans across all columns */
+        grid-column: 3 / -1; /* Spans across all columns */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -65,9 +65,19 @@
                     </div>
                 </div>
 
+                <div class="summary-card">
+                    <div class="icon-wrapper green">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="details">
+                        <p>Total Payment Methods</p>
+                        <span><?= $data['totalPayment']; ?></span>
+                    </div>
+                </div>
+
                 <div class="summary-card revenue">
                     <div class="icon-wrapper green">
-                        <i class="fas fa-building"></i>
+                       <i class="fas fa-money-bill-wave"></i>
                     </div>
                     <div class="details">
                         <p>Revenue</p>

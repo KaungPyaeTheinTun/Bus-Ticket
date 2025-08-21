@@ -3,6 +3,7 @@
 interface AuthRepositoryInterface
 {
     public function findByEmail(string $email);
+    public function getById(string $userId);
     public function createUser(array $data);
     public function verifyToken(string $token);
     public function loginCheck(string $email, string $password);

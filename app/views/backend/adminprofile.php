@@ -2,7 +2,50 @@
 
 <?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
 
-<style>
+<style> 
+    .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid var(--primary-blue);
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .otp-form {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .otp-inputs {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px; /* Space below OTP inputs */
+    }
+
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 600;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        outline: none;
+        transition: border-color 0.3s ease;
+    }
+
+    .otp-input:focus {
+        border-color: var(--primary-blue);
+    }
+
     /* Add Admin Modal */
         #addAdminModal .modal-content {
             max-width: 400px;
@@ -150,7 +193,7 @@
 
         /* Password Change Modal Specific Styles */
      /* Password Change Modal Specific Styles */
-        #changePasswordModal .modal-content {
+    #changePasswordModal .modal-content {
         text-align: left;
     }
 
@@ -195,6 +238,52 @@
         cursor: pointer;
         user-select: none;
     }
+    /*changepasswordmodelwithotp */
+    #changePasswordModalwithotp .modal-content {
+        text-align: left;
+    }
+
+    #changePasswordModalwithotp .modal-content h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    #changePasswordModalwithotp form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    /* Input fields inside password modal */
+    #changePasswordModalwithotp input[type="password"],
+    #changePasswordModalwithotp input[type="text"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.95em;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #changePasswordModalwithotp input[type="password"]:focus,
+    #changePasswordModalwithotp input[type="text"]:focus {
+        border-color: #3f51b5;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    }
+
+    /* Show password checkbox container */
+    #changePasswordModalwithotp .show-password-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.95em;
+        color: #333;
+        cursor: pointer;
+        user-select: none;
+    }
     #addAdminModal form {
         display: flex;
         flex-direction: column;
@@ -215,6 +304,22 @@
 
     #addAdminModal input[type="password"]:focus,
     #addAdminModal input[type="text"]:focus {
+        border-color: #3f51b5;
+        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
+    }
+
+    #forgetPasswordModal input[type="text"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.95em;
+        outline: none;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #forgetPasswordModal input[type="text"]:focus {
         border-color: #3f51b5;
         box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
     }
@@ -332,12 +437,34 @@
             </form>
             </div>
     </div>
-
+<!-- changePasswordModal -->
     <div id="changePasswordModal" class="modal-overlay">
         <div class="modal-content">
-            <h3>Change Password</h3>
+            <h3 style="color:#3f51b5;">Change Password</h3>
             <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
             <form id="changePasswordForm" method="POST" action="<?php echo URLROOT; ?>/auth/changepasswordadmin">
+                <input type="password" id="currentPassword" name="current-password" placeholder="Current Password" required>
+                <input type="password" id="newPassword" name="password" placeholder="New Password" required autocomplete="new-password">
+                <input type="password" id="confirmNewPassword" name="confirm-password" placeholder="Confirm New Password" required autocomplete="new-password">
+                <div class="show-password-container">
+                    <input type="checkbox" id="showPassword">
+                    <label for="showPassword">Show Password</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#forgetPasswordModal"><span>forgetpassword ?</span></a>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-yes">Change Password</button>
+                    <button type="button" class="btn-no" id="cancelPasswordChange">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- changePasswordModalwithotp -->
+    <div id="changePasswordModalwithotp" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color:#3f51b5;">Change Password</h3>
+            <?php require_once APPROOT . '/views/components/auth_message.php'; ?>
+            <form id="changePasswordForm" method="POST" action="<?php echo URLROOT; ?>/auth/changepasswordNoCurrentPass">
                 <input type="password" id="newPassword" name="password" placeholder="New Password" required autocomplete="new-password">
                 <input type="password" id="confirmNewPassword" name="confirm-password" placeholder="Confirm New Password" required autocomplete="new-password">
                 <div class="show-password-container">
@@ -351,6 +478,43 @@
             </form>
         </div>
     </div>
+ <!-- Forget Password Modal -->
+<div id="forgetPasswordModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="color:#3f51b5;">Forget Password</h3>
+        <p>Reset Using Email</p><br>
+        <form id="forgetPasswordForm" method="POST" action="<?php echo URLROOT; ?>/auth/forgetpasswordadmin">
+            <?= SessionHelper::csrfInput(); ?>
+            <input type="text" name="email" placeholder="Enter your email" required>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-yes">Submit <span id="submitSpinner" class="spinner" style="display:none;"></span></button>
+                <button type="button" class="btn-no" id="cancelForgetPassword">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- OTP Modal -->
+<div id="otpModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="color:#3f51b5;">Enter OTP</h3>
+        <p>An OTP has been sent to</p><br>
+        <p style="font-weight:bold;"><?php echo $data['login_user']['email']; ?></p><br>
+        <form id="otpForm" method="POST" action="<?php echo URLROOT; ?>/auth/otpadmin">
+            <?= SessionHelper::csrfInput(); ?>
+            <div class="otp-inputs">
+                <?php for ($i = 0; $i < 6; $i++): ?>
+                    <input type="text" name="otp[]" maxlength="1" class="otp-input" required>
+                <?php endfor; ?>
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-yes">Verify OTP</button>
+                <button type="button" class="btn-no" id="cancelOtp">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Add Admin Modal -->
 <div id="addAdminModal" class="modal-overlay">
     <div class="modal-content">
@@ -374,9 +538,78 @@
         </form>
     </div>
 </div>
+
 </main>
 </div>
 <script> 
+    document.addEventListener('DOMContentLoaded', function() {
+        const otpInputs = document.querySelectorAll('.otp-input');
+        // Paste OTP
+        otpInputs[0].addEventListener('paste', function(e) {
+            const pasteData = e.clipboardData.getData('text').trim();
+            if (/^\d+$/.test(pasteData)) {
+                pasteData.split('').forEach((char, i) => { if (otpInputs[i]) otpInputs[i].value = char; });
+                otpInputs[Math.min(pasteData.length, otpInputs.length) - 1].focus();
+                e.preventDefault();
+            }
+        });
+        // Auto-focus & backspace logic
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function(e) {
+                let val = e.target.value;
+                if (val.length > 1) val = val.slice(-1);
+                e.target.value = val;
+                if (val && index < otpInputs.length - 1) otpInputs[index + 1].focus();
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) otpInputs[index - 1].focus();
+            });
+        });
+    });
+    //DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", function() {
+        const forgetPasswordLink = document.querySelector('a[href="#forgetPasswordModal"]');
+        const forgetPasswordModal = document.getElementById('forgetPasswordModal');
+        const otpModal = document.getElementById('otpModal');
+        const cancelForgetPasswordBtn = document.getElementById('cancelForgetPassword');
+        const cancelOtpBtn = document.getElementById('cancelOtp');
+        const forgetPasswordForm = document.getElementById('forgetPasswordForm');
+
+        // Open Forget Password modal on link click
+        forgetPasswordLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            forgetPasswordModal.style.display = 'flex';
+        });
+
+        // Close Forget Password modal
+        cancelForgetPasswordBtn.addEventListener('click', function() {
+            forgetPasswordModal.style.display = 'none';
+        });
+
+        // Close OTP modal
+        cancelOtpBtn.addEventListener('click', function() {
+            otpModal.style.display = 'none';
+        });
+
+        // Click outside modal to close
+        [forgetPasswordModal, otpModal].forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if(e.target === modal) modal.style.display = 'none';
+            });
+        });
+
+        // Handle Forget Password form submit
+        
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        // If PHP set the session flag, auto-open OTP modal
+        <?php if (!empty($_SESSION['otp_requested'])): ?>
+            const otpModal = document.getElementById('otpModal');
+            otpModal.style.display = 'flex';
+            <?php unset($_SESSION['otp_requested']); ?>
+        <?php endif; ?>
+    });
     //addadmin
     document.addEventListener("DOMContentLoaded", function() {
         const addAdminBtn = document.getElementById('openAddAdminModal');
@@ -459,10 +692,13 @@
     document.getElementById('showPassword').addEventListener('change', function() {
         const newPass = document.getElementById('newPassword');
         const confirmPass = document.getElementById('confirmNewPassword');
+        const currentPass = document.getElementById('currentPassword');
         const type = this.checked ? 'text' : 'password';
         newPass.type = type;
         confirmPass.type = type;
+        currentPass.type = type;
     });
+    
     // Auto-hide flash message after 2 seconds
     const flashMessage = document.getElementById('flashMessage');
     if (flashMessage) {
@@ -471,6 +707,46 @@
             setTimeout(() => flashMessage.remove(), 500); // Remove after fadeOut completes
         },1500); // Show for 2 seconds
     }
+    //open model from controller commend
+    document.addEventListener("DOMContentLoaded", function() {
+        // Open OTP modal after email submit
+        <?php if (!empty($_SESSION['otp_requested'])): ?>
+            document.getElementById('otpModal').style.display = 'flex';
+            <?php unset($_SESSION['otp_requested']); ?>
+        <?php endif; ?>
+
+        // Open Change Password with OTP modal after successful OTP
+        <?php if (!empty($_SESSION['otp_verified'])): ?>
+            document.getElementById('changePasswordModalwithotp').style.display = 'flex';
+            <?php unset($_SESSION['otp_verified']); ?>
+        <?php endif; ?>
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const showPasswordCheckbox = document.querySelector('#changePasswordModalwithotp #showPassword');
+        const newPasswordInput = document.querySelector('#changePasswordModalwithotp #newPassword');
+        const confirmPasswordInput = document.querySelector('#changePasswordModalwithotp #confirmNewPassword');
+
+        if (showPasswordCheckbox) {
+            showPasswordCheckbox.addEventListener('change', function() {
+                const type = this.checked ? 'text' : 'password';
+                newPasswordInput.type = type;
+                confirmPasswordInput.type = type;
+            });
+        }
+    });
+    // Spinner for the Forget Password form
+    document.addEventListener('DOMContentLoaded', function() {
+        const fpForm = document.getElementById('forgetPasswordForm');
+        if (!fpForm) return;
+
+        const submitBtn = fpForm.querySelector('button[type="submit"].btn-yes');
+        const spinner = submitBtn ? submitBtn.querySelector('#submitSpinner') : null;
+
+        fpForm.addEventListener('submit', function() {
+            if (spinner) spinner.style.display = 'inline-block'; // show spinner
+            if (submitBtn) submitBtn.disabled = true;            // prevent double submits
+        });
+    });
 </script>
 
 

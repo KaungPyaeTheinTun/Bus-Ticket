@@ -4,6 +4,8 @@ require_once APPROOT . '/middleware/AuthMiddleware.php';
 
 require_once APPROOT . '/services/HomeService.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class Home extends Controller
 {
     private $homeService;
@@ -39,6 +41,7 @@ class Home extends Controller
     public function record()
     {
         AuthMiddleware::requireRole(2);
+        $session = new SessionManager(); 
         
         if(session_status() == PHP_SESSION_NONE) {
             session_start();
