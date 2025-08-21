@@ -16,6 +16,11 @@ class AuthRepository extends DBconnection implements AuthRepositoryInterface
         return $this->getDB()->columnFilter('users', 'email', $email);
     }
 
+    public function getById(string $userId)
+    {
+        return $this->getDB()->getById('users', $userId);
+    }
+
     public function createUser(array $data)
     {
         return $this->getDB()->create('users', $data);

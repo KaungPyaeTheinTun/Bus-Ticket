@@ -69,7 +69,7 @@
         <form class="otp-form" method="POST" action="<?php echo URLROOT; ?>/auth/otp">
             <div class="otp-inputs">
                 <?php for ($i = 0; $i < 6; $i++): ?>
-                    <input type="text" name="otp[]" maxlength="1" class="otp-input">
+                    <input type="text" name="otp[]" maxlength="1" class="otp-input" required>
                 <?php endfor; ?>
             </div>
             <button type="submit" class="submit-button">Submit</button>

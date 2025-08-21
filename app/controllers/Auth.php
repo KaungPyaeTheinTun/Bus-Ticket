@@ -277,7 +277,7 @@ class Auth extends Controller
         }
     }
 
-    public function changepasswordadmin()
+    public function changepasswordNoCurrentPass()
     {
         $this->ensurePost();
         // $this->startSessionAndValidateCsrf();
@@ -311,7 +311,98 @@ class Auth extends Controller
         setMessage($success ? 'success' : 'error', $success ? '✅ Password changed successfully.' : '⚠️ Failed to change password.');
         redirect('/user/profile');
     }
+    public function changepasswordadmin()
+    {
+        $this->ensurePost();
 
+        session_start();
+        $adminId = $_SESSION['session_loginuserid'] ?? null;
+        if (!$adminId) {
+            setMessage('error', '⚠️ User not logged in.');
+            redirect('/user/profile');
+            return;
+        }
+
+        $currentPassword = $_POST['current-password'] ?? '';
+        $newPassword     = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm-password'] ?? '';
+
+        if (!$this->validatePasswordMatch($newPassword, $confirmPassword)) {
+            redirect('/user/profile');
+            return;
+        }
+
+        $validator = new UserValidator(['password' => $newPassword]);
+        if ($validator->validatePasswordOnly()) {
+            setMessage('error', '⚠️ Password does not meet the required format.');
+            redirect('/user/profile');
+            return;
+        }
+
+        $user = $this->authService->getUserById($adminId);
+        if (!$user || base64_encode($currentPassword) !== $user['password']) {
+            setMessage('error', '⚠️ Current password is incorrect.');
+            redirect('/user/profile');
+            return;
+        }
+
+        $passwordEncoded = base64_encode($newPassword);
+        $success = $this->authService->changePasswordById($adminId, $passwordEncoded);
+
+        setMessage($success ? 'success' : 'error', $success ? '✅ Password changed successfully.' : '⚠️ Failed to change password.');
+        redirect('/user/profile');
+    }
+    
+    public function forgetpasswordadmin()
+    {
+        $this->ensurePost();
+
+        if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            setMessage('error', '⚠️ Valid email is required.');
+            redirect('/user/profile');
+            return;
+        }
+
+        if ($this->authService->sendsOTP($_POST['email'])) {
+            session_start();
+            $_SESSION['post_mail'] = $_POST['email'];
+            $_SESSION['otp_requested'] = true; // 🔹 flag to open OTP modal
+            redirect('/user/profile');
+        } else {
+            setMessage('error', '⚠️ Email not found!');
+            redirect('/user/profile');
+        }
+    }
+
+    public function otpadmin()
+    {
+        $this->ensurePost();
+
+        $otp = implode('', $_POST['otp'] ?? []);
+        if (!preg_match('/^\d{6}$/', $otp)) {
+            setMessage('error', '⚠️ Invalid OTP format.');
+            redirect('/user/profile');
+            return;
+        }
+
+        session_start();
+        $email = $_SESSION['post_mail'] ?? null;
+        if (!$email) {
+            setMessage('error', '⚠️ Session expired. Please try again.');
+            redirect('/user/profile');
+            return;
+        }
+
+        if ($this->authService->verifyOTP($email, $otp)) {
+            $_SESSION['otp'] = $email;
+            $_SESSION['otp_verified'] = true; // 🔹 flag to open changePasswordModalwithotp
+            redirect('/user/profile');
+        } else {
+            setMessage('error', '⚠️ Code is Incorrect');
+            redirect('/user/profile');
+        }
+    }
+ 
     public function logout()
     {
         session_start();

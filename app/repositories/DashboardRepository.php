@@ -25,4 +25,9 @@ class DashboardRepository extends DBconnection implements DashboardRepositoryInt
     {
         return $this->getDB()->readAll('view_booking');
     }
+
+    public function getAllPayment(): array
+    {
+        return $this->getDB()->readAll('payments');
+    }
 }

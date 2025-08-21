@@ -30,73 +30,31 @@
 
 </head>
 <style>
-         /* Styles for the Modal (Popup Box) */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1000; /* Sit on top */
+    .animated-link h1 {
+        display: inline-block;
+        position: relative;
+        color:rgb(255, 255, 255);
+        transition: color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .animated-link h1::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 3px;
+        bottom: -5px;
         left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        justify-content: center; /* Center horizontally */
-        align-items: center; /* Center vertically */
+        background-color:rgb(255, 255, 255); /* underline color */
+        transition: width 0.3s ease;
     }
 
-    .modal-content {
-        background-color: #fefefe;
-        margin: auto; /* For older browsers/center fallback */
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%; /* Could be a fixed width or max-width */
-        max-width: 400px; /* Max width for larger screens */
-        border-radius: 8px;
-        position: relative; /* Needed for absolute positioning of close button */
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-        animation-name: animatetop;
-        animation-duration: 0.4s;
+    .animated-link:hover h1 {
+        color:rgb(255, 255, 255); /* text color on hover */
     }
 
-    /* Add Animation (Optional) */
-    @keyframes animatetop {
-        from {top: -300px; opacity: 0}
-        to {top: 0; opacity: 1}
-    }
-
-
-    .close-button {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        position: absolute; /* Position relative to .modal-content */
-        top: 10px;
-        right: 15px;
-    }
-
-    .close-button:hover,
-    .close-button:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    #logoutButton {
-        background-color: #f44336; /* Red */
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 15px;
-        width: 100%;
-        font-size: 16px;
-    }
-
-    #logoutButton:hover {
-        background-color: #da190b;
+    .animated-link:hover h1::after {
+        width: 100%; /* underline expands on hover */
     }
 </style>
 <body>
@@ -104,7 +62,7 @@
         <div class="header-content">
             <div class="logo">
                 <img src="<?php echo URLROOT; ?>/images/icons/icon.png">
-                <h1>MYBUSTICKET</h1>
+                <a href="<?php echo URLROOT; ?>/pages/index/#" class="animated-link"><h1>MYBUSTICKET</h1></a>
             </div>
             <nav class="main-nav" id="main-nav">
                 <ul>

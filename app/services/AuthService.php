@@ -90,4 +90,9 @@ class AuthService
     {
         return $this->repo->updatePassword($userId, $password);
     }
+
+    public function getUserById(int $userId)
+    {
+        return $this->repo->getById($userId);
+    }
 }
