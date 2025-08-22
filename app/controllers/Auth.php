@@ -71,7 +71,7 @@ class Auth extends Controller
         $this->ensurePost();
         $this->startSessionAndValidateCsrf();
 
-        if (!RateLimiter::check('register', 2, 60)) {
+        if (!RateLimiter::check('register', 4, 60)) {
             setMessage('error', '⚠️ Too many registration attempts. Please wait 1 minute.');
             redirect('pages/register');
             return;
@@ -100,7 +100,7 @@ class Auth extends Controller
         $this->ensurePost();
         $this->startSessionAndValidateCsrf();
 
-        if (!RateLimiter::check('register', 2, 60)) {
+        if (!RateLimiter::check('register', 4, 60)) {
             setMessage('error', '⚠️ Too many registration attempts. Please wait 1 minute.');
             redirect('/user/profile');
             return;
@@ -138,7 +138,7 @@ class Auth extends Controller
         $this->ensurePost();
         $this->startSessionAndValidateCsrf();
 
-        if (!RateLimiter::check('login', 2, 60)) {
+        if (!RateLimiter::check('login', 4, 60)) {
             setMessage('error', '⚠️ Too many login attempts. Please wait 1 minute.');
             redirect('pages/login');
             return;
@@ -305,8 +305,8 @@ class Auth extends Controller
             return;
         }
 
-        $passwordEncoded = base64_encode($password);
-        $success = $this->authService->changePasswordById($adminId, $passwordEncoded);
+        // $passwordEncoded = base64_encode($password);
+        $success = $this->authService->changePasswordById($adminId, $password);
 
         setMessage($success ? 'success' : 'error', $success ? '✅ Password changed successfully.' : '⚠️ Failed to change password.');
         redirect('/user/profile');
@@ -340,14 +340,13 @@ class Auth extends Controller
         }
 
         $user = $this->authService->getUserById($adminId);
-        if (!$user || base64_encode($currentPassword) !== $user['password']) {
+        if (!$user || !password_verify($currentPassword, $user['password'])) {
             setMessage('error', '⚠️ Current password is incorrect.');
             redirect('/user/profile');
             return;
         }
 
-        $passwordEncoded = base64_encode($newPassword);
-        $success = $this->authService->changePasswordById($adminId, $passwordEncoded);
+        $success = $this->authService->changePasswordById($adminId, $newPassword);
 
         setMessage($success ? 'success' : 'error', $success ? '✅ Password changed successfully.' : '⚠️ Failed to change password.');
         redirect('/user/profile');

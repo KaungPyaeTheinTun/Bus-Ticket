@@ -95,6 +95,7 @@ class Home extends Controller
     public function payment()
     {
         AuthMiddleware::requireRole(2);
+        $session = new SessionManager(); 
 
         $selectedId = $_GET['payment_method'] ?? null;
         $data = $this->homeService->getPayments($selectedId);

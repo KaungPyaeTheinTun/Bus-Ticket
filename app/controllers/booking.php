@@ -5,6 +5,8 @@ require_once APPROOT . '/services/BookingService.php';
 
 require_once APPROOT . '/helpers/SessionHelper.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class Booking extends Controller
 {
     private $bookingService;
@@ -12,7 +14,8 @@ class Booking extends Controller
     public function __construct(BookingService $bookingService)
     {
         AuthMiddleware::requireRole(1);
-        
+        $session = new SessionManager(); 
+       
         $this->bookingService = $bookingService;
     }
 

@@ -5,14 +5,21 @@ A simple bus ticket web application built using pure PHP, following the MVC (Mod
 
 ---
 
-## 🧰 Technologies Used
+## 🧰 Technologies & Practices Used
 
-- ✅ PHP (Pure PHP, no frameworks)
-- ✅ MySQL (Database)
+- ✅ PHP (Pure PHP, Object-Oriented Programming)
+- ✅ MySQL (Relational Database)
 - ✅ HTML5 / CSS3 / JavaScript
-- ✅ MVC Pattern
+- ✅ MVC Pattern (Custom implementation)
+- ✅ SOLID Principles (Clean and maintainable architecture)
+- ✅ Security Best Practices  
+  - Input validation & sanitization  
+  - XSS & CSRF protection  
+  - Password hashing (bcrypt/Argon2) with salting & peppering  
+  - Secure file upload handling  
+  - Session management & access control 
 - ✅ XAMPP (or any local server)
-- ✅ Bootstrap (optional UI)
+- ✅ Bootstrap (optional UI framework)
 
 ---
 

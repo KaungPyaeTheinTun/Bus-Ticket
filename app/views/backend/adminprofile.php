@@ -3,6 +3,23 @@
 <?php require_once APPROOT . '/helpers/SessionHelper.php'; ?>
 
 <style> 
+    .admin-table {
+        border-collapse: collapse; /* merge borders */
+        width: 100%;
+        border-left: 1px solid #ddd;   /* left border */
+        border-right: 1px solid #ddd;  /* right border */
+    }
+
+    .admin-table th,
+    .admin-table td {
+        border: none; /* removes vertical + horizontal lines */
+        padding: 12px 8px;
+    }
+
+    /* optional: keep only horizontal lines */
+    .admin-table tr {
+        border-bottom: 1px solid #ddd; /* keep horizontal divider */
+    }
     .spinner {
         border: 3px solid #f3f3f3;
         border-top: 3px solid var(--primary-blue);
@@ -450,7 +467,7 @@
                     <input type="checkbox" id="showPassword">
                     <label for="showPassword">Show Password</label>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="#forgetPasswordModal"><span>forgetpassword ?</span></a>
+                    <!-- <a href="#forgetPasswordModal"><span>forgetpassword ?</span></a> -->
                 </div>
                 <div class="modal-buttons">
                     <button type="submit" class="btn-yes">Change Password</button>

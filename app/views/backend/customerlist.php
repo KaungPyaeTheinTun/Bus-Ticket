@@ -1,6 +1,27 @@
 <?php require_once APPROOT . '/views/inc/sidebar.php'; ?>
 
 <style>
+    .customer-table {
+        border-collapse: collapse; /* merge borders */
+        width: 100%;
+        border-left: 1px solid #ddd;   /* left border */
+        border-right: 1px solid #ddd;  /* right border */
+    }
+
+    .customer-table th,
+    .customer-table td {
+        border: none; /* removes vertical + horizontal lines */
+        padding: 12px 8px;
+    }
+
+    /* optional: keep only horizontal lines */
+    .customer-table tr {
+        border-bottom: 1px solid #ddd; /* keep horizontal divider */
+    }
+    #operatorSearch::placeholder {
+        color:rgb(88, 78, 78); /* bluish placeholder */
+        opacity: 1;
+    }
     .underline-search {
         width: 250px;
         margin-left:53%;

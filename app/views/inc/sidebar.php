@@ -51,8 +51,10 @@
 
 </head>
 <body>
-        <aside class="sidebar fixed-sidebar"> <div class="logo">
-                <h1>MYTICKET</h1>
+        <aside class="sidebar fixed-sidebar">
+            <div class="logo">
+                <!-- <img src="<?php echo URLROOT; ?>/images/icons/icon.png"> -->
+                <h1>MYBUSTICKET</h1>
             </div>
             <nav class="navigation">
                 <ul>

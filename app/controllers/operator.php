@@ -4,6 +4,8 @@ require_once APPROOT . '/middleware/authmiddleware.php';
 
 require_once APPROOT . '/services/OperatorService.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class Operator extends Controller
 {
     private $operatorService;
@@ -11,7 +13,8 @@ class Operator extends Controller
     public function __construct(OperatorService $operatorService)
     {
         AuthMiddleware::requireRole(1);
-        
+        $session = new SessionManager(); 
+
         $this->operatorService = $operatorService;
     }
 

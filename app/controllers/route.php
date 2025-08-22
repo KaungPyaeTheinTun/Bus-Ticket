@@ -6,6 +6,8 @@ require_once APPROOT . '/services/RouteService.php';
 
 require_once APPROOT . '/middleware/authmiddleware.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class Route extends Controller
 {
     private $routeService;
@@ -13,6 +15,7 @@ class Route extends Controller
     public function __construct(RouteService $routeService)
     {
         AuthMiddleware::requireRole(1);
+        $session = new SessionManager(); 
         
         $this->routeService = $routeService;
     }

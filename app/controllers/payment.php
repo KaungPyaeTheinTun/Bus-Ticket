@@ -6,6 +6,8 @@ require_once APPROOT . '/services/PaymentService.php';
 
 require_once APPROOT . '/helpers/SessionHelper.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class Payment extends Controller
 {
     private $paymentService;
@@ -13,6 +15,7 @@ class Payment extends Controller
     public function __construct(PaymentService $paymentService)
     {
         AuthMiddleware::requireRole(1);
+        $session = new SessionManager(); 
         
         $this->paymentService = $paymentService;
     }
@@ -51,9 +54,13 @@ class Payment extends Controller
                 'phone' => trim($_POST['phone'] ?? '')
             ];
 
-            if (!empty($data['phone']) && !ctype_digit($data['phone'])) 
-            {
-                throw new \Exception("Phone must contain digits only.");
+            if (!empty($data['phone'])) {
+                if (!ctype_digit($data['phone'])) {
+                    throw new \Exception("Phone must contain digits only.");
+                }
+                if (strlen($data['phone']) !== 11) {
+                    throw new \Exception("Phone must be exactly 11 digits.");
+                }
             }
 
             $this->paymentService->createPayment($data, $_FILES);
@@ -81,8 +88,19 @@ class Payment extends Controller
                 'method' => trim($_POST['name'] ?? ''),
                 'phone' => trim($_POST['phone'] ?? '')
             ];
+            if (!empty($data['phone'])) {
+                if (!ctype_digit($data['phone'])) {
+                    throw new \Exception("Phone must contain digits only.");
+                }
+                if (strlen($data['phone']) !== 11) {
+                    throw new \Exception("Phone must be exactly 11 digits.");
+                }
+            }
+
             $this->paymentService->updatePayment($id, $data, $_FILES);
+
             $_SESSION['success'] = "✅ Payment method updated successfully.";
+
         } catch (\Exception $e) {
             $_SESSION['error'] = "❌ " . $e->getMessage();
         }

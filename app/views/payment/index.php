@@ -14,6 +14,23 @@
         <?php endif; ?>
 
 <style>
+    .operator-table {
+        border-collapse: collapse; /* merge borders */
+        width: 100%;
+        border-left: 1px solid #ddd;   /* left border */
+        border-right: 1px solid #ddd;  /* right border */
+    }
+
+    .operator-table th,
+    .operator-table td {
+        border: none; /* removes vertical + horizontal lines */
+        padding: 12px 8px;
+    }
+
+    /* optional: keep only horizontal lines */
+    .operator-table tr {
+        border-bottom: 1px solid #ddd; /* keep horizontal divider */
+    }
     .modal-content form input[type="file"] {
         width: 100%;
         padding: 8px;
@@ -107,7 +124,7 @@
                 <tr>
                     <th>Method</th>
                     <th>Phone Number</th>
-                    <th style="text-align: center;">Scan_Image</th>
+                    <th>Scan_Image</th>
                     <th style="text-align: center;">Edit</th>
                     <th style="text-align: center;">Delete</th>
                 </tr>
@@ -118,7 +135,7 @@
                 <tr>
                     <td><?php echo htmlspecialchars($payment['method']); ?></td>
                     <td><?php echo htmlspecialchars($payment['phone']); ?></td>
-                    <td style="text-align: center;">
+                    <td>
                         <?php if (!empty($payment['scan_image'])): ?>
                             <img src="<?php echo URLROOT; ?>/public/uploads/scan_image/<?php echo htmlspecialchars($payment['scan_image']); ?>" width="50">
                         <?php endif; ?>
