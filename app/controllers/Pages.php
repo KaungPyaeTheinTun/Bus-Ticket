@@ -4,6 +4,8 @@ require_once APPROOT . '/middleware/authmiddleware.php';
 
 require_once APPROOT . '/services/DashboardService.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class Pages extends Controller
 {
     private $dashboardService;
@@ -23,6 +25,7 @@ class Pages extends Controller
     public function dashboard()
     {
         AuthMiddleware::requireRole(1);
+        $session = new SessionManager(); 
 
         $data = $this->dashboardService->getDashboardData();
         $this->view('pages/dashboard', $data);

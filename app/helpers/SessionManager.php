@@ -1,8 +1,8 @@
 <?php
 class SessionManager
 {
-    private $regenInterval = 180; // Regenerate ID every 5 min
-    private $timeout       = 600; // Inactivity timeout (30 min)
+    private $regenInterval = 180; // Regenerate ID every 3 min
+    private $timeout       = 600; // Inactivity timeout (10 min)
 
    public function __construct()
     {

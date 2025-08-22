@@ -3,6 +3,8 @@ require_once APPROOT . '/middleware/authmiddleware.php';
 
 require_once APPROOT . '/services/UserService.php';
 
+require_once APPROOT . '/helpers/SessionManager.php';
+
 class User extends Controller
 {
     private $userService;
@@ -10,6 +12,7 @@ class User extends Controller
     public function __construct(UserService $userService)
     {
         AuthMiddleware::requireRole(1);
+        $session = new SessionManager(); 
         
         $this->userService = $userService;
     }

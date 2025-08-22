@@ -27,7 +27,7 @@ class UserService
 
     public function deleteAdmin(int $id, int $loginUserId, string $loginUserEmail)
     {
-        if ($loginUserEmail !== 'admin@gmail.com') {
+        if ($loginUserEmail !== 'superadmin@gmail.com') {
             return ['success' => false, 'message' => "❌ Only default admin can delete admins."];
         }
         if ($id === $loginUserId) {

@@ -21,6 +21,23 @@
 <?php endif; ?>
 
 <style>
+    .booking-table {
+        border-collapse: collapse; /* merge borders */
+        width: 100%;
+        border-left: 1px solid #ddd;   /* left border */
+        border-right: 1px solid #ddd;  /* right border */
+    }
+
+    .booking-table th,
+    .booking-table td {
+        border: none; /* removes vertical + horizontal lines */
+        padding: 12px 8px;
+    }
+
+    /* optional: keep only horizontal lines */
+    .booking-table tr {
+        border-bottom: 1px solid #ddd; /* keep horizontal divider */
+    }
     .flash-message {
             position: fixed;
             top: 28px;

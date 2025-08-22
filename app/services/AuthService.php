@@ -17,10 +17,7 @@ class AuthService
             return ['error' => 'This email is already registered!'];
         }
 
-        // $validator = new UserValidator($formData);
-        // $errors = $validator->validateForm();
-
-          if (!$skipValidation) {
+        if (!$skipValidation) {
             $validator = new UserValidator($formData);
             $errors = $validator->validateForm();
             if (!empty($errors)) {
@@ -28,15 +25,17 @@ class AuthService
             }
         }
 
-        if (!empty($errors)) {
-            return ['errors' => $errors];
-        }
+        // Hash password securely (Argon2id or fallback bcrypt)
+        $passwordHash = password_hash(
+            $formData['password'],
+            defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_BCRYPT
+        );
 
         $user = [
             'name'          => $formData['name'],
             'phone'         => $formData['phone'],
             'email'         => $formData['email'],
-            'password'      => base64_encode($formData['password']), // Ideally password_hash
+            'password'      => $passwordHash, 
             'profile_image' => 'default_profile.jpg',
             'token'         => bin2hex(random_bytes(50)),
             'is_confirmed'  => 0,
@@ -52,11 +51,24 @@ class AuthService
 
     public function login(string $email, string $password)
     {
-        $user = $this->repo->loginCheck($email, base64_encode($password));
-        if ($user) {
-            $this->repo->setLogin($user['id']);
+        $user = $this->repo->findByEmail($email);
+        if (!$user) {
+            return false;
         }
-        return $user;
+
+        // Verify password against hash
+        if (password_verify($password, $user['password'])) {
+            // Optionally rehash if needed (cost updated in future)
+            if (password_needs_rehash($user['password'], PASSWORD_ARGON2ID)) {
+                $newHash = password_hash($password, PASSWORD_ARGON2ID);
+                $this->repo->updatePassword($user['id'], $newHash);
+            }
+
+            $this->repo->setLogin($user['id']);
+            return $user;
+        }
+
+        return false;
     }
 
     public function sendsOTP(string $email)
@@ -83,12 +95,23 @@ class AuthService
     {
         $user = $this->repo->findByEmail($email);
         if (!$user) return false;
-        return $this->repo->updatePassword($user['id'], base64_encode($newPassword));
+
+        $passwordHash = password_hash(
+            $newPassword,
+            defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_BCRYPT
+        );
+
+        return $this->repo->updatePassword($user['id'], $passwordHash);
     }
 
-    public function changePasswordById(int $userId, string $password)
+    public function changePasswordById(int $userId, string $newPassword)
     {
-        return $this->repo->updatePassword($userId, $password);
+        $passwordHash = password_hash(
+            $newPassword,
+            defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_BCRYPT
+        );
+
+        return $this->repo->updatePassword($userId, $passwordHash);
     }
 
     public function getUserById(int $userId)
