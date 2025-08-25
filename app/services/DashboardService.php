@@ -11,6 +11,11 @@ class DashboardService
         $this->repo = $repo;
     }
 
+    public function getFromTo()
+    {
+        return $this->repo->getFromTo();
+    }
+
     public function getDashboardData(): array
     {
         $operators = $this->repo->getAllOperators();

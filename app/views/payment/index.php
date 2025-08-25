@@ -171,7 +171,7 @@
 <div class="modal-content">
     <form method="POST" action="<?php echo URLROOT; ?>/payment/store" enctype="multipart/form-data">
 	<?= SessionHelper::csrfInput() ?>
-    <h3>Add Payment Method</h3>
+    <h3 style="color:#3f51b5;">Add Payment Method</h3>
     <div class="form-group input-with-icon">
         <input type="text" name="name" class="text-input" placeholder="Enter method name" value="<?php echo htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
     </div>
@@ -195,7 +195,7 @@
 <div class="modal-content">
     <form id="editForm" method="POST" action="<?php echo URLROOT; ?>/payment/update" enctype="multipart/form-data">
     <?= SessionHelper::csrfInput() ?>
-    <h3>Edit Payment Method</h3>
+    <h3 style="color:#3f51b5;">Edit Payment Method</h3>
     <input type="hidden" name="id" id="edit-id">
     <div class="form-group input-with-icon">
         <input type="text" name="name" id="edit-name" class="text-input" placeholder="Enter method name" required>
@@ -218,7 +218,7 @@
 <div id="deleteConfirmationModal" class="modal-overlay">
 <div class="modal-content">                           
     <form id="deleteForm" method="POST">
-        <h3>Are you sure you want to delete <span id="adminNameToDelete"></span>?</h3>
+        <h3>Are you sure you want to delete <span id="adminNameToDelete"  style="color:#3f51b5;"></span>?</h3>
         <p>This action cannot be undone.</p>
         <div class="modal-buttons">
             <button type="submit" class="btn-yes">Yes, Delete</button>  

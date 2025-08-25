@@ -119,8 +119,8 @@ class Home extends Controller
             return;
         }
 
-        if ($passengers < 1 || $passengers > 2) {
-            $_SESSION['error'] = 'Passenger number must be 1 or 2.';
+        if ($passengers < 1 || $passengers > 3) {
+            $_SESSION['error'] = 'Passenger limit is maximun 3.';
             redirect('/pages/index');
             return;
         }

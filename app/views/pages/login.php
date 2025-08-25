@@ -4,13 +4,26 @@
 
 <?php session_start(); ?>
 
+<style>
+    .left-panel .logo h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+ 
+</style>
     <div class="login-container">
         <div class="left-panel">
             <div class="logo">
-           <h1>MYTICKET</h1>
+                <h1>MYBUSTICKET</h1>
             </div>
             <div class="bus-image">
-                <img src="<?php echo URLROOT; ?>/images/bus.png" alt="IMG">
+                <img src="<?php echo URLROOT; ?>/images/bus.png" alt="Bus Image">
             </div>
         </div>
         <div class="right-panel">

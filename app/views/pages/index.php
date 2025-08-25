@@ -7,6 +7,44 @@
 <!-- Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <style>
+    .booking-form select {
+        width: 100%;
+        font-family: 'Poppins', sans-serif;
+        color:#333;
+        padding: 10px 15px;
+        border: 1px solid var(--input-border);
+        border-radius: 5px;
+        font-size: 16px;
+        outline: none;
+        appearance: none; /* Remove default arrow in some browsers */
+        background-color: var(--white);
+        transition: border-color 0.3s ease;
+    }
+
+    .booking-form select:focus {
+        border-color: var(--primary-blue);
+    }
+
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        background: #fff;
+        cursor: pointer;
+    }
+    .form-group select:focus {
+        border-color: #3f51b5;
+        outline: none;
+    }
+    .payment-note {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 1px;
+        font-style: italic;
+        margin-top:-30px;
+    }
     .flatpickr-calendar {
         font-size: 12px;
         width: 300px; /* caution: use only if necessary */
@@ -71,18 +109,30 @@
             <div class="booking-form-container">
                 <form class="booking-form" id="searchForm" method="get" action="<?php echo URLROOT; ?>/home/searchAndRedirect">
                     <div class="form-group">
-                        <input type="text" placeholder="From" id="from-location" name="from" required>
+                        <input type="text" list="from-location" id="from" name="from" placeholder="From" required>
+                        <datalist id="from-location">
+                            <?php foreach ($data['from'] as $row): ?>
+                            <option value="<?php echo htmlspecialchars($row['from']); ?>">
+                            <?php endforeach; ?>
+                        </datalist>
                     </div>
+
                     <div class="form-group">
-                        <input type="text" placeholder="To" id="to-location" name="to" required>
+                        <input type="text" list="to-location" id="to" name="to" placeholder="To" required>
+                        <datalist id="to-location">
+                            <?php foreach ($data['to'] as $row): ?>
+                            <option value="<?php echo htmlspecialchars($row['to']); ?>">
+                            <?php endforeach; ?>
+                        </datalist>
                     </div>
+
                     <div class="form-group">
                         <input type="text" id="departureDateTime" name="departure_time" class="text-input" placeholder="Departure Date & Time" >
                     </div>
                     <div class="form-group passenger-group">
                         <div class="passenger-control">
                             <button type="button" class="minus-btn"><i class="fas fa-minus-circle"></i></button>
-                            <input type="number" id="passengers" name="passengers" value="1" min="1" max="2">
+                            <input type="number" id="passengers" name="passengers" value="1" min="1" max="3">
                             <button type="button" class="plus-btn"><i class="fas fa-plus-circle"></i></button>
                         </div>
                     </div>
@@ -97,8 +147,8 @@
         <section class="features-section">
             <div class="feature-card">
                 <div class="feature-icon"><i class="fas fa-bus"></i></div>
-                <h3>10+ Bus Operators</h3>
-                <p>Choose from 10+ major bus operators covering 100+ destinations.</p>
+                <h3>5+ Bus Operators</h3>
+                <p>Choose from 5+ major bus operators covering 10+ destinations.</p>
                 <a href="#operator" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="feature-card">
@@ -110,19 +160,22 @@
             <div class="feature-card">
                 <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                 <h3>Secure Payment</h3>
-                <p>WaveMoney, A+ Kpay, KBZPay and MABPay.</p>
+                <p>WaveMoney, A+, KBZPay, CB Bank and MABPay.</p>
                 <br>
                 <a href="#payment" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
             </div>
         </section>
 
         <section id="payment" class="payment-section">
-            <h2>We Accept</h2>
+            <h2>We Accept<br><span class="payment-note">
+                    Pay securely using your preferred payment method – fast, safe, and convenient!
+            </span></h2>
             <div class="payment-logos">
                 <img src="<?php echo URLROOT; ?>/images/kpay.png" alt="Kpay"> 
                 <img src="<?php echo URLROOT; ?>/images/wave.png" alt="Wave Money">
                 <img src="<?php echo URLROOT; ?>/images/a+.png" alt="A+ Pay">
                 <img src="<?php echo URLROOT; ?>/images/mab.png" alt="MAB Pay">
+                <img src="<?php echo URLROOT; ?>/images/cb.png" alt="CB Pay">
             </div>
         </section>
 
@@ -144,7 +197,9 @@
         </section>
 
         <section id="operator" class="operators-section">
-            <h2>Over 10+ Bus Operators</h2>
+            <h2>Over 5+ Bus Operators<br><span class="payment-note">
+                   Choose from 5+ major bus operators covering 10+ destinations.
+            </span></h2>
             <div class="operator-logos">
                 <img src="<?php echo URLROOT; ?>/images/jj.png" alt="JJ Express">
                 <img src="<?php echo URLROOT; ?>/images/s.png" alt="S Bus">

@@ -288,18 +288,18 @@ section h2 {
 
 /* Features Section */
 .features-section {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 30px;
-    background-color: var(--white);
-    padding: 60px 20px;
-    border-radius: 10px;
-    margin-top: -80px; /* Overlap with hero section */
-    position: relative;
-    z-index: 10;
-    box-shadow: var(--shadow-medium);
-}
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        background-color: var(--white);
+        padding: 60px 20px;
+        border-radius: 0px;
+        margin-top: -65px; /* Overlap with hero section */
+        position: relative;
+        z-index: 10;
+        box-shadow: var(--shadow-medium);
+    }
 
 .feature-card {
     flex: 0 1 300px; /* Max width for each card */
@@ -347,9 +347,20 @@ section h2 {
 }
 
 /* Payment Section */
-.payment-section {
-    background-color: var(--gray-bg);
-}
+    
+    .payment-section {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        background-color: var(--white);
+        padding: 60px 20px;
+        border-radius: 0px;
+        margin-top: 15px; /* Overlap with hero section */
+        position: relative;
+        z-index: 10;
+        box-shadow: var(--shadow-medium);
+    }
 
 .payment-logos {
     display: flex;
@@ -372,6 +383,7 @@ section h2 {
 /* Routes Section */
 .routes-section {
     background-color: var(--white);
+    margin-top: 15px;
 }
 
 .route-cards {
@@ -409,9 +421,19 @@ section h2 {
 }
 
 /* Operators Section */
-.operators-section {
-    background-color: var(--gray-bg);
-}
+    .operators-section {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 30px;
+        background-color: var(--white);
+        padding: 60px 20px;
+        border-radius: 0px;
+        margin-top: 15px; /* Overlap with hero section */
+        position: relative;
+        z-index: 10;
+        box-shadow: var(--shadow-medium);
+    }
 
 .operator-logos {
     display: flex;
@@ -436,6 +458,7 @@ section h2 {
     color: var(--white);
     padding: 40px 20px 20px;
     font-size: 15px;
+    margin-top: 15px;;
 }
 
 .footer-content {
