@@ -427,8 +427,8 @@
                         <td><?php echo $user['phone']; ?></td>
                         <td><?php echo $user['email']; ?></td>
                         <td style="text-align: center;">
-                            <a href="<?php echo URLROOT; ?>/user/delete/<?php echo base64_encode($user['id']); ?>" 
-                                class="delete-admin-btn" >
+                            <a href="<?php echo URLROOT; ?>/user/delete/<?php echo base64_encode($user['id']); ?>" class="delete-admin-btn"
+                                data-name="<?php echo htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8'); ?>">
                                 <i class="fas fa-trash-alt action-icon delete-icon"></i>
                             </a>
                         </td>
@@ -440,10 +440,9 @@
             </section>
         </main>
     </div>
-
+<!-- delete model -->
  <div id="deleteConfirmationModal" class="modal-overlay">
-        <div class="modal-content">
-                                       
+        <div class="modal-content">                      
             <form id="deleteForm" method="POST">
                 <h3>Are you sure you want to delete <span id="adminNameToDelete"></span>?</h3>
                 <p>This action cannot be undone.</p>
@@ -535,7 +534,7 @@
 <!-- Add Admin Modal -->
 <div id="addAdminModal" class="modal-overlay">
     <div class="modal-content">
-        <h3>Add Sub Admin</h3>
+        <h3 style="color:#3f51b5;text-align:center;">Add Sub Admin</h3>
         <?php require APPROOT . '/views/components/auth_message.php'; ?>
         <form method="POST" action="<?php echo URLROOT; ?>/auth/adminRegister">
             <?= SessionHelper::csrfInput(); ?>

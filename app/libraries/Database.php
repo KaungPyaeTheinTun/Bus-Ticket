@@ -31,14 +31,16 @@ class Database
         }
     }
 
-    public function callProcedure($name, $params = [])
+    public function callProcedure(string $name, array $params = [])
     {
         try {
             $placeholders = implode(',', array_fill(0, count($params), '?'));
             $sql = "CALL $name($placeholders)";
             $stm = $this->pdo->prepare($sql);
             $stm->execute(array_values($params));
-            return true;
+
+            $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+            return $result ?: true; // return rows if found, otherwise just true
         } catch (PDOException $e) {
             echo $e->getMessage();
             return false;

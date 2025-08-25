@@ -144,7 +144,7 @@ class Mail
                     </div>
                     <div class="content">
                         <p>Hi there,</p>
-                        <p>Thank you for registering. Please verify your email using the code below:</p>
+                        <p>We received a request to reset your password. Please use the code below to verify your request and set a new password:</p>
                         <div class="otp-code">' . $otp . '</div>
                         <a href="http://localhost/mvc-bus-ticket/pages/otp?otp=' . $otp . '" class="button">Verify Email</a>
                         <p>If you did not request this, please ignore this email.</p>

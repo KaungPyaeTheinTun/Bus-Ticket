@@ -1,6 +1,16 @@
 <?php require_once APPROOT . '/views/inc/header.php'; ?>
 <?php session_start(); ?>
 <style>
+        .left-panel .logo h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+        position: relative;
+    }
     .spinner {
         border: 3px solid #f3f3f3;
         border-top: 3px solid var(--primary-blue);
@@ -22,7 +32,7 @@
     <div class="forget-password-container">
         <div class="left-panel">
             <div class="logo">
-                <h1>MYTICKET</h1>
+                <h1>MYBUSTICKET</h1>
             </div>
             <div class="bus-image">
                 <img src=" <?php echo URLROOT; ?>/images/bus.png" alt="IMG">

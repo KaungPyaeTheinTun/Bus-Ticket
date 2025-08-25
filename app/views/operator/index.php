@@ -307,7 +307,7 @@
 <div id="editModal" class="modal-overlay">
     <div class="modal-content">
         <form id="editForm" method="POST" action="<?php echo URLROOT; ?>/operator/update">
-            <h3>Change <span style="color:#3f51b5;" id="adminNameToDelete"></span> Info.</h3>
+            <h3 style="color:#3f51b5;">Change <span style="color:#3f51b5;" id="adminNameToDelete"></span> Info.</h3>
             <input type="hidden" name="id" id="edit-id">
             <input type="hidden" name="bus_type_id" id="edit-bus-type-id">
 
@@ -337,7 +337,7 @@
 <div id="addOperatorModal" class="modal-overlay">
     <div class="modal-content">
         <form method="POST" action="<?php echo URLROOT; ?>/operator/store">
-            <h3>Add New Operator</h3>
+            <h3 style="color:#3f51b5;">Add New Operator</h3>
             
             <div class="form-group input-with-icon">
                 <i class="fas fa-bus icon"></i>
